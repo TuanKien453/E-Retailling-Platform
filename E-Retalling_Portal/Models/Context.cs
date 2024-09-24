@@ -1,31 +1,47 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Reflection.Emit;
+using System.Xml.Linq;
 
 namespace E_Retalling_Portal.Models
 {
-    public class LocalAppContext:DbContext
+    public class Context:DbContext
     {
-        private static bool _init = false;
-        private static bool resetDb = true;
-
+        private static bool _initialized = false;
+        private static bool _resetDb = true;
+        private static String? _connectionString= null;
         public DbSet<Account> Account {  get; set; }
         public DbSet<User> User { get; set; }
         public DbSet<Address> Address { get; set; }
         public DbSet<Role> Role { get; set; }
 
-        public LocalAppContext()
+
+        static Context()
         {
-            if (_init == false && resetDb == true)
+            InitializeFromXml("configDatabase.xml");
+        }
+        private static void InitializeFromXml(string xmlFilePath)
+        {
+            XDocument doc = XDocument.Load(xmlFilePath);
+
+            _connectionString = doc.Root.Element("ConnectionString")?.Value;
+            _resetDb = bool.Parse(doc.Root.Element("ResetDb")?.Value);
+        }
+
+
+        public Context()
+        {
+            if (_resetDb && !_initialized)
             {
                 Database.EnsureDeleted();
                 Database.EnsureCreated();
-                _init = true;
+                _initialized = true;
             }
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer("Data Source=LAPTOP-EGV9P77B;Initial Catalog=E-Retalling_Portal;User ID=sa;Password=vainglory;Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False");
+            optionsBuilder.UseSqlServer(_connectionString);
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

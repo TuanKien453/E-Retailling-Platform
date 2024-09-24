@@ -17,7 +17,7 @@ namespace E_Retalling_Portal.Controllers
 
         public IActionResult Index()
         {
-            using (var context = new LocalAppContext())
+            using (var context = new Context())
             {
                 
             }
