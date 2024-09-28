@@ -1,8 +1,25 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
+@{
+    // Sử dụng HttpContext từ view để lấy giá trị session
+    var username = Context.Session.GetString("UserName");
+}
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div>
+    <h1>Welcome to the Home Page</h1>
+
+    @if (username!= null)
+    {
+        @ViewBag.alo
+        <p>Hello, @username!</p>
+        <form method="post" asp-controller="Access" asp-action="Logout">
+            <button type="submit">Logout</button>
+        </form>
+    }
+    else
+    {
+        <p>You are not logged in.</p>
+        <a href="/Access/Login">Login</a>
+    }
 </div>

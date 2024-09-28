@@ -11,11 +11,10 @@ namespace E_Retalling_Portal.Models
         private static bool _initialized = false;
         private static bool _resetDb = true;
         private static String? _connectionString= null;
-        public DbSet<Account> Account {  get; set; }
-        public DbSet<User> User { get; set; }
-        public DbSet<Address> Address { get; set; }
-        public DbSet<Role> Role { get; set; }
-
+        public DbSet<Account> Accounts {  get; set; }
+        public DbSet<User> Users { get; set; }
+        public DbSet<Address> Addresses { get; set; }
+        public DbSet<Role> Roles { get; set; }
 
         static Context()
         {

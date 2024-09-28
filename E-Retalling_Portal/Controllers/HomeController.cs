@@ -1,4 +1,5 @@
 using E_Retalling_Portal.Models;
+using E_Retalling_Portal.Models.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -17,10 +18,6 @@ namespace E_Retalling_Portal.Controllers
 
         public IActionResult Index()
         {
-            using (var context = new Context())
-            {
-                
-            }
                 return View();
         }
 
