@@ -7,8 +7,12 @@ namespace E_Retalling_Portal.Models
         [Key]
         public int id { get; set; }
 
-        public string parentCategory { get; set; }
-
+        public int? parentCategoryId { get; set; }
+        [MaxLength(40)]
+        [Required(ErrorMessage = "Name is required")]
         public string name { get; set; }
+
+        public Category? parent { get; set; }
+        public List<Category>? childrens { get; set; }
     }
 }
