@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.EntityFrameworkCore;
 using System.Xml.Linq;
 
 namespace E_Retalling_Portal.Models
@@ -62,6 +63,9 @@ namespace E_Retalling_Portal.Models
                 .HasOne(c => c.parent)
                 .WithMany(c => c.childrens)
                 .HasForeignKey(c => c.parentCategoryId);
+
+            modelBuilder.Entity<Role>().HasData(
+                new Role { id = 1, roleName = "customer" });
 
             SeedingCategory(modelBuilder);
         }

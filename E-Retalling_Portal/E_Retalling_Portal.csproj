@@ -5,6 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>E_Retalling_Portal</RootNamespace>
+    <UserSecretsId>2e1bb0e1-1620-498b-984f-8459ecf9b5f3</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
