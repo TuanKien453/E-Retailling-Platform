@@ -2,7 +2,6 @@
     ViewData["Title"] = "Home Page";
 }
 @{
-    // Sử dụng HttpContext từ view để lấy giá trị session
     var username = Context.Session.GetString("UserName");
 }
 
@@ -11,7 +10,6 @@
 
     @if (username!= null)
     {
-        @ViewBag.alo
         <p>Hello, @username!</p>
         <form method="post" asp-controller="Access" asp-action="Logout">
             <button type="submit">Logout</button>

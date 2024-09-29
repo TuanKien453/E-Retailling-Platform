@@ -33,7 +33,8 @@ namespace E_Retalling_Portal.Controllers
                     if (acc != null)
                     {
                         HttpContext.Session.SetString(Enums.SessionKeys.UserName.ToString(), acc.username);
-                        return RedirectToAction("Index", "Home");
+						HttpContext.Session.SetInt32(Enums.SessionKeys.UserId.ToString(), acc.userId);
+						return RedirectToAction("Index", "Home");
                     }
                     else { ViewBag.ErrorMessage = "Invalid username or password."; }
                 }
@@ -75,7 +76,8 @@ namespace E_Retalling_Portal.Controllers
                 }
 
                 HttpContext.Session.SetString(Enums.SessionKeys.UserName.ToString(), account.username);
-                return RedirectToAction("Index", "Home");
+				HttpContext.Session.SetInt32(Enums.SessionKeys.UserId.ToString(), account.userId);
+				return RedirectToAction("Index", "Home");
             }
 
             return RedirectToAction("Login");
@@ -112,6 +114,7 @@ namespace E_Retalling_Portal.Controllers
 				}
 
 				HttpContext.Session.SetString(Enums.SessionKeys.UserName.ToString(), account.username);
+				HttpContext.Session.SetInt32(Enums.SessionKeys.UserId.ToString(), account.userId);
 				return RedirectToAction("Index", "Home");
 			}
 
