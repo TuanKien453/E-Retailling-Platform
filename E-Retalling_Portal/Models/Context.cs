@@ -1,12 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Data.Common;
-using System.Reflection.Emit;
 using System.Xml.Linq;
 
 namespace E_Retalling_Portal.Models
 {
-    public class Context:DbContext
+    public class Context : DbContext
     {
         private static bool _initialized = false;
         private static bool _resetDb = true;
@@ -15,7 +12,7 @@ namespace E_Retalling_Portal.Models
         public DbSet<User> Users { get; set; }
         public DbSet<Address> Addresses { get; set; }
         public DbSet<Role> Roles { get; set; }
-
+        public DbSet<Category> Categories { get; set; }
 
         static Context()
         {
@@ -60,6 +57,24 @@ namespace E_Retalling_Portal.Models
                 .WithMany(u => u.addresses)
                 .HasForeignKey(a => a.userId);
 
+
+            modelBuilder.Entity<Category>()
+                .HasOne(c => c.parent)
+                .WithMany(c => c.childrens)
+                .HasForeignKey(c => c.parentCategoryId);
+
+            SeedingCategory(modelBuilder);
+        }
+
+        private static void SeedingCategory(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Category>().HasData(
+                new Category { id = 1, name = "Categories 1", parentCategoryId = null },
+                new Category { id = 2, name = "Categories 2", parentCategoryId = null },
+                new Category { id = 3, name = "Subcategory 1", parentCategoryId = 1 },
+                new Category { id = 4, name = "Subcategory 2", parentCategoryId = 3 },
+                new Category { id = 5, name = "Subcategory 3", parentCategoryId = 2 }
+             );
         }
     }
 }

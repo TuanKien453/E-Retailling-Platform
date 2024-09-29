@@ -1,0 +1,100 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/kit/css/theme.css" />
+    <link rel="stylesheet" href="~/css/sideBar.css" />
+    <link rel="stylesheet" href="~/css/pagination.css" />
+    <script src="https://kit.fontawesome.com/710667f71a.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <!--header-->
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow">
+            <div class="container-fluid">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <!--end of header-->
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-2 sidebar">
+
+
+                <div class="flex-shrink-0">
+                    <h3 class="fs-5 fw-semibold sidebar-title p-3">Account</h3>
+                    <ul class="list-unstyled ps-0">
+
+                        <li class="mb-1">
+                            <div class="sidebar-parent">
+                                <i class="fa-solid fa-table-columns"></i>
+                                <button class="btn btn-toggle align-items-center rounded collapsed no-shadow text-white" data-bs-toggle="collapse" data-bs-target="#home-collapse" aria-expanded="false">
+                                    Home
+                                </button>
+                            </div>
+                            <div class="collapse" id="home-collapse" style="">
+                                <ul class="btn-toggle-nav list-unstyled fw-normal pb-2 small">
+                                    <li class="active"><a href="#" class="">Overview</a></li>
+                                    <li><a href="#" class="">Updates</a></li>
+                                    <li><a href="#" class="">Reports</a></li>
+                                </ul>
+                            </div>
+                        </li>
+
+                        <li class="mb-1">
+                            <div class="sidebar-parent">
+                                <i class="fa-solid fa-house"></i>
+                                <button class="btn btn-toggle align-items-center rounded collapsed no-shadow text-white" data-bs-toggle="collapse" data-bs-target="#dashboard-collapse" aria-expanded="false">
+                                    Dashboard
+                                </button>
+                            </div>
+                            <div class="collapse" id="dashboard-collapse" style="">
+                                <ul class="btn-toggle-nav list-unstyled fw-normal pb-2 small">
+                                    <li><a href="#" class="">Overview</a></li>
+                                    <li><a href="#" class="">Weekly</a></li>
+                                    <li><a href="#" class="">Monthly</a></li>
+                                    <li><a href="#" class="">Annually</a></li>
+                                </ul>
+                            </div>
+                        </li>
+                    </ul>
+
+
+                </div>
+
+
+            </div>
+            <div class="col-10 left-col">
+
+
+                @RenderBody()
+
+            </div>
+        </div>
+    </div>
+
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

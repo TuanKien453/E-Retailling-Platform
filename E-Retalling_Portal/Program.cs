@@ -1,7 +1,11 @@
+using E_Retalling_Portal.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+// Register RolePermissionService
+builder.Services.AddSingleton<RolePermissionService>();
 
 var app = builder.Build();
 
