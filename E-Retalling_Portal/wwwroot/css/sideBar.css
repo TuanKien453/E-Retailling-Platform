@@ -5,7 +5,7 @@
     padding-top: 0.5rem;
     padding-left: 1.2rem;
     font-weight: 500;
-    font-size: 16px;
+    font-size: 18px;
 }
 .sidebar-parent{
     width:fit-content;
@@ -46,7 +46,7 @@
     box-shadow:none !important;
 }
 .content {
-    min-height: 85.8vh;
+    min-height: 93.4vh;
     background-color: white;
     border-radius:0.2rem;
 }
@@ -60,4 +60,34 @@
 .sidebar{
     background-color: #0f1319;
     color: white !important;
+    padding-left:16px;
+}
+.single-item>button>i{
+    font-size: 18px;
+}
+.single-item > button > a {
+    color: white;
+    font-weight: 500;
+    font-size: 18px;
+}
+.single-item:hover > button > a, .single-item:hover {
+    transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+    color: mediumpurple !important;
+}
+.single-item.active {
+    border-radius: 1rem;
+    pointer-events: none;
+    background-color: #0d6efd;
+}
+
+.fa-chevron-down {
+    transition: transform 0.3s;
+}
+
+.collapsed .fa-chevron-down {
+    transform: rotate(90deg);
+}
+.dropdown-icon{
+    position:absolute;
+    left:220px;
 }
