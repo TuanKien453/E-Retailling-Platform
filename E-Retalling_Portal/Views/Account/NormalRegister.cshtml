@@ -16,7 +16,7 @@
                             <div class="row">
                                 <div class="col-12 mb-4">
                                     <label for="displayName" class="control-label" > Display Name</label>
-                                    <input type="text" id="displayName" name="displayName" class="form-control @(ViewBag.DisplayName != null ? "is-valid" : "is-valid" )" required value= "@ViewBag.DisplayName" />
+                                    <input type="text" id="displayName" name="displayName" class="form-control @(ViewBag.DisplayName != null ? "is-valid" : "" )" required value= "@ViewBag.DisplayName" />
                                 </div>
                             </div>
 
@@ -24,14 +24,14 @@
                                 <div class="col-md-6 mb-4">
                                     <div data-mdb-input-init class="form-outline">
                                         <label for="firstName" class="control-label">First Name</label>
-                                        <input type="text" id="firstName" name="firstName" class="form-control @(ViewBag.FirstName != null ? "is-valid" : "is-valid")" required value="@ViewBag.FirstName" />
+                                        <input type="text" id="firstName" name="firstName" class="form-control @(ViewBag.FirstName != null ? "is-valid" : "")" required value="@ViewBag.FirstName" />
                                     </div>
 
                                 </div>
                                 <div class="col-md-6 mb-4">
                                     <div data-mdb-input-init class="form-outline">
                                         <label for="lastName" class="control-label">Last Name</label>
-                                        <input type="text" id="lastName" name="lastName" class="form-control @(ViewBag.LastName != null ? "is-valid" : "is-valid")" required value="@ViewBag.LastName" />
+                                        <input type="text" id="lastName" name="lastName" class="form-control @(ViewBag.LastName != null ? "is-valid" : "")" required value="@ViewBag.LastName" />
                                     </div>
 
                                 </div>
@@ -42,7 +42,7 @@
 
                                     <div data-mdb-input-init class="form-outline datepicker w-100">
                                         <label for="birthday" class="control-label">Birthday</label>
-                                        <input type="date" id="birthday" name="birthday" class="form-control @(ViewBag.Birthday != null ? "is-valid" : "is-valid")" required value="@ViewBag.Birthday" />
+                                        <input type="date" id="birthday" name="birthday" class="form-control @(ViewBag.Birthday != null ? "is-valid" : "")" required value="@ViewBag.Birthday" />
                                     </div>
 
                                 </div>
@@ -70,7 +70,7 @@
 
                                     <div data-mdb-input-init class="form-outline">
                                         <label for="email" class="control-label">Email</label>
-                                        <input type="email" id="email" name="email" class="form-control @(ViewBag.ErrorEmail != null ? "is-invalid" : "is-valid")" required value="@ViewBag.Email" />
+                                        <input type="email" id="email" name="email" class="form-control @(ViewBag.Email != null ? "is-valid" : "") @(ViewBag.ErrorEmail != null ? "is-invalid" : "")" required value="@ViewBag.Email" />
                                         @if  ( ViewBag.ErrorEmail != null)
                                         {
                                             <span class="text-danger">@ViewBag.ErrorEmail</span>
@@ -82,7 +82,7 @@
 
                                     <div data-mdb-input-init class="form-outline">
                                         <label for="phoneNumber" class="control-label">Phone Number</label>
-                                        <input type="text" id="phoneNumber" name="phoneNumber" class="form-control @(ViewBag.ErrorPhone != null ? "is-invalid" : "is-valid")" required value="@ViewBag.Phone" />
+                                        <input type="text" id="phoneNumber" name="phoneNumber" class="form-control @(@ViewBag.Phone != null ? "is-valid" : "") @(ViewBag.ErrorPhone != null ? "is-invalid" : "") " required value="@ViewBag.Phone" />
                                         @if(ViewBag.ErrorPhone != null)
                                         {
                                             <span class="text-danger">@ViewBag.ErrorPhone</span>
@@ -94,7 +94,7 @@
                                 <div class="row">
                                     <div class="col-12 mb-4">
                                         <label for="address" class="control-label">Address</label>
-                                        <input type="text" id="address" name="address" class="form-control @(ViewBag.Address != null ? "is-valid" : "is-valid")" required value="@ViewBag.Address" />
+                                        <input type="text" id="address" name="address" class="form-control @(ViewBag.Address != null ? "is-valid" : "")" required value="@ViewBag.Address" />
                                     </div>
                                 </div>
 
@@ -105,7 +105,7 @@
 
                                     <div class="form-group">
                                         <label for="username" class="control-label">Username</label>
-                                        <input type="text" id="username" name="username" class="form-control @(ViewBag.ErrorUsername != null ? "is-invalid" : "is-valid")" required value="@ViewBag.Username" />
+                                        <input type="text" id="username" name="username" class="form-control @(@ViewBag.Username != null ? "is-valid" : "") @(ViewBag.ErrorUsername != null ? "is-invalid" : "")" required value="@ViewBag.Username" />
                                                 @if (ViewBag.ErrorUsername != null)
                                                 {                                                   
                                                     <span class="text-danger">@ViewBag.ErrorUsername</span>
@@ -120,7 +120,7 @@
 
                                     <div class="form-group">
                                         <label for="password" class="control-label">Password</label>
-                                        <input type="password" id="password" name="password" class="form-control @(ViewBag.Password != null ? "is-valid" : "is-valid")" required value="ViewBag.Password" />
+                                        <input type="password" id="password" name="password" class="form-control " required />
                                     </div>
 
                                 </div>
@@ -128,7 +128,7 @@
                                 <div class="col-6 mb 4">
                                     <div class="form-group">
                                         <label for="passwordConfirm" class="control-label">PasswordConfirm</label>
-                                        <input type="password" id="passwordConfirm" name="passwordConfirm" class="form-control @(ViewBag.ErrorPasswordConfirm != null ? "is-invalid" : "is-valid")" required value="ViewBag.PasswordConfirm" />
+                                        <input type="password" id="passwordConfirm" name="passwordConfirm" class="form-control @(ViewBag.ErrorPasswordConfirm != null ? "is-invalid" : "")" required />
                                         @if (ViewBag.ErrorPasswordConfirm != null)
                                         {
                                             <span class="text-danger">@ViewBag.ErrorPasswordConfirm</span>
