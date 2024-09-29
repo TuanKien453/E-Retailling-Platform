@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - E_Retalling_Portal</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/kit/css/material-kit.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/E_Retalling_Portal.styles.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -16,21 +17,52 @@
 
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">E_Retalling_Portal</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
+
+        <!-- Navbar Transparent -->
+
+        <nav class="navbar navbar-expand-lg w-100 shadow-none my-3 navbar-transparent">
+            <div class="container">
+                <a class="navbar-brand" href="https://demos.creative-tim.com/material-kit-pro/index" data-placement="bottom" target="_blank">
+                    Name
+                </a>
+                <button class="navbar-toggler shadow-none ms-2" type="button" data-bs-toggle="collapse" data-bs-target="#navigation" aria-controls="navigation" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon mt-2">
+                        <span class="navbar-toggler-bar bar1"></span>
+                        <span class="navbar-toggler-bar bar2"></span>
+                        <span class="navbar-toggler-bar bar3"></span>
+                    </span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                <div class="collapse navbar-collapse w-100 pt-3 pb-2 py-lg-0" id="navigation">
+                    <ul class="navbar-nav navbar-nav-hover mx-auto">
+                        <li class="nav-item mx-2">
+                            <a class="nav-link ps-2 d-flex justify-content-between cursor-pointer align-items-center text-dark" role="button">
+                                Pages
+                            </a>
                         </li>
+
+                        <li class="nav-item mx-2">
+                            <a class="nav-link ps-2 d-flex justify-content-between cursor-pointer align-items-center text-dark" role="button">
+                                Account
+                            </a>
+                        </li>
+                        <li class="nav-item mx-2">
+                            <a class="nav-link ps-2 d-flex justify-content-between cursor-pointer align-items-center text-dark" role="button">
+                                Blocks
+                            </a>
+                        </li>
+
+                        <li class="nav-item mx-2">
+                            <a class="nav-link ps-2 d-flex justify-content-between cursor-pointer align-items-center text-dark" role="button">
+                                Docs
+                            </a>
+                        </li>
+                    </ul>
+
+                    <ul class="navbar-nav d-lg-block d-none">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+
+                            <a href="" class="btn btn-sm  bg-gradient-primary  mb-0 me-1" role="button">Sign In</a>
+
                         </li>
                     </ul>
                     <ul class="navbar-nav">
@@ -44,7 +76,9 @@
                 </div>
             </div>
         </nav>
-    </header>
+        <!-- End Navbar -->
+        <!-- End Navbar -->
+
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
