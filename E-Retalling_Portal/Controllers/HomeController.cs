@@ -1,5 +1,5 @@
 using E_Retalling_Portal.Models;
-using E_Retalling_Portal.Models.Authentication;
+using E_Retalling_Portal.Controllers.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;

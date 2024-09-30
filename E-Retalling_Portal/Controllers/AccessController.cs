@@ -6,82 +6,106 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Facebook;
+using System.Net.Http;
 
 namespace E_Retalling_Portal.Controllers
 {
-    public class AccessController : Controller
-    {
-        public IActionResult Login()
-        {
-            if (HttpContext.Session.GetString(Enums.SessionKeys.UserName.ToString()) != null)
-                return RedirectToAction("Index", "Home");
+	public class AccessController : Controller
+	{
+		public IActionResult Login()
+		{
+			if (HttpContext.Session.GetString(Enums.SessionKeys.UserName.ToString()) != null)
+				return RedirectToAction("Index", "Home");
 
-            return View("LoginForm");
-        }
+			return View("LoginForm");
+		}
 
-        [HttpPost]
-        public IActionResult Login(Account account)
-        {
-            using (var context = new Context())
-            {
+		[HttpPost]
+		public IActionResult Login(Account account)
+		{
+			using (var context = new Context())
+			{
 
-                if (HttpContext.Session.GetString(Enums.SessionKeys.UserName.ToString()) == null)
-                {
-                    var acc = context.Accounts
-                                     .FirstOrDefault(x => x.username == account.username && x.password == account.password);
+				if (HttpContext.Session.GetString(Enums.SessionKeys.UserName.ToString()) == null)
+				{
+					var acc = context.Accounts
+									 .FirstOrDefault(x => x.username == account.username && x.password == account.password);
 
-                    if (acc != null)
-                    {
-                        HttpContext.Session.SetString(Enums.SessionKeys.UserName.ToString(), acc.username);
+					if (acc != null)
+					{
+						HttpContext.Session.SetString(Enums.SessionKeys.UserName.ToString(), acc.username);
 						HttpContext.Session.SetInt32(Enums.SessionKeys.UserId.ToString(), acc.userId);
 						return RedirectToAction("Index", "Home");
-                    }
-                    else { ViewBag.ErrorMessage = "Invalid username or password."; }
-                }
-            }
-            return View("LoginForm");
-        }
+					}
+					else { ViewBag.ErrorMessage = "Invalid username or password."; }
+				}
+			}
+			return View("LoginForm");
+		}
 
-        public IActionResult Logout()
-        {
-            HttpContext.Session.Clear();
-            return RedirectToAction("Login");
-        }
+		public IActionResult Logout()
+		{
+			HttpContext.Session.Clear();
+			return RedirectToAction("Login");
+		}
 
-        public IActionResult ExternalGoogleLogin()
-        {
-            String provider = Enums.ExternalLoginProvider.Google.ToString();
-            var redirectUrl = Url.Action("ExternalGoogleLoginCallback", "Access");
-            var properties = new AuthenticationProperties { RedirectUri = redirectUrl };
-            return Challenge(properties, provider);
+		public IActionResult ExternalGoogleLogin()
+		{
+			String provider = Enums.ExternalLoginProvider.Google.ToString();
+			var redirectUrl = Url.Action("ExternalGoogleLoginCallback", "Access");
+			var properties = new AuthenticationProperties { RedirectUri = redirectUrl };
+			return Challenge(properties, provider);
 
-        }
+		}
 
-        public async Task<IActionResult> ExternalGoogleLoginCallback()
-        {
-            var info = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            if (info != null)
-            {
-                var Username = info.Principal.FindFirstValue(ClaimTypes.Name);
+		public async Task<IActionResult> ExternalGoogleLoginCallback()
+		{
+			var info = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
-                var account = await FindUserByUsername(Username);
-                if (account == null)
-                {
-                    account = new Account() 
-                    { 
-                        username = Username, externalId = 1, externalType = "Google",  roleId = 1
-                    };
+			// Kiểm tra xem thông tin xác thực có tồn tại
+			if (info?.Principal != null)
+			{
+				// Lấy email từ claims
+				var externalId = info.Principal.FindFirstValue("externalId");
 
-                    await SaveUserToDatabase(account);
-                }
+				var account = FindAccountByExternalId(externalId, Enums.ExternalLoginProvider.Google.ToString());
 
-                HttpContext.Session.SetString(Enums.SessionKeys.UserName.ToString(), account.username);
-				HttpContext.Session.SetInt32(Enums.SessionKeys.UserId.ToString(), account.userId);
+				if (account != null)
+				{
+					HttpContext.Session.SetString(Enums.SessionKeys.UserName.ToString(), info.Principal.FindFirstValue(ClaimTypes.Name));
+					HttpContext.Session.SetString(Enums.SessionKeys.UserId.ToString(), externalId);
+					return RedirectToAction("Index", "Home");
+				}
+				else
+				{
+					Account acc = new Account()
+					{
+						externalId = externalId,
+						externalType = "Google",
+						roleId = 1,
+					};
+					List<Account> listacc = new List<Account>() { acc };
+					User u = new User()
+					{
+						accounts = listacc
+					};
+					SaveUserToDatabase(u);
+					acc.userId = u.id;
+					SaveAccountToDatabase(acc);
+				}
+
+				// Lưu tên người dùng vào session
+				HttpContext.Session.SetString(Enums.SessionKeys.UserName.ToString(), info.Principal.FindFirstValue(ClaimTypes.Name));
+				HttpContext.Session.SetString(Enums.SessionKeys.UserId.ToString(), externalId);
+
+				// Chuyển hướng đến trang chính
 				return RedirectToAction("Index", "Home");
-            }
+			}
 
-            return RedirectToAction("Login");
-        }
+			// Nếu không có thông tin xác thực, chuyển hướng đến trang đăng nhập
+			return RedirectToAction("Login");
+		}
 
 		public IActionResult ExternalFacebookLogin()
 		{
@@ -94,50 +118,79 @@ namespace E_Retalling_Portal.Controllers
 
 		public async Task<IActionResult> ExternalFacebookLoginCallback()
 		{
+
+			// Xác thực thông tin từ Facebook
 			var info = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-			if (info != null)
+
+			// Kiểm tra xem thông tin xác thực có tồn tại
+			if (info?.Principal != null)
 			{
-				var Username = info.Principal.FindFirstValue(ClaimTypes.Name);
+				// Lấy email từ claims
+				var externalId = info.Principal.FindFirstValue("externalId");
 
-				var account = await FindUserByUsername(Username);
-				if (account == null)
+				var account = FindAccountByExternalId(externalId, Enums.ExternalLoginProvider.Facebook.ToString());
+
+				if (account != null)
 				{
-					account = new Account() 
-                    {
-						username = Username,
-						externalId = 2,
+					HttpContext.Session.SetString(Enums.SessionKeys.UserName.ToString(), info.Principal.FindFirstValue(ClaimTypes.Name));
+					HttpContext.Session.SetString(Enums.SessionKeys.UserId.ToString(), externalId);
+					return RedirectToAction("Index", "Home");
+				}
+				else
+				{
+					Account acc = new Account()
+					{
+						externalId = externalId,
 						externalType = "Facebook",
-						roleId = 1
+						roleId = 1,
 					};
-
-					await SaveUserToDatabase(account);
+					List<Account> listacc = new List<Account>() { acc };
+					User u = new User()
+					{
+						accounts = listacc
+					};
+					SaveUserToDatabase(u);
+					acc.userId = u.id;
+					SaveAccountToDatabase(acc);
 				}
 
-				HttpContext.Session.SetString(Enums.SessionKeys.UserName.ToString(), account.username);
-				HttpContext.Session.SetInt32(Enums.SessionKeys.UserId.ToString(), account.userId);
+				// Lưu tên người dùng vào session
+				HttpContext.Session.SetString(Enums.SessionKeys.UserName.ToString(), info.Principal.FindFirstValue(ClaimTypes.Name));
+				HttpContext.Session.SetString(Enums.SessionKeys.UserId.ToString(), externalId);
+
+				// Chuyển hướng đến trang chính
 				return RedirectToAction("Index", "Home");
 			}
 
+			// Nếu không có thông tin xác thực, chuyển hướng đến trang đăng nhập
 			return RedirectToAction("Login");
 		}
 
+		private Account FindAccountByExternalId(string externalId, string externalType)
+		{
+			using (var context = new Context())
+			{
+				return context.Accounts.FirstOrDefault(acc => acc.externalId == externalId && acc.externalType == externalType );
+			}
+		}
 
-		private async Task<Account> FindUserByUsername(string username)
-        {
-            using (var context = new Context()) 
-            {
-                return await context.Accounts.FirstOrDefaultAsync(u => u.username == username);
-            }
-        }
+		private async Task SaveAccountToDatabase(Account acc)
+		{
+			using (var context = new Context())
+			{
+				context.Accounts.Add(acc);
+				await context.SaveChangesAsync();
+			}
+		}
 
-        private async Task SaveUserToDatabase(Account acc)
-        {
-            using (var context = new Context())
-            {
-                context.Accounts.Add(acc);
-                await context.SaveChangesAsync();
-            }
-        }
+		private async Task SaveUserToDatabase(User user)
+		{
+			using (var context = new Context())
+			{
+				context.Users.Add(user);
+				await context.SaveChangesAsync();
+			}
+		}
 
-    }
+	}
 }

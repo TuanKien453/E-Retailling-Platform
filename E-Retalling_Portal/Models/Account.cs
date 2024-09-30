@@ -10,13 +10,13 @@ namespace E_Retalling_Portal.Models
 
         public int userId { get; set; }
         
-        public string username { get; set; }
+        public string? username { get; set; }
 
-        public string password { get; set; }
+        public string? password { get; set; }
 
         public int roleId { get; set; }
 
-        public int externalId { get; set; }
+        public string externalId { get; set; }
 
         public string externalType { get; set; }
 

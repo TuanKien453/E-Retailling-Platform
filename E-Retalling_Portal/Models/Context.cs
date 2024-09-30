@@ -59,6 +59,9 @@ namespace E_Retalling_Portal.Models
                 .WithMany(u => u.addresses)
                 .HasForeignKey(a => a.userId);
 
+            modelBuilder.Entity<Role>()
+                .HasData(new Role { id = 1, roleName = "customer" });
+
         }
     }
 }
