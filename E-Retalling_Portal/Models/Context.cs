@@ -11,7 +11,6 @@ namespace E_Retalling_Portal.Models
         private static String? _connectionString= null;
         public DbSet<Account> Accounts {  get; set; }
         public DbSet<User> Users { get; set; }
-        public DbSet<Address> Addresses { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<Category> Categories { get; set; }
 
@@ -52,12 +51,6 @@ namespace E_Retalling_Portal.Models
                 .HasOne(u => u.user)
                 .WithMany(u => u.accounts)
                 .HasForeignKey(a => a.userId);
-
-            modelBuilder.Entity<Address>()
-                .HasOne(u => u.user)
-                .WithMany(u => u.addresses)
-                .HasForeignKey(a => a.userId);
-
 
             modelBuilder.Entity<Category>()
                 .HasOne(c => c.parent)

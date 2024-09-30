@@ -15,13 +15,12 @@ namespace E_Retalling_Portal.Models
         public string birthday { get; set; }
         public string gender { get; set; }
 
+        public string address { get; set; }
         public string firstName { get; set; }
 
         public string lastName { get; set; }
 
         public List<Account> accounts { get; set; }
-        public List<Address> addresses { get; set; }
-
 
     }
 }

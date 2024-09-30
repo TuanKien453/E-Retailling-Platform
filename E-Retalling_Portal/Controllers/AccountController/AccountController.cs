@@ -30,15 +30,12 @@ namespace E_Retalling_Portal.Controllers.AccountController
                     Account testAcc = context.Accounts.GetVaildAccount(username).FirstOrDefault();
                     if (testUser == null && testAcc == null && password == passwordConfirm)
                     {
-                        User newUser = new User { email = email, phoneNumber = phoneNumber, displayName = displayName, birthday = birthday, gender = gender, firstName = firstName, lastName = lastName };
+                        User newUser = new User { email = email, phoneNumber = phoneNumber, displayName = displayName, birthday = birthday, gender = gender, firstName = firstName, lastName = lastName, address = address};
                         context.Add(newUser);
                         context.SaveChanges();
                         newUser = context.Users.GetUserIdByEmail(email).FirstOrDefault();
                         Account newAccount = new Account { userId = newUser.id, username = username, password = password, roleId = 1, externalId = null, externalType = null };
                         context.Add(newAccount);
-                        context.SaveChanges();
-                        Address newAddress = new Address { address = address, userId = newUser.id };
-                        context.Add(newAddress);
                         context.SaveChanges();
                         return RedirectToAction("RegisterSucceed");
                     }
