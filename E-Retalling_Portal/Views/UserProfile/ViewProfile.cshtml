@@ -28,9 +28,9 @@
                             </button>
                         </div>
 
-                      
-                                
-                        
+
+
+
 
 
                     </div>
@@ -42,45 +42,53 @@
                 <div class="card mb-4">
                     <div class="card-body">
                         <form action="/UserProfile/Update" method="post">
-                            <div class="row">
+                            <div class="row mb-3">
                                 <div class="col-sm-3">
-                                    <label for="displayName" class="mb-0">Display Name</label>
+                                    <label for="displayName" class="form-label">Display Name</label>
                                 </div>
                                 <div class="col-sm-9">
-                                    <input type="text" class="form-control text-muted mb-0" id="displayName" name="displayName" value="@ViewBag.User.displayName">
+                                    <input type="text" class="form-control" id="displayName" name="displayName" value="@ViewBag.User.displayName" placeholder="Enter your display name">
                                 </div>
                             </div>
-                            <hr>
-                            <div class="row">
+
+                            <div class="row mb-3">
                                 <div class="col-sm-3">
-                                    <label for="email" class="mb-0">Email</label>
+                                    <label for="email" class="form-label">Email</label>
                                 </div>
                                 <div class="col-sm-9">
-                                    <input type="email" class="form-control text-muted mb-0" id="email" name="email" value="@ViewBag.User.email">
+                                    <input type="email" id="email" name="email" class="form-control @(ViewBag.User.email != null ? "is-valid" : "") @(ViewBag.ErrorEmail != null ? "is-invalid" : "")" required value="@ViewBag.User.email" placeholder="Enter your email" />
+                                    @if (ViewBag.ErrorEmail != null)
+                                    {
+                                        <span class="text-danger">@ViewBag.ErrorEmail</span>
+                                    }
                                 </div>
                             </div>
-                            <hr>
-                            <div class="row">
+
+                            <div class="row mb-3">
                                 <div class="col-sm-3">
-                                    <label for="phoneNumber" class="mb-0">Phone Number</label>
+                                    <label for="phoneNumber" class="form-label">Phone Number</label>
                                 </div>
                                 <div class="col-sm-9">
-                                    <input type="text" class="form-control text-muted mb-0" id="phoneNumber" name="phoneNumber" pattern="0\d{9}" title="Please enter phone number" value="@ViewBag.User.phoneNumber">
+                                    <input type="text" id="phoneNumber" name="phoneNumber" pattern="0\d{9}" title="Please enter a valid phone number" class="form-control @(ViewBag.User.phoneNumber != null ? "is-valid" : "") @(ViewBag.ErrorPhone != null ? "is-invalid" : "")" required value="@ViewBag.User.phoneNumber" placeholder="Enter your phone number" />
+                                    @if (ViewBag.ErrorPhone != null)
+                                    {
+                                        <span class="text-danger">@ViewBag.ErrorPhone</span>
+                                    }
                                 </div>
                             </div>
-                            <hr>
-                            <div class="row">
+
+                            <div class="row mb-3">
                                 <div class="col-sm-3">
-                                    <label for="birthday" class="mb-0">Birthday</label>
+                                    <label for="birthday" class="form-label">Birthday</label>
                                 </div>
                                 <div class="col-sm-9">
-                                    <input type="date" class="form-control text-muted mb-0" id="birthday" name="birthday" value="@ViewBag.User.birthday">
+                                    <input type="date" class="form-control" id="birthday" name="birthday" value="@ViewBag.User.birthday">
                                 </div>
                             </div>
-                            <hr>
-                            <div class="row">
+
+                            <div class="row mb-3">
                                 <div class="col-sm-3">
-                                    <label for="gender" class="mb-0">Gender</label>
+                                    <label for="gender" class="form-label">Gender</label>
                                 </div>
                                 <div class="col-sm-9">
                                     <select class="form-control text-muted mb-0" id="gender" name="gender">
@@ -105,44 +113,43 @@
 
                                     </select>
                                 </div>
+                            </div>
 
-                            </div>
-                            <hr>
-                            <div class="row">
+                            <div class="row mb-3">
                                 <div class="col-sm-3">
-                                    <label for="firstName" class="mb-0">First Name</label>
+                                    <label for="firstName" class="form-label">First Name</label>
                                 </div>
                                 <div class="col-sm-9">
-                                    <input type="text" class="form-control text-muted mb-0" id="firstName" name="firstName" value="@ViewBag.User.firstName">
+                                    <input type="text" class="form-control" id="firstName" name="firstName" value="@ViewBag.User.firstName" placeholder="Enter your first name">
                                 </div>
                             </div>
-                            <hr>
-                            <div class="row">
+
+                            <div class="row mb-3">
                                 <div class="col-sm-3">
-                                    <label for="lastName" class="mb-0">Last Name</label>
+                                    <label for="lastName" class="form-label">Last Name</label>
                                 </div>
                                 <div class="col-sm-9">
-                                    <input type="text" class="form-control text-muted mb-0" id="lastName" name="lastName" value="@ViewBag.User.lastName">
+                                    <input type="text" class="form-control" id="lastName" name="lastName" value="@ViewBag.User.lastName" placeholder="Enter your last name">
                                 </div>
                             </div>
-                            <hr>
-                            <div class="row">
-                                <div class="row mb-3">
-                                    <div class="col-sm-3">
-                                        <label class="mb-0">Address</label>
-                                    </div>
-                                    <div class="col-sm-9">
-                                        <input type="text" class="form-control text-muted mb-0" name="address" value="@ViewBag.User.address" />
-                                    </div>
+
+                            <div class="row mb-3">
+                                <div class="col-sm-3">
+                                    <label for="address" class="form-label">Address</label>
+                                </div>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" id="address" name="address" value="@ViewBag.User.address" placeholder="Enter your address">
                                 </div>
                             </div>
-                            
+
                             <div class="row">
-                                <div class="col-sm-12">
+                                <div class="col-sm-12 text-end">
                                     <button type="submit" class="btn btn-primary">Update</button>
                                 </div>
                             </div>
                         </form>
+
+
                     </div>
                 </div>
             </div>
@@ -205,6 +212,8 @@
             var errorMessage = '@TempData["ErrorMessage"]';
             var successMessage = '@TempData["SuccessMessage"]';
             var updateMessage = '@TempData["UpdateMessage"]';
+
+
             if (updateMessage) {
                 document.getElementById('notificationMessage').innerText = updateMessage;
                 var updateModal = new bootstrap.Modal(document.getElementById('notificationModal'));

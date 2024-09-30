@@ -85,14 +85,35 @@ namespace E_Retalling_Portal.Models
         private static void SeedingUser(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<User>().HasData(
-                new User {id=1, address="address",birthday="2000-12-04",displayName="Ngu",email="abc@gmail.com",firstName="first",lastName="last",phoneNumber="0123456789",gender="Female"}
+                new User {
+                    id=1, address="address",
+                    birthday="2000-12-04",
+                    displayName="kienhocgioi",
+                    email="abc@gmail.com",
+                    firstName="first",
+                    lastName="last",
+                    phoneNumber="0123456789",
+                    gender="Female"},
+                new User {
+                    id=2,
+                    address = "addresdds",
+                    birthday = "2000-15-04",
+                    displayName = "anh",
+                    email = "abcadsf@gmail.com",
+                    firstName = "first",
+                    lastName = "last",
+                    phoneNumber = "0123459145",
+                    gender = "Female"
+                }
+                
             );
         }
 
         private static void SeedingAccount(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Account>().HasData(
-                new Account { id=1,username="admin",password="123",roleId=1,externalId=null,externalType=null,userId=1}
+                new Account { id=1,username="admin",password="123",roleId=1,externalId=null,externalType=null,userId=1},
+                new Account { id = 2, username = "anh", password = "123", roleId = 1, externalId = null, externalType = null, userId = 2 }
             );
         }
     }
