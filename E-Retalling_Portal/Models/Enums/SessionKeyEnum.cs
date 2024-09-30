@@ -3,7 +3,8 @@
 		public enum SessionKeys
 		{
 			UserName,
-			UserId
+			UserId,
+			AccountId
 		}
 
 }

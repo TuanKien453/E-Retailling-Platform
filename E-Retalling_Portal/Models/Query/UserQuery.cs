@@ -12,6 +12,6 @@ namespace E_Retalling_Portal.Models.Query
             return dbUser.Where(u => u.id == userId);
         }
 
-        
-    }
+	}
+
 }
