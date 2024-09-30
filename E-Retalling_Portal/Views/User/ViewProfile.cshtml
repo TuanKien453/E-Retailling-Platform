@@ -1,0 +1,228 @@
+﻿@{
+    Layout = "_Layout";
+}
+
+<section style="background-color: white;">
+    <div class="container py-5">
+
+
+        <div class="row">
+            <div class="col-lg-4">
+                <div class="card mb-4 row">
+                    <div class="card-body text-center">
+                        @if (ViewBag.User.gender == "Male")
+                        {
+                            <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp" alt="avatar"
+                                 class="rounded-circle img-fluid" style="width: 150px;">
+                        }
+                        else if (ViewBag.User.gender == "Female")
+                        {
+                            <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava4.webp" alt="avatar"
+                                 class="rounded-circle img-fluid" style="width: 150px;">
+                        }
+
+                        <h5 class="my-3">@ViewBag.User.displayName</h5>
+                        <p class="text-muted mb-4">@ViewBag.User.address</p>
+                        <div class="d-flex justify-content-center mb-2">
+                            <button type="button" class="btn btn-outline-secondary ms-1" data-bs-toggle="modal" data-bs-target="#changePasswordModal">
+                                Change password
+                            </button>
+                        </div>
+
+                      
+                                
+                        
+
+
+                    </div>
+                </div>
+
+
+            </div>
+            <div class="col-lg-8">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <form action="/User/Update" method="post">
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <label for="displayName" class="mb-0">Full Name</label>
+                                </div>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control text-muted mb-0" id="displayName" name="displayName" value="@ViewBag.User.displayName">
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <label for="email" class="mb-0">Email</label>
+                                </div>
+                                <div class="col-sm-9">
+                                    <input type="email" class="form-control text-muted mb-0" id="email" name="email" value="@ViewBag.User.email">
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <label for="phoneNumber" class="mb-0">Phone Number</label>
+                                </div>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control text-muted mb-0" id="phoneNumber" name="phoneNumber" pattern="0\d{9}" title="Please enter phone number" value="@ViewBag.User.phoneNumber">
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <label for="birthday" class="mb-0">Birthday</label>
+                                </div>
+                                <div class="col-sm-9">
+                                    <input type="date" class="form-control text-muted mb-0" id="birthday" name="birthday" value="@ViewBag.User.birthday">
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <label for="gender" class="mb-0">Gender</label>
+                                </div>
+                                <div class="col-sm-9">
+                                    <select class="form-control text-muted mb-0" id="gender" name="gender">
+                                        @if (ViewBag.User.gender == "Male")
+                                        {
+                                            <option value="Male" selected=>Male</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="Male">Male</option>
+                                        }
+
+                                        @if (ViewBag.User.gender == "Female")
+                                        {
+                                            <option value="Female" selected=>Female</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="Female">Female</option>
+                                        }
+
+
+                                    </select>
+                                </div>
+
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <label for="firstName" class="mb-0">First Name</label>
+                                </div>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control text-muted mb-0" id="firstName" name="firstName" value="@ViewBag.User.firstName">
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <label for="lastName" class="mb-0">Last Name</label>
+                                </div>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control text-muted mb-0" id="lastName" name="lastName" value="@ViewBag.User.lastName">
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="row mb-3">
+                                    <div class="col-sm-3">
+                                        <label class="mb-0">Address</label>
+                                    </div>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control text-muted mb-0" name="address" value="@ViewBag.User.address" />
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <button type="submit" class="btn btn-primary">Update</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    </div>
+    </div>
+</section>
+<div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="changePasswordModalLabel">Change password</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="changePasswordForm" method="post" action="/User/SavePassword">
+                    <div class="mb-3">
+                        <label for="currentPassword" class="form-label">Current password</label>
+                        <input type="password" class="form-control" id="currentPassword" name="currentPassword" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="newPassword" class="form-label">New password</label>
+                        <input type="password" class="form-control" id="newPassword" name="newPassword" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="confirmPassword" class="form-label">Confirm new password</label>
+                        <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="notificationModal" tabindex="-1" aria-labelledby="notificationModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="notificationModalLabel">Notification</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p id="notificationMessage"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script>
+        window.onload = function () {
+            var errorMessage = '@TempData["ErrorMessage"]';
+            var successMessage = '@TempData["SuccessMessage"]';
+            var updateMessage = '@TempData["UpdateMessage"]';
+            if (updateMessage) {
+                document.getElementById('notificationMessage').innerText = updateMessage;
+                var updateModal = new bootstrap.Modal(document.getElementById('notificationModal'));
+                updateModal.show();
+            }
+            if (errorMessage) {
+                document.getElementById('notificationMessage').innerText = errorMessage;
+                var errorModal = new bootstrap.Modal(document.getElementById('notificationModal'));
+                errorModal.show();
+            } else if (successMessage) {
+                document.getElementById('notificationMessage').innerText = successMessage;
+                var successModal = new bootstrap.Modal(document.getElementById('notificationModal'));
+                successModal.show();
+            }
+        }
+    </script>
+}
+
+
+
