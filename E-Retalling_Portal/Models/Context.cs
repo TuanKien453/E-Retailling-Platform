@@ -59,6 +59,8 @@ namespace E_Retalling_Portal.Models
 
             SeedingCategory(modelBuilder);
             SeedingRole(modelBuilder);
+            SeedingUser(modelBuilder);
+            SeedingAccount(modelBuilder);
         }
 
         private static void SeedingCategory(ModelBuilder modelBuilder)
@@ -77,6 +79,19 @@ namespace E_Retalling_Portal.Models
             new Role { id = 1, roleName = "Customer" },
             new Role { id = 2, roleName = "Shop Owner" },
             new Role { id = 3, roleName = "Manager" }
+            );
+        }
+
+        private static void SeedingUser(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<User>().HasData(
+                new User {id=1, address="address",birthday="2000-12-04",displayName="Ngu",email="abc@gmail.com",firstName="first",lastName="last",phoneNumber="0123456789",gender="Female"}
+            );
+        }
+        private static void SeedingAccount(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Account>().HasData(
+                new Account { id=1,username="admin",password="123",roleId=1,externalId=null,externalType=null,userId=1}
             );
         }
     }

@@ -6,7 +6,7 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace E_Retalling_Portal.Controllers.UserProfile
 {
-    public class UserController : Controller
+    public class UserProfileController : Controller
     {
 
 
@@ -16,17 +16,16 @@ namespace E_Retalling_Portal.Controllers.UserProfile
             {
                 User user = context.Users.getUserById(1).FirstOrDefault();
                 Account account = context.Accounts.getAccountByUserId(1).FirstOrDefault();
-                
+
                 ViewBag.User = user;
                 ViewBag.Account = account;
 
                 return View();
             }
-
         }
 
         [HttpPost]
-        public IActionResult SavePassword(string currentPassword, string newPassword, string confirmPassword)
+        public IActionResult ChangePassword(string currentPassword, string newPassword, string confirmPassword)
         {
             using (var context = new Context())
             {
@@ -57,9 +56,9 @@ namespace E_Retalling_Portal.Controllers.UserProfile
         {
             using (var context = new Context())
             {
-                
 
-                User  userProfile = context.Users.getUserById(1).FirstOrDefault();
+
+                User userProfile = context.Users.getUserById(1).FirstOrDefault();
                 Account accountProfile = context.Accounts.getAccountByUserId(1).FirstOrDefault();
 
                 userProfile.displayName = user.displayName;
@@ -69,16 +68,15 @@ namespace E_Retalling_Portal.Controllers.UserProfile
                 userProfile.gender = user.gender;
                 userProfile.firstName = user.firstName;
                 userProfile.lastName = user.lastName;
-                userProfile.address = user.address; 
+                userProfile.address = user.address;
                 context.SaveChanges();
 
-
-                    TempData["UpdateMessage"] = "UpdateSuccessfully!";
-                    return RedirectToAction("ViewProfile");
-                }
-                
+                TempData["UpdateMessage"] = "Updated Successfully!";
+                return RedirectToAction("ViewProfile");
             }
 
         }
+
     }
+}
 

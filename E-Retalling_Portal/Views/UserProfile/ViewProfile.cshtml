@@ -22,7 +22,6 @@
                         }
 
                         <h5 class="my-3">@ViewBag.User.displayName</h5>
-                        <p class="text-muted mb-4">@ViewBag.User.address</p>
                         <div class="d-flex justify-content-center mb-2">
                             <button type="button" class="btn btn-outline-secondary ms-1" data-bs-toggle="modal" data-bs-target="#changePasswordModal">
                                 Change password
@@ -42,10 +41,10 @@
             <div class="col-lg-8">
                 <div class="card mb-4">
                     <div class="card-body">
-                        <form action="/User/Update" method="post">
+                        <form action="/UserProfile/Update" method="post">
                             <div class="row">
                                 <div class="col-sm-3">
-                                    <label for="displayName" class="mb-0">Full Name</label>
+                                    <label for="displayName" class="mb-0">Display Name</label>
                                 </div>
                                 <div class="col-sm-9">
                                     <input type="text" class="form-control text-muted mb-0" id="displayName" name="displayName" value="@ViewBag.User.displayName">
@@ -161,7 +160,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="changePasswordForm" method="post" action="/User/SavePassword">
+                <form id="changePasswordForm" method="post" action="/UserProfile/ChangePassword">
                     <div class="mb-3">
                         <label for="currentPassword" class="form-label">Current password</label>
                         <input type="password" class="form-control" id="currentPassword" name="currentPassword" required>
