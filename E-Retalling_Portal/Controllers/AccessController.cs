@@ -120,13 +120,10 @@ namespace E_Retalling_Portal.Controllers
 		public async Task<IActionResult> ExternalFacebookLoginCallback()
 		{
 
-			// Xác thực thông tin từ Facebook
 			var info = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
-			// Kiểm tra xem thông tin xác thực có tồn tại
 			if (info?.Principal != null)
 			{
-				// Lấy email từ claims
 				var externalId = info.Principal.FindFirstValue("externalId");
 
 				var account = FindAccountByExternalId(externalId, ExternalLoginProvider.Facebook.ToString());
@@ -155,15 +152,12 @@ namespace E_Retalling_Portal.Controllers
 					SaveAccountToDatabase(acc);
 				}
 
-				// Lưu tên người dùng vào session
 				HttpContext.Session.SetString(SessionKeys.UserName.ToString(), info.Principal.FindFirstValue(ClaimTypes.Name));
 				HttpContext.Session.SetString(SessionKeys.UserId.ToString(), externalId);
 
-				// Chuyển hướng đến trang chính
 				return RedirectToAction("Index", "Home");
 			}
 
-			// Nếu không có thông tin xác thực, chuyển hướng đến trang đăng nhập
 			return RedirectToAction("Login");
 		}
 
