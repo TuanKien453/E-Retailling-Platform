@@ -26,6 +26,7 @@
 
 							<h3 class="mb-5">Sign in</h3>
 							<form asp-action="Login" asp-controller="Access" method="post">
+								<input type="hidden" name="roleId" value="1" />
 								<div data-mdb-input-init class="form-outline mb-4">
 									<input type="text" id="username" name="Username" class="form-control form-control-lg" />
 									<label class="form-label" for="username">Username</label>

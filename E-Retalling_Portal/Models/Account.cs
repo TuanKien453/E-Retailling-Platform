@@ -16,9 +16,9 @@ namespace E_Retalling_Portal.Models
 
         public int roleId { get; set; }
 
-        public string externalId { get; set; }
+        public string? externalId { get; set; }
 
-        public string externalType { get; set; }
+        public string? externalType { get; set; }
 
         public Role role { get; set; }
 

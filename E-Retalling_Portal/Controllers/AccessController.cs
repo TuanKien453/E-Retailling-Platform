@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Facebook;
 using System.Net.Http;
+using E_Retalling_Portal.Models.Enums;
 
 namespace E_Retalling_Portal.Controllers
 {
@@ -15,7 +16,7 @@ namespace E_Retalling_Portal.Controllers
 	{
 		public IActionResult Login()
 		{
-			if (HttpContext.Session.GetString(Enums.SessionKeys.UserName.ToString()) != null)
+			if (HttpContext.Session.GetString(SessionKeys.UserName.ToString()) != null)
 				return RedirectToAction("Index", "Home");
 
 			return View("LoginForm");
@@ -27,15 +28,15 @@ namespace E_Retalling_Portal.Controllers
 			using (var context = new Context())
 			{
 
-				if (HttpContext.Session.GetString(Enums.SessionKeys.UserName.ToString()) == null)
+				if (HttpContext.Session.GetString(SessionKeys.UserName.ToString()) == null)
 				{
 					var acc = context.Accounts
-									 .FirstOrDefault(x => x.username == account.username && x.password == account.password);
+									 .FirstOrDefault(x => x.username == account.username && x.password == account.password && x.roleId == account.roleId);
 
 					if (acc != null)
 					{
-						HttpContext.Session.SetString(Enums.SessionKeys.UserName.ToString(), acc.username);
-						HttpContext.Session.SetInt32(Enums.SessionKeys.UserId.ToString(), acc.userId);
+						HttpContext.Session.SetString(SessionKeys.UserName.ToString(), acc.username);
+						HttpContext.Session.SetInt32(SessionKeys.UserId.ToString(), acc.userId);
 						return RedirectToAction("Index", "Home");
 					}
 					else { ViewBag.ErrorMessage = "Invalid username or password."; }
@@ -52,7 +53,7 @@ namespace E_Retalling_Portal.Controllers
 
 		public IActionResult ExternalGoogleLogin()
 		{
-			String provider = Enums.ExternalLoginProvider.Google.ToString();
+			String provider = ExternalLoginProvider.Google.ToString();
 			var redirectUrl = Url.Action("ExternalGoogleLoginCallback", "Access");
 			var properties = new AuthenticationProperties { RedirectUri = redirectUrl };
 			return Challenge(properties, provider);
@@ -69,12 +70,12 @@ namespace E_Retalling_Portal.Controllers
 				// Lấy email từ claims
 				var externalId = info.Principal.FindFirstValue("externalId");
 
-				var account = FindAccountByExternalId(externalId, Enums.ExternalLoginProvider.Google.ToString());
+				var account = FindAccountByExternalId(externalId, ExternalLoginProvider.Google.ToString());
 
 				if (account != null)
 				{
-					HttpContext.Session.SetString(Enums.SessionKeys.UserName.ToString(), info.Principal.FindFirstValue(ClaimTypes.Name));
-					HttpContext.Session.SetString(Enums.SessionKeys.UserId.ToString(), externalId);
+					HttpContext.Session.SetString(SessionKeys.UserName.ToString(), info.Principal.FindFirstValue(ClaimTypes.Name));
+					HttpContext.Session.SetString(SessionKeys.UserId.ToString(), externalId);
 					return RedirectToAction("Index", "Home");
 				}
 				else
@@ -96,8 +97,8 @@ namespace E_Retalling_Portal.Controllers
 				}
 
 				// Lưu tên người dùng vào session
-				HttpContext.Session.SetString(Enums.SessionKeys.UserName.ToString(), info.Principal.FindFirstValue(ClaimTypes.Name));
-				HttpContext.Session.SetString(Enums.SessionKeys.UserId.ToString(), externalId);
+				HttpContext.Session.SetString(SessionKeys.UserName.ToString(), info.Principal.FindFirstValue(ClaimTypes.Name));
+				HttpContext.Session.SetString(SessionKeys.UserId.ToString(), externalId);
 
 				// Chuyển hướng đến trang chính
 				return RedirectToAction("Index", "Home");
@@ -109,7 +110,7 @@ namespace E_Retalling_Portal.Controllers
 
 		public IActionResult ExternalFacebookLogin()
 		{
-			String provider = Enums.ExternalLoginProvider.Facebook.ToString();
+			String provider = ExternalLoginProvider.Facebook.ToString();
 			var redirectUrl = Url.Action("ExternalFacebookLoginCallback", "Access");
 			var properties = new AuthenticationProperties { RedirectUri = redirectUrl };
 			return Challenge(properties, provider);
@@ -128,12 +129,12 @@ namespace E_Retalling_Portal.Controllers
 				// Lấy email từ claims
 				var externalId = info.Principal.FindFirstValue("externalId");
 
-				var account = FindAccountByExternalId(externalId, Enums.ExternalLoginProvider.Facebook.ToString());
+				var account = FindAccountByExternalId(externalId, ExternalLoginProvider.Facebook.ToString());
 
 				if (account != null)
 				{
-					HttpContext.Session.SetString(Enums.SessionKeys.UserName.ToString(), info.Principal.FindFirstValue(ClaimTypes.Name));
-					HttpContext.Session.SetString(Enums.SessionKeys.UserId.ToString(), externalId);
+					HttpContext.Session.SetString(SessionKeys.UserName.ToString(), info.Principal.FindFirstValue(ClaimTypes.Name));
+					HttpContext.Session.SetString(SessionKeys.UserId.ToString(), externalId);
 					return RedirectToAction("Index", "Home");
 				}
 				else
@@ -155,8 +156,8 @@ namespace E_Retalling_Portal.Controllers
 				}
 
 				// Lưu tên người dùng vào session
-				HttpContext.Session.SetString(Enums.SessionKeys.UserName.ToString(), info.Principal.FindFirstValue(ClaimTypes.Name));
-				HttpContext.Session.SetString(Enums.SessionKeys.UserId.ToString(), externalId);
+				HttpContext.Session.SetString(SessionKeys.UserName.ToString(), info.Principal.FindFirstValue(ClaimTypes.Name));
+				HttpContext.Session.SetString(SessionKeys.UserId.ToString(), externalId);
 
 				// Chuyển hướng đến trang chính
 				return RedirectToAction("Index", "Home");
