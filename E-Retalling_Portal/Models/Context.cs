@@ -13,7 +13,6 @@ namespace E_Retalling_Portal.Models
         private static String? _connectionString= null;
         public DbSet<Account> Accounts {  get; set; }
         public DbSet<User> Users { get; set; }
-        public DbSet<Address> Addresses { get; set; }
         public DbSet<Role> Roles { get; set; }
 
 
@@ -54,12 +53,11 @@ namespace E_Retalling_Portal.Models
                 .HasOne(u => u.user)
                 .WithMany(u => u.accounts)
                 .HasForeignKey(a => a.userId);
-
-            modelBuilder.Entity<Address>()
-                .HasOne(u => u.user)
-                .WithMany(u => u.addresses)
-                .HasForeignKey(a => a.userId);
-
+            modelBuilder.Entity<Role>().HasData(new Role { id = 1, roleName = "customer"});
+            modelBuilder.Entity<User>().HasData(new User { id = 1, email = "abc@gmail.com", phoneNumber = "0123456789",
+            displayName = "anhncd", birthday = "2004-05-28", gender = "Male", firstName = "qaz", lastName = "xsw", address = "Hanoi"});
+            modelBuilder.Entity<Account>().HasData(new Account { id = 1, userId = 1, username =  "anhncd", password = "123456",
+            roleId = 1, externalId = 1, externalType = "gg"});
         }
     }
 }

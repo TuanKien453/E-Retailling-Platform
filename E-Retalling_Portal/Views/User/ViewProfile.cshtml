@@ -1,48 +1,42 @@
-﻿@model E_Retalling_Portal.ViewModel.UserProfileVM
-@{
+﻿@{
     Layout = "_Layout";
-    var selectedGender = Model.User.gender;
 }
 
-<section style="background-color: #eee;">
+<section style="background-color: white;">
     <div class="container py-5">
-        <div class="row">
-            <div class="col">
-                <nav aria-label="breadcrumb" class="bg-body-tertiary rounded-3 p-3 mb-4">
-                    <ol class="breadcrumb mb-0">
-                        <li class="breadcrumb-item"><a href="#">Home</a></li>
-                        <li class="breadcrumb-item"><a href="#">User</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">User Profile</li>
-                    </ol>
-                </nav>
-            </div>
-        </div>
+
 
         <div class="row">
             <div class="col-lg-4">
-                <div class="card mb-4">
+                <div class="card mb-4 row">
                     <div class="card-body text-center">
-                        @if (@Model.User.gender == "Male")
+                        @if (ViewBag.User.gender == "Male")
                         {
                             <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp" alt="avatar"
                                  class="rounded-circle img-fluid" style="width: 150px;">
                         }
-                        else if (@Model.User.gender == "Female")
+                        else if (ViewBag.User.gender == "Female")
                         {
                             <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava4.webp" alt="avatar"
                                  class="rounded-circle img-fluid" style="width: 150px;">
                         }
 
-                        <h5 class="my-3">@Model.User.displayName</h5>
-                        <p class="text-muted mb-4">@Model.Address.address</p>
+                        <h5 class="my-3">@ViewBag.User.displayName</h5>
+                        <p class="text-muted mb-4">@ViewBag.User.address</p>
                         <div class="d-flex justify-content-center mb-2">
                             <button type="button" class="btn btn-outline-secondary ms-1" data-bs-toggle="modal" data-bs-target="#changePasswordModal">
                                 Change password
                             </button>
                         </div>
 
+                      
+                                
+                        
+
+
                     </div>
                 </div>
+
 
             </div>
             <div class="col-lg-8">
@@ -54,7 +48,7 @@
                                     <label for="displayName" class="mb-0">Full Name</label>
                                 </div>
                                 <div class="col-sm-9">
-                                    <input type="text" class="form-control text-muted mb-0" id="displayName" name="User.displayName" value="@Model.User.displayName">
+                                    <input type="text" class="form-control text-muted mb-0" id="displayName" name="displayName" value="@ViewBag.User.displayName">
                                 </div>
                             </div>
                             <hr>
@@ -63,7 +57,7 @@
                                     <label for="email" class="mb-0">Email</label>
                                 </div>
                                 <div class="col-sm-9">
-                                    <input type="email" class="form-control text-muted mb-0" id="email" name="User.email" value="@Model.User.email">
+                                    <input type="email" class="form-control text-muted mb-0" id="email" name="email" value="@ViewBag.User.email">
                                 </div>
                             </div>
                             <hr>
@@ -72,7 +66,7 @@
                                     <label for="phoneNumber" class="mb-0">Phone Number</label>
                                 </div>
                                 <div class="col-sm-9">
-                                    <input type="text" class="form-control text-muted mb-0" id="phoneNumber" name="User.phoneNumber" value="@Model.User.phoneNumber">
+                                    <input type="text" class="form-control text-muted mb-0" id="phoneNumber" name="phoneNumber" pattern="0\d{9}" title="Please enter phone number" value="@ViewBag.User.phoneNumber">
                                 </div>
                             </div>
                             <hr>
@@ -81,7 +75,7 @@
                                     <label for="birthday" class="mb-0">Birthday</label>
                                 </div>
                                 <div class="col-sm-9">
-                                    <input type="text" class="form-control text-muted mb-0" id="birthday" name="User.birthday" value="@Model.User.birthday">
+                                    <input type="date" class="form-control text-muted mb-0" id="birthday" name="birthday" value="@ViewBag.User.birthday">
                                 </div>
                             </div>
                             <hr>
@@ -90,11 +84,29 @@
                                     <label for="gender" class="mb-0">Gender</label>
                                 </div>
                                 <div class="col-sm-9">
-                                    <select class="form-control text-muted mb-0" id="gender" name="User.gender">
-                                        <option value="Male" selected="selectedGender">Male</option>
-                                        <option value="Female" selected="selectedGender">Female</option>
+                                    <select class="form-control text-muted mb-0" id="gender" name="gender">
+                                        @if (ViewBag.User.gender == "Male")
+                                        {
+                                            <option value="Male" selected=>Male</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="Male">Male</option>
+                                        }
+
+                                        @if (ViewBag.User.gender == "Female")
+                                        {
+                                            <option value="Female" selected=>Female</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="Female">Female</option>
+                                        }
+
+
                                     </select>
                                 </div>
+
                             </div>
                             <hr>
                             <div class="row">
@@ -102,7 +114,7 @@
                                     <label for="firstName" class="mb-0">First Name</label>
                                 </div>
                                 <div class="col-sm-9">
-                                    <input type="text" class="form-control text-muted mb-0" id="firstName" name="User.firstName" value="@Model.User.firstName">
+                                    <input type="text" class="form-control text-muted mb-0" id="firstName" name="firstName" value="@ViewBag.User.firstName">
                                 </div>
                             </div>
                             <hr>
@@ -111,19 +123,21 @@
                                     <label for="lastName" class="mb-0">Last Name</label>
                                 </div>
                                 <div class="col-sm-9">
-                                    <input type="text" class="form-control text-muted mb-0" id="lastName" name="User.lastName" value="@Model.User.lastName">
+                                    <input type="text" class="form-control text-muted mb-0" id="lastName" name="lastName" value="@ViewBag.User.lastName">
                                 </div>
                             </div>
                             <hr>
                             <div class="row">
-                                <div class="col-sm-3">
-                                    <label for="address" class="mb-0">Address</label>
-                                </div>
-                                <div class="col-sm-9">
-                                    <input type="text" class="form-control text-muted mb-0" id="address" name="Address.address" value="@Model.Address.address">
+                                <div class="row mb-3">
+                                    <div class="col-sm-3">
+                                        <label class="mb-0">Address</label>
+                                    </div>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control text-muted mb-0" name="address" value="@ViewBag.User.address" />
+                                    </div>
                                 </div>
                             </div>
-                            <hr>
+                            
                             <div class="row">
                                 <div class="col-sm-12">
                                     <button type="submit" class="btn btn-primary">Update</button>
@@ -192,7 +206,7 @@
             var errorMessage = '@TempData["ErrorMessage"]';
             var successMessage = '@TempData["SuccessMessage"]';
             var updateMessage = '@TempData["UpdateMessage"]';
-            if(updateMessage){
+            if (updateMessage) {
                 document.getElementById('notificationMessage').innerText = updateMessage;
                 var updateModal = new bootstrap.Modal(document.getElementById('notificationModal'));
                 updateModal.show();
