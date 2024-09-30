@@ -88,6 +88,7 @@ namespace E_Retalling_Portal.Models
                 new User {id=1, address="address",birthday="2000-12-04",displayName="Ngu",email="abc@gmail.com",firstName="first",lastName="last",phoneNumber="0123456789",gender="Female"}
             );
         }
+
         private static void SeedingAccount(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Account>().HasData(
