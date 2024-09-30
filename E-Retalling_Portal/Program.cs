@@ -7,9 +7,6 @@ builder.Services.AddControllersWithViews();
 // Register RolePermissionService
 builder.Services.AddSingleton<RolePermissionService>();
 
-builder.Services.AddDbContext<Context>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

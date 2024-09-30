@@ -6,89 +6,90 @@ using System.Threading.Tasks;
 using E_Retalling_Portal.Models.Query;
 using Microsoft.Build.Framework;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
 namespace E_Retalling_Portal.Controllers.AccountController
 {
     public class AccountController : Controller
     {
-        public IActionResult NormalRegister()
+        public IActionResult NormalRegister([DataType(DataType.EmailAddress)]String email)
         {
             return View();
         }
-        public IActionResult RegisterCheck()
+        public IActionResult RegisterCheck([DataType(DataType.EmailAddress),MaxLength(100)] String email,[MaxLength(100)] String username, [DataType(DataType.Password),MaxLength(100)] String password,
+                                            [DataType(DataType.PhoneNumber), MaxLength(15)]String phoneNumber, [MaxLength(100)] String displayName, [DataType(DataType.Date), MaxLength(20)] String birthday,
+                                            [MaxLength(15)] String gender, [MaxLength(100)] String firstName, [MaxLength(100)] String lastName, [DataType(DataType.Password), MaxLength(100)] String passwordConfirm,
+                                            [MaxLength(100)] String address)
         {
-            string username = Request.Form["username"];
-            string password = Request.Form["password"];
-            string email = Request.Form["email"];
-            string phoneNumber = Request.Form["phoneNumber"];
-            string displayName = Request.Form["displayName"];
-            string birthday = Request.Form["birthday"];
-            string gender = Request.Form["gender"];
-            string firstName = Request.Form["firstName"];
-            string lastName = Request.Form["lastName"];
-            string passwordConfirm = Request.Form["passwordConfirm"];
-            string address = Request.Form["address"];            
-            using (var context = new Context())
+            if(ModelState.IsValid == true)
             {
-                
-                User testUser = context.Users.CheckUserData(email, phoneNumber).FirstOrDefault();
-                Account testAcc = context.Accounts.CheckAccount(username).FirstOrDefault();
-                if (testUser == null && testAcc == null && password==passwordConfirm)
+                using (var context = new Context())
                 {
-                    User newUser = new User { email = email, phoneNumber = phoneNumber, displayName = displayName, birthday = birthday, gender = gender, firstName = firstName, lastName = lastName };
-                    context.Add(newUser);
-                    context.SaveChanges();
-                    newUser = context.Users.GetUserIdByEmail(email).FirstOrDefault();
-                    Account newAccount = new Account{ userId = newUser.id, username = username, password = password, roleId = 1, externalId = 0, externalType = "normal" };
-                    context.Add(newAccount);
-                    context.SaveChanges();
-                    Address newAddress = new Address {address = address, userId = newUser.id};
-                    context.Add(newAddress);
-                    context.SaveChanges();
-                    return RedirectToAction("RegisterSucceed");
-                } else
-                {
-                    ViewBag.DisplayName = displayName;
-                    ViewBag.PhoneNumber = phoneNumber;
-                    ViewBag.Birthday = birthday;
-                    ViewBag.Gender = gender;
-                    ViewBag.FirstName = firstName; 
-                    ViewBag.LastName = lastName;
-                    ViewBag.Address = address;
-                    ViewBag.Password = password;
-                    ViewBag.PasswordConfirm = passwordConfirm;
-                    ViewBag.Email = email;
-                    ViewBag.Phone = phoneNumber;
-                    ViewBag.Username = username;
-                    if (testUser != null)
+
+                    User testUser = context.Users.GetVaildUserData(email, phoneNumber).FirstOrDefault();
+                    Account testAcc = context.Accounts.GetVaildAccount(username).FirstOrDefault();
+                    if (testUser == null && testAcc == null && password == passwordConfirm)
                     {
-                        if (testUser.email == email)
+                        User newUser = new User { email = email, phoneNumber = phoneNumber, displayName = displayName, birthday = birthday, gender = gender, firstName = firstName, lastName = lastName };
+                        context.Add(newUser);
+                        context.SaveChanges();
+                        newUser = context.Users.GetUserIdByEmail(email).FirstOrDefault();
+                        Account newAccount = new Account { userId = newUser.id, username = username, password = password, roleId = 1, externalId = null, externalType = null };
+                        context.Add(newAccount);
+                        context.SaveChanges();
+                        Address newAddress = new Address { address = address, userId = newUser.id };
+                        context.Add(newAddress);
+                        context.SaveChanges();
+                        return RedirectToAction("RegisterSucceed");
+                    }
+                    else
+                    {
+                        ViewBag.DisplayName = displayName;
+                        ViewBag.PhoneNumber = phoneNumber;
+                        ViewBag.Birthday = birthday;
+                        ViewBag.Gender = gender;
+                        ViewBag.FirstName = firstName;
+                        ViewBag.LastName = lastName;
+                        ViewBag.Address = address;
+                        ViewBag.Password = password;
+                        ViewBag.PasswordConfirm = passwordConfirm;
+                        ViewBag.Email = email;
+                        ViewBag.Phone = phoneNumber;
+                        ViewBag.Username = username;
+                        if (testUser != null)
                         {
-                            ViewBag.ErrorEmail = "Email is already been register ";
+                            if (testUser.email == email)
+                            {
+                                ViewBag.ErrorEmail = "Email is already been register ";
+                            }
+
+                            if (testUser.phoneNumber == phoneNumber)
+                            {
+                                ViewBag.ErrorPhone = "PhoneNumber is already registered.";
+                            }
+
+                        }
+                        if (testAcc != null)
+                        {
+                            if (testAcc.username == username)
+                            {
+                                ViewBag.ErrorUsername = "This UserName is already been used.";
+                            }
+
+                        }
+                        if (passwordConfirm != password)
+                        {
+                            ViewBag.ErrorPasswordConfirm = "Password and PasswordConfirm does not match";
                         }
 
-                        if (testUser.phoneNumber == phoneNumber)
-                        {
-                            ViewBag.ErrorPhone = "PhoneNumber is already registered.";
-                        }
-
+                        return View("NormalRegister");
                     }
-                    if (testAcc != null)
-                    {
-                        if (testAcc.username == username)
-                        {
-                            ViewBag.ErrorUsername = "This UserName is already been used.";
-                        }
-                     
-                    }
-                    if (passwordConfirm != password)
-                    {
-                        ViewBag.ErrorPasswordConfirm = "Password and PasswordConfirm does not match";
-                    }
-
-                    return View("NormalRegister"); ;
                 }
-            }
+            } else
+            {
+                return View("Views/Shared/ErrorPage/Error500.cshtml");
+            }         
+            
         }
         public IActionResult RegisterSucceed()
         {

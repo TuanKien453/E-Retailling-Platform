@@ -64,10 +64,8 @@ namespace E_Retalling_Portal.Models
                 .WithMany(c => c.childrens)
                 .HasForeignKey(c => c.parentCategoryId);
 
-            modelBuilder.Entity<Role>().HasData(
-                new Role { id = 1, roleName = "customer" });
-
             SeedingCategory(modelBuilder);
+            SeedingRole(modelBuilder);
         }
 
         private static void SeedingCategory(ModelBuilder modelBuilder)
@@ -79,6 +77,14 @@ namespace E_Retalling_Portal.Models
                 new Category { id = 4, name = "Subcategory 2", parentCategoryId = 3 },
                 new Category { id = 5, name = "Subcategory 3", parentCategoryId = 2 }
              );
+        }
+        private static void SeedingRole(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Role>().HasData(
+            new Role { id = 1, roleName = "Customer" },
+            new Role { id = 2, roleName = "Shop Owner" },
+            new Role { id = 3, roleName = "Manager" }
+            );
         }
     }
 }
