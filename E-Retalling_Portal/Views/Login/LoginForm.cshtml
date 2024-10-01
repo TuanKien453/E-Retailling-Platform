@@ -25,7 +25,7 @@
 						<div class="card-body p-5 text-center">
 
 							<h3 class="mb-5">Sign in</h3>
-							<form asp-action="Login" asp-controller="Access" method="post">
+							<form asp-action="Login" asp-controller="Login" method="post">
 								<input type="hidden" name="roleId" value="1" />
 								<div data-mdb-input-init class="form-outline mb-4">
 									<input type="text" id="username" name="Username" class="form-control form-control-lg" />
@@ -54,14 +54,14 @@
 
 							<hr class="my-4">
 
-							<form asp-controller="Access" asp-action="ExternalGoogleLogin">
+							<form asp-controller="Login" asp-action="ExternalGoogleLogin">
 
 								<button data-mdb-button-init data-mdb-ripple-init class="btn btn-lg btn-block btn-primary" style="background-color: #dd4b39;" type="submit">
 									<i class="fab fa-google me-2"></i> Sign in with Google
 								</button>
 							</form>
-							<form asp-controller="Access" asp-action="ExternalFacebookLogin">
-								<button data-mdb-button-init data-mdb-ripple-init class="btn btn-lg btn-block btn-primary mb-2" style="background-color: #3b5998;"
+							<form asp-controller="Login" asp-action="ExternalFacebookLogin">
+								<button data-mdb-button-init data-mdb-ripple-init class="btn btn-lg btn-block btn-primary mb-2 mt-3" style="background-color: #3b5998;"
 										type="submit">
 									<i class="fab fa-facebook-f me-2"></i>Sign in with facebook
 								</button>

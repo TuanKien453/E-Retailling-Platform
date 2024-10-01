@@ -1,23 +1,7 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
-@{
-    var username = Context.Session.GetString("UserName");
-}
 
 <div>
     <h1>Welcome to the Home Page</h1>
-
-    @if (username!= null)
-    {
-        <p>Hello, @username!</p>
-        <form method="post" asp-controller="Access" asp-action="Logout">
-            <button type="submit">Logout</button>
-        </form>
-    }
-    else
-    {
-        <p>You are not logged in.</p>
-        <a href="/Access/Login">Login</a>
-    }
 </div>

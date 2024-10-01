@@ -1,4 +1,5 @@
 using E_Retalling_Portal.Models;
+using E_Retalling_Portal.Models.Enums;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -17,7 +18,9 @@ namespace E_Retalling_Portal.Controllers
 
         public IActionResult Index()
         {
-                return View();
+            int? AccountId = HttpContext.Session.GetInt32(SessionKeys.AccountId.ToString());
+            ViewBag.AccountId = AccountId;
+            return View();
         }
 
         public IActionResult Privacy()

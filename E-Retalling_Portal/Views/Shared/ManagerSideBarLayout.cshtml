@@ -16,22 +16,17 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-2 sidebar">
-
-
                 <div class="flex-shrink-0">
                     <h3 class="fs-5 fw-semibold sidebar-title p-3">Account</h3>
                     <ul class="list-unstyled ps-0">
-                        <li class="mb-1 single-item active">
-                                
-                                <button class="btn btn-toggle align-items-center rounded collapsed no-shadow text-white  ">
+                        <li class="mb-1 single-item activeable">
+                            <button class="btn btn-toggle align-items-center rounded collapsed no-shadow text-white  ">
                                 <i class="fa-solid fa-table-columns">&nbsp;</i>
-                                    <a href="#">DashBoard</a>
-                                </button>
+                                <a href="DashBoard">DashBoard</a>
+                            </button>
                         </li>
-
                         <li class="mb-1">
                             <div class="sidebar-parent">
-                                
                                 <button class="btn btn-toggle align-items-center rounded collapsed no-shadow text-white" data-bs-toggle="collapse" data-bs-target="#home-collapse" aria-expanded="false">
                                     <i class="fa-solid fa-table-columns">&nbsp;</i>
                                     Home
@@ -40,16 +35,15 @@
                             </div>
                             <div class="collapse" id="home-collapse" style="">
                                 <ul class="btn-toggle-nav list-unstyled fw-normal pb-2 small">
-                                    <li class="active"><a href="#" class="">Overview</a></li>
-                                    <li><a href="#" class="">Updates</a></li>
-                                    <li><a href="#" class="">Reports</a></li>
+                                    <li class="activeable"><a href="Category" class="">Category</a></li>
+                                    <li class="activeable"><a href="#" class="">Updates</a></li>
+                                    <li class="activeable"><a href="#" class="">Reports</a></li>
                                 </ul>
                             </div>
                         </li>
 
                         <li class="mb-1">
                             <div class="sidebar-parent">
-                                
                                 <button class="btn btn-toggle align-items-center rounded collapsed no-shadow text-white" data-bs-toggle="collapse" data-bs-target="#dashboard-collapse" aria-expanded="false">
                                     <i class="fa-solid fa-house">&nbsp;</i>
                                     Dashboard
@@ -58,19 +52,17 @@
                             </div>
                             <div class="collapse" id="dashboard-collapse" style="">
                                 <ul class="btn-toggle-nav list-unstyled fw-normal pb-2 small">
-                                    <li><a href="#" class="">Overview</a></li>
-                                    <li><a href="#" class="">Weekly</a></li>
-                                    <li><a href="#" class="">Monthly</a></li>
-                                    <li><a href="#" class="">Annually</a></li>
+                                    <li class="activeable"><a href="#" class="">Overview</a></li>
+                                    <li class="activeable"><a href="#" class="">Weekly</a></li>
+                                    <li class="activeable"><a href="#" class="">Monthly</a></li>
+                                    <li class="activeable"><a href="#" class="">Annually</a></li>
                                 </ul>
                             </div>
                         </li>
+
+
                     </ul>
-
-
                 </div>
-
-
             </div>
             <div class="col-10 left-col">
 
@@ -81,11 +73,29 @@
         </div>
     </div>
     <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const activeables = document.querySelectorAll(".activeable");
+
+            activeables.forEach(item => {
+                item.addEventListener("click", function (event) { 
+                    if (event.target.tagName.toLowerCase() === 'a') {
+                        activeables.forEach(activeable => {
+                            activeable.classList.remove("active");
+                        });
+                        this.classList.add("active");
+                    }
+                });
+            });
+        });
+
         document.querySelectorAll('.btn-toggle').forEach(btn => {
             btn.addEventListener('click', () => {
                 btn.querySelector('.fa-chevron-down').classList.toggle('collapsed');
             });
         });
+
+
+
     </script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
