@@ -1,70 +1,22 @@
 ﻿
 @{
-    ViewData["Title"] = "NormalResgister";
+    ViewData["Title"] = "ShopOwnerRegister";
     Layout = null;
 }
 <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-<section class="vh-70">
+<section >
     <div class="container py-5 h-100 ">
         <div class="row justify-content-center align-items-center h-100">
             <div class="col-12 col-lg-9 col-xl-7">
                 <div class="card shadow-2-strong card-registration" style="border-radius: 15px;">
-                    <div class="card-body p-4 p-md-5">         
-                        <h3 class="mb-4 pb-2 pb-md-0 mb-md-5">Registration Form</h3>
+                    <div class="card-body p-4 p-md-5">
+                        @if (ViewBag.Error != null)
+                        {
+                            <span class="text-danger">@ViewBag.Error</span>
+                        }
+                        <h3 class="mb-4 pb-2 pb-md-0 mb-md-5"> Shop Owner Registration Form</h3>
                         <h5 class="mb-4 pb-2">User Information</h5>
-                        <form asp-action="RegisterCheck" method="post">
-                            <div class="row">
-                                <div class="col-12 mb-4">
-                                    <label for="displayName" class="control-label" > Display Name</label>
-                                    <input type="text" id="displayName" name="displayName" class="form-control @(ViewBag.DisplayName != null ? "is-valid" : "" )" required value= "@ViewBag.DisplayName" />
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-md-6 mb-4">
-                                    <div data-mdb-input-init class="form-outline">
-                                        <label for="firstName" class="control-label">First Name</label>
-                                        <input type="text" id="firstName" name="firstName" class="form-control @(ViewBag.FirstName != null ? "is-valid" : "")" required value="@ViewBag.FirstName" />
-                                    </div>
-
-                                </div>
-                                <div class="col-md-6 mb-4">
-                                    <div data-mdb-input-init class="form-outline">
-                                        <label for="lastName" class="control-label">Last Name</label>
-                                        <input type="text" id="lastName" name="lastName" class="form-control @(ViewBag.LastName != null ? "is-valid" : "")" required value="@ViewBag.LastName" />
-                                    </div>
-
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-md-6 mb-4 d-flex align-items-center">
-
-                                    <div data-mdb-input-init class="form-outline datepicker w-100">
-                                        <label for="birthday" class="control-label">Birthday</label>
-                                        <input type="date" id="birthday" name="birthday" class="form-control @(ViewBag.Birthday != null ? "is-valid" : "")" required value="@ViewBag.Birthday" />
-                                    </div>
-
-                                </div>
-                                <div class="col-md-6 mb-4">
-
-                                    <h6 class="mb-2 pb-1">Gender: </h6>
-
-                                    <div class="form-check form-check-inline">
-                                        <input for="gender" class="form-check-input" type="radio" name="gender" id="femaleGender"
-                                               value="female" checked/>
-                                        <label class="form-check-label" for="femaleGender">Female</label>
-                                    </div>
-
-                                    <div class="form-check form-check-inline">
-                                        <input for="gender" class="form-check-input" type="radio" name="gender" id="maleGender"
-                                               value="male"/>
-                                        <label class="form-check-label" for="maleGender">Male</label>
-                                    </div>
-
-                                </div>
-                            </div>
-
+                        <form asp-action="ShopOwnerRegisterCheck" method="post">                  
                             <div class="row">
                                 <div class="col-md-6 mb-4 pb-2">
 
@@ -91,12 +43,7 @@
 
                                 </div>
 
-                                <div class="row">
-                                    <div class="col-12 mb-4">
-                                        <label for="address" class="control-label">Address</label>
-                                        <input type="text" id="address" name="address" class="form-control @(ViewBag.Address != null ? "is-valid" : "")" required value="@ViewBag.Address" />
-                                    </div>
-                                </div>
+                              
 
                             </div>
                             <h5 class="mb-4 pb-2">Account Information</h5>
