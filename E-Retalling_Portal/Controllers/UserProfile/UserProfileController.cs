@@ -1,7 +1,9 @@
 ﻿using E_Retalling_Portal.Models;
+using E_Retalling_Portal.Models.Enums;
 using E_Retalling_Portal.Models.Query;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace E_Retalling_Portal.Controllers.UserProfile
@@ -14,8 +16,10 @@ namespace E_Retalling_Portal.Controllers.UserProfile
         {
             using (var context = new Context())
             {
-                User user = context.Users.getUserById(1).FirstOrDefault();
-                Account account = context.Accounts.getAccountByUserId(1).FirstOrDefault();
+                int userId = (int)HttpContext.Session.GetInt32(SessionKeys.UserId.ToString());
+
+                User user = context.Users.getUserById(userId).FirstOrDefault();
+                Account account = context.Accounts.getAccountByUserId(userId).FirstOrDefault();
 
                 ViewBag.User = user;
                 ViewBag.Account = account;
@@ -29,7 +33,8 @@ namespace E_Retalling_Portal.Controllers.UserProfile
         {
             using (var context = new Context())
             {
-                Account account = context.Accounts.getAccountByUserId(1).FirstOrDefault();
+                int userId = (int)HttpContext.Session.GetInt32(SessionKeys.UserId.ToString());
+                Account account = context.Accounts.getAccountByUserId(userId).FirstOrDefault();
 
                 if (account.password != currentPassword)
                 {
@@ -56,19 +61,37 @@ namespace E_Retalling_Portal.Controllers.UserProfile
         {
             using (var context = new Context())
             {
+                
+                int userId = (int)HttpContext.Session.GetInt32(SessionKeys.UserId.ToString());
+
+                User newUser = context.Users.getUserById(userId).FirstOrDefault();
+
+                User testUser = context.Users.GetValidUserData(newUser.email, newUser.phoneNumber).FirstOrDefault();
+
+                if (testUser != null)
+                {
+                    if (testUser.email == user.email)
+                    {
+                        ViewBag.ErrorEmail = "Email is already been register ";
+                    }
+
+                    if (testUser.phoneNumber == user.phoneNumber)
+                    {
+                        ViewBag.ErrorPhone = "PhoneNumber is already registered.";
+                    }
 
 
-                User userProfile = context.Users.getUserById(1).FirstOrDefault();
-                Account accountProfile = context.Accounts.getAccountByUserId(1).FirstOrDefault();
+                }
+                newUser.displayName = user.displayName;
 
-                userProfile.displayName = user.displayName;
-                userProfile.email = user.email;
-                userProfile.phoneNumber = user.phoneNumber;
-                userProfile.birthday = user.birthday;
-                userProfile.gender = user.gender;
-                userProfile.firstName = user.firstName;
-                userProfile.lastName = user.lastName;
-                userProfile.address = user.address;
+                newUser.email = user.email;
+
+                newUser.phoneNumber = user.phoneNumber;
+                newUser.birthday = user.birthday;
+                newUser.gender = user.gender;
+                newUser.firstName = user.firstName;
+                newUser.lastName = user.lastName;
+                newUser.address = user.address;
                 context.SaveChanges();
 
                 TempData["UpdateMessage"] = "Updated Successfully!";

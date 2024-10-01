@@ -26,7 +26,7 @@ namespace E_Retalling_Portal.Controllers.AccountController
                 using (var context = new Context())
                 {
 
-                    User testUser = context.Users.GetVaildUserData(email, phoneNumber).FirstOrDefault();
+                    User testUser = context.Users.GetValidUserData(email, phoneNumber).FirstOrDefault();
                     Account testAcc = context.Accounts.GetVaildAccount(username).FirstOrDefault();
                     if (testUser == null && testAcc == null && password == passwordConfirm)
                     {
