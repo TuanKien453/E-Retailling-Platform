@@ -56,10 +56,10 @@
                                     <label for="email" class="form-label">Email</label>
                                 </div>
                                 <div class="col-sm-9">
-                                    <input type="email" id="email" name="email" class="form-control @(ViewBag.User.email != null ? "is-valid" : "") @(ViewBag.ErrorEmail != null ? "is-invalid" : "")" required value="@ViewBag.User.email" placeholder="Enter your email" />
-                                    @if (ViewBag.ErrorEmail != null)
+                                    <input type="email" id="email" name="email" class="form-control" required value="@ViewBag.User.email" />
+                                    @if (TempData["ErrorEmail"] != null)
                                     {
-                                        <span class="text-danger">@ViewBag.ErrorEmail</span>
+                                        <span class="text-danger">@TempData["ErrorEmail"]</span>
                                     }
                                 </div>
                             </div>
@@ -69,10 +69,10 @@
                                     <label for="phoneNumber" class="form-label">Phone Number</label>
                                 </div>
                                 <div class="col-sm-9">
-                                    <input type="text" id="phoneNumber" name="phoneNumber" pattern="0\d{9}" title="Please enter a valid phone number" class="form-control @(ViewBag.User.phoneNumber != null ? "is-valid" : "") @(ViewBag.ErrorPhone != null ? "is-invalid" : "")" required value="@ViewBag.User.phoneNumber" placeholder="Enter your phone number" />
-                                    @if (ViewBag.ErrorPhone != null)
+                                    <input type="text" id="phoneNumber" name="phoneNumber" pattern="0\d{9}" title="Please enter a valid phone number" class="form-control" required value="@ViewBag.User.phoneNumber" />
+                                    @if (TempData["ErrorPhone"] != null)
                                     {
-                                        <span class="text-danger">@ViewBag.ErrorPhone</span>
+                                        <span class="text-danger">@TempData["ErrorPhone"]</span>
                                     }
                                 </div>
                             </div>

@@ -16,7 +16,10 @@ namespace E_Retalling_Portal.Models.Query
         {
             return dbUser.Where(u => u.email == email);
         }
-
+        public static IQueryable<User> GetValidUserData(this DbSet<User> dbUser, string email, string phone, int userId)
+        {
+            return dbUser.Where(u => (u.email == email || u.phoneNumber == phone) && u.id != userId);
+        }
 
     }
 }

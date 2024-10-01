@@ -62,40 +62,59 @@ namespace E_Retalling_Portal.Controllers.UserProfile
             using (var context = new Context())
             {
                 
-                int userId = (int)HttpContext.Session.GetInt32(SessionKeys.UserId.ToString());
+                int? userId = (int)HttpContext.Session.GetInt32(SessionKeys.UserId.ToString());
 
-                User newUser = context.Users.getUserById(userId).FirstOrDefault();
+                User newUser = context.Users.getUserById(userId.Value).FirstOrDefault();
 
-                User testUser = context.Users.GetValidUserData(newUser.email, newUser.phoneNumber).FirstOrDefault();
+                User testUser = context.Users.GetValidUserData(user.email, user.phoneNumber,userId.Value).FirstOrDefault();
 
                 if (testUser != null)
                 {
+                    newUser.displayName = user.displayName;
+                    
+                    newUser.birthday = user.birthday;
+                    newUser.gender = user.gender;
+                    newUser.firstName = user.firstName;
+                    newUser.lastName = user.lastName;
+                    newUser.address = user.address;
+                    
                     if (testUser.email == user.email)
                     {
-                        ViewBag.ErrorEmail = "Email is already been register ";
+                        TempData["ErrorEmail"] = "Email is already been registered";
                     }
 
                     if (testUser.phoneNumber == user.phoneNumber)
                     {
-                        ViewBag.ErrorPhone = "PhoneNumber is already registered.";
+                        TempData["ErrorPhone"] = "PhoneNumber is already registered.";
                     }
-
-
+                    if(testUser.email != user.email && testUser.phoneNumber != user.phoneNumber)
+                    {
+                        newUser.email = user.email;
+                        newUser.phoneNumber = user.phoneNumber;
+                    }
+                    context.SaveChanges();
+                    return RedirectToAction("ViewProfile");
                 }
-                newUser.displayName = user.displayName;
+                else
+                {
+                    newUser.displayName = user.displayName;
 
-                newUser.email = user.email;
+                    newUser.email = user.email;
 
-                newUser.phoneNumber = user.phoneNumber;
-                newUser.birthday = user.birthday;
-                newUser.gender = user.gender;
-                newUser.firstName = user.firstName;
-                newUser.lastName = user.lastName;
-                newUser.address = user.address;
-                context.SaveChanges();
+                    newUser.phoneNumber = user.phoneNumber;
+                    newUser.birthday = user.birthday;
+                    newUser.gender = user.gender;
+                    newUser.firstName = user.firstName;
+                    newUser.lastName = user.lastName;
+                    newUser.address = user.address;
+                    context.SaveChanges();
 
-                TempData["UpdateMessage"] = "Updated Successfully!";
-                return RedirectToAction("ViewProfile");
+                    TempData["UpdateMessage"] = "Updated Successfully!";
+                    return RedirectToAction("ViewProfile");
+                   
+                }
+                 
+                
             }
 
         }
