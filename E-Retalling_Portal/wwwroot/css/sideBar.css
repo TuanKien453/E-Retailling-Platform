@@ -1,5 +1,12 @@
-﻿
-
+﻿.single-item>button {
+    cursor: default !important;
+}
+a{
+    text-decoration:none;
+}
+.single-item > button>a {
+    padding: 0px !important;
+}
 .btn-toggle-nav li {
     padding-bottom: 0.5rem;
     padding-top: 0.5rem;
@@ -71,7 +78,7 @@
     font-weight: 500;
     font-size: 18px;
 }
-.single-item:hover > button > a, .single-item:hover {
+.single-item:hover > button > a, .single-item:hover, .single-item:hover > button > i {
     transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
     color: mediumpurple !important;
 }

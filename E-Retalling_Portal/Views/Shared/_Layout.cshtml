@@ -55,9 +55,12 @@
                         </a>
                     </li>
                 </ul>
-
+                @{
+                    var session = Context.Session;
+                    int? AccountId = session.GetInt32(SessionKeys.AccountId.ToString());
+                }
                 <ul class="navbar-nav d-lg-block d-none">
-                    @if (ViewBag.AccountId == null)
+                    @if (AccountId == null)
                     {
                         <li class="nav-item">
                             <a href="/login" class="btn btn-sm  bg-gradient-primary  mb-0 me-1" role="button">Sign In</a>

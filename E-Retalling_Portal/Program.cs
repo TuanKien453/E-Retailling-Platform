@@ -15,7 +15,7 @@ builder.Services.AddControllersWithViews();
 // Register RolePermissionService
 builder.Services.AddSingleton<RolePermissionService>();
 
-
+//session config
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(30);

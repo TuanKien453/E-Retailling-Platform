@@ -1,0 +1,179 @@
+﻿@{
+    ViewData["Title"] = "Add Product";
+    Layout = "~/Views/Shared/ShopManagerSideBarLayout.cshtml";
+}
+
+<style>
+  .form-input {
+    width:100px;
+    padding:3px;
+    background:#fff;
+  }
+  .form-input input {
+    display:none;
+  }
+  .form-input label {
+    display:block;
+    width:80px;
+    height: auto;
+    max-height: 80px;
+    background:#333;
+    border-radius:10px;
+    cursor:pointer;
+  }
+  
+  .form-input img {
+    width:80px;
+    height: 80px;
+    opacity: .9;
+  }
+
+  .imgRemove{
+    position: relative;
+    bottom: 83px;
+    left: 70%;
+    background-color: transparent;
+    border: none;
+    font-size: 16px;
+    display: none;
+    color:red;
+    font-weight:700;
+  }
+  .show{
+      display:block;
+  }
+
+
+
+  .small{
+    color: #7b809a;
+    font-size:15px;
+  }
+  
+</style>
+<div class="content m-4 pb-3">
+    <div class="container-fluid">
+        <div class="row pt-5">
+            <div class="col-2">
+                <h3>Product Images:</h3>
+            </div>
+            <div class="col-1">
+                <div class="">
+                    <div class="form-input mx-auto">
+                        <label for="file-ip-1">
+                            <img id="file-ip-1-preview" src="https://i.ibb.co/ZVFsg37/default.png">
+                            <button type="button" class="imgRemove" onclick="ImgRemove(1)" id="button-remove-1"><i class="fa-solid fa-xmark"></i></button>
+                        </label>
+                        <input type="file" name="img" id="file-ip-1" accept="image/*" onchange="showPreview(event,1);">
+                    </div>
+                    <p class="text-center small small-ip-1">Upload Image</p>
+                </div>
+            </div>
+            <!-- ************************************************************************************************************ -->
+            <div class="col-1">
+                <div class="">
+                    <div class="form-input mx-auto">
+                        <label for="file-ip-2">
+                            <img id="file-ip-2-preview" src="https://i.ibb.co/ZVFsg37/default.png">
+                            <button type="button" class="imgRemove" onclick="ImgRemove(2)" id="button-remove-2"><i class="fa-solid fa-xmark"></i></button>
+                        </label>
+                        <input type="file" name="img" id="file-ip-2" accept="image/*" onchange="showPreview(event,2);">
+                    </div>
+                    <p class="text-center small small-ip-2">Upload Image</p>
+                </div>
+            </div>
+            <!-- ************************************************************************************************************ -->
+            <div class="col-1">
+                <div class="">
+                    <div class="form-input mx-auto">
+                        <label for="file-ip-3">
+                            <img id="file-ip-3-preview" src="https://i.ibb.co/ZVFsg37/default.png">
+                            <button type="button" class="imgRemove" onclick="ImgRemove(3)" id="button-remove-3"><i class="fa-solid fa-xmark"></i></button>
+                        </label>
+                        <input type="file" name="img" id="file-ip-3" accept="image/*" onchange="showPreview(event,3);">
+                    </div>
+                    <p class="text-center small small-ip-3">Upload Image</p>
+                </div>
+            </div>
+            <!-- ************************************************************************************************************ -->
+            <div class="col-1">
+                <div class="">
+                    <div class="form-input mx-auto">
+                        <label for="file-ip-4">
+                            <img id="file-ip-4-preview" src="https://i.ibb.co/ZVFsg37/default.png">
+                            <button type="button" class="imgRemove" onclick="ImgRemove(4)" id="button-remove-4"><i class="fa-solid fa-xmark"></i></button>
+                        </label>
+                        <input type="file" name="img" id="file-ip-4" accept="image/*" onchange="showPreview(event,4);">
+                    </div>
+                    <p class="text-center small small-ip-4">Upload Image</p>
+                </div>
+            </div>
+            <!-- ************************************************************************************************************ -->
+            <div class="col-1">
+                <div class="">
+                    <div class="form-input mx-auto">
+                        <label for="file-ip-5">
+                            <img id="file-ip-5-preview" src="https://i.ibb.co/ZVFsg37/default.png">
+                            <button type="button" class="imgRemove" onclick="ImgRemove(5)" id="button-remove-5"><i class="fa-solid fa-xmark"></i></button>
+                        </label>
+                        <input type="file" name="img" id="file-ip-5" accept="image/*" onchange="showPreview(event,5);">
+                    </div>
+                    <p class="text-center small small-ip-5">Upload Image</p>
+                </div>
+            </div>
+            <!-- ************************************************************************************************************ -->
+            <div class="col-1">
+                <div class="">
+                    <div class="form-input mx-auto">
+                        <label for="file-ip-6">
+                            <img id="file-ip-6-preview" src="https://i.ibb.co/ZVFsg37/default.png">
+                            <button type="button" class="imgRemove" onclick="ImgRemove(6)" id="button-remove-6"><i class="fa-solid fa-xmark"></i></button>
+                        </label>
+                        <input type="file" name="img" id="file-ip-6" accept="image/*" onchange="showPreview(event,6);">
+                    </div>
+                    <p class="text-center small small-ip-6">Upload Image</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+</div>
+
+<script>
+        //show image preview
+        function showPreview(event, index) {
+            if (event.target.files.length > 0) {
+                let file = event.target.files[0];
+                let src = URL.createObjectURL(file);
+                let preview = document.getElementById("file-ip-" + index + "-preview");
+                preview.src = src;
+                preview.style.display = "block";
+
+                let fileName = file.name;
+                let smallElement = document.querySelector('.small-ip-' + index);
+                smallElement.textContent = fileName;
+
+                let imgRemoveButton = document.querySelector('#button-remove-'+index);
+                imgRemoveButton.classList.add('show');
+            }
+        }
+
+        // Function to remove image
+        function ImgRemove(index) {
+            //set default img
+            let preview = document.getElementById("file-ip-" + index + "-preview");
+            let input = document.getElementById("file-ip-" + index);
+            preview.src = "https://i.ibb.co/ZVFsg37/default.png";
+            //remove data
+            input.value = "";
+
+            let smallElement = document.querySelector('.small-ip-' + index);
+            smallElement.textContent = "Upload Image";
+
+            let imgRemoveButton = document.querySelector('#button-remove-' + index);
+            imgRemoveButton.classList.remove('show');
+        }
+
+</script>

@@ -18,8 +18,7 @@ namespace E_Retalling_Portal.Controllers
 
         public IActionResult Index()
         {
-            int? AccountId = HttpContext.Session.GetInt32(SessionKeys.AccountId.ToString());
-            ViewBag.AccountId = AccountId;
+            
             return View();
         }
 

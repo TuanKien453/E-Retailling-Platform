@@ -2,11 +2,11 @@
 
 namespace E_Retalling_Portal.Controllers.Manager
 {
-    public class DashBoardController : Controller
+    public class ManagerDashBoardController : Controller
     {
         public IActionResult Index()
         {
-            return View();
+            return View("/Views/ManagerSite/ManagerDashBoard/Index.cshtml");
         }
     }
 }

@@ -22,45 +22,28 @@
                         <li class="mb-1 single-item activeable active">
                             <button class="btn btn-toggle align-items-center rounded collapsed no-shadow text-white  ">
                                 <i class="fa-solid fa-table-columns">&nbsp;</i>
-                                <a href="@Url.Action("Index","ManagerDashBoard")">DashBoard</a>
+                                <a href="@Url.Action("Index","ShopDashBoard")">DashBoard</a>
                             </button>
                         </li>
+
                         <li class="mb-1">
                             <div class="sidebar-parent">
                                 <button class="btn btn-toggle align-items-center rounded collapsed no-shadow text-white" data-bs-toggle="collapse" data-bs-target="#home-collapse" aria-expanded="false">
                                     <i class="fa-solid fa-table-columns">&nbsp;</i>
-                                    Home
+                                    Product
                                     <i class="fa-solid fa-chevron-down dropdown-icon"></i>
                                 </button>
                             </div>
                             <div class="collapse" id="home-collapse" style="">
                                 <ul class="btn-toggle-nav list-unstyled fw-normal pb-2 small">
-                                    <li class="activeable"><a href="@Url.Action("Index","Category")" class="">Category</a></li>
-                                    <li class="activeable"><a href="#" class="">Updates</a></li>
-                                    <li class="activeable"><a href="#" class="">Reports</a></li>
+                                    <li class="activeable"><a href="Category" class="">View all</a></li>
+                                    <li class="activeable"><a href="@Url.Action("AddProduct","Product")" class="">Add Product</a></li>
+                                    <li class="activeable"><a href="#" class="">Static</a></li>
                                 </ul>
                             </div>
                         </li>
 
-                        <li class="mb-1">
-                            <div class="sidebar-parent">
-                                <button class="btn btn-toggle align-items-center rounded collapsed no-shadow text-white" data-bs-toggle="collapse" data-bs-target="#dashboard-collapse" aria-expanded="false">
-                                    <i class="fa-solid fa-house">&nbsp;</i>
-                                    Dashboard
-                                    <i class="fa-solid fa-chevron-down dropdown-icon"></i>
-                                </button>
-                            </div>
-                            <div class="collapse" id="dashboard-collapse" style="">
-                                <ul class="btn-toggle-nav list-unstyled fw-normal pb-2 small">
-                                    <li class="activeable"><a href="#" class="">Overview</a></li>
-                                    <li class="activeable"><a href="#" class="">Weekly</a></li>
-                                    <li class="activeable"><a href="#" class="">Monthly</a></li>
-                                    <li class="activeable"><a href="#" class="">Annually</a></li>
-                                </ul>
-                            </div>
-                        </li>
-
-
+                      
                     </ul>
                 </div>
             </div>
@@ -72,7 +55,7 @@
             </div>
         </div>
     </div>
- 
+
 
     <script src="~/js/SidebarControl.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

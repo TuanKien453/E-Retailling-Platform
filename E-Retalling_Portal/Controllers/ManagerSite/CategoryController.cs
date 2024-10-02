@@ -31,7 +31,7 @@ namespace E_Retalling_Portal.Controllers.Manager
             var pagedCategories = builedCategoies.ToPagedList(pageNumber, pageSize);
 
             ViewBag.categoies = categories;
-            return View("ViewCategory", pagedCategories);
+            return View("/Views/ManagerSite/Category/ViewCategory.cshtml", pagedCategories);
         }
         [HttpPost]
         public IActionResult Add(Category cate)
