@@ -16,13 +16,20 @@ namespace E_Retalling_Portal.Controllers.UserProfile
         {
             using (var context = new Context())
             {
-                int userId = (int)HttpContext.Session.GetInt32(SessionKeys.UserId.ToString());
+                int? accountId = (int)HttpContext.Session.GetInt32(SessionKeys.AccountId.ToString());
+                Console.WriteLine("slo "+ accountId);
+                Account account = context.Accounts.GetAccountByAccountId(accountId.Value).FirstOrDefault();
+                Console.WriteLine("sssss"+ account.userId);
+                int userId = account.userId;
 
-                User user = context.Users.getUserById(userId).FirstOrDefault();
-                Account account = context.Accounts.getAccountByUserId(userId).FirstOrDefault();
+                User user = context.Users.GetUserByUserIdInAccount(userId).FirstOrDefault();
 
+                
                 ViewBag.User = user;
+            
                 ViewBag.Account = account;
+
+
 
                 return View();
             }
@@ -33,8 +40,10 @@ namespace E_Retalling_Portal.Controllers.UserProfile
         {
             using (var context = new Context())
             {
-                int userId = (int)HttpContext.Session.GetInt32(SessionKeys.UserId.ToString());
-                Account account = context.Accounts.getAccountByUserId(userId).FirstOrDefault();
+                int? accountId = (int)HttpContext.Session.GetInt32(SessionKeys.AccountId.ToString());
+
+                Account account = context.Accounts.GetAccountByAccountId(accountId.Value).FirstOrDefault();
+
 
                 if (account.password != currentPassword)
                 {
@@ -61,12 +70,12 @@ namespace E_Retalling_Portal.Controllers.UserProfile
         {
             using (var context = new Context())
             {
-                
-                int? userId = (int)HttpContext.Session.GetInt32(SessionKeys.UserId.ToString());
 
-                User newUser = context.Users.getUserById(userId.Value).FirstOrDefault();
+                int? accountId = (int)HttpContext.Session.GetInt32(SessionKeys.AccountId.ToString());
 
-                User testUser = context.Users.GetValidUserData(user.email, user.phoneNumber,userId.Value).FirstOrDefault();
+                User newUser = context.Users.GetUserByUserIdInAccount(accountId.Value).FirstOrDefault();
+
+                User testUser = context.Users.GetValidUserData(user.email, user.phoneNumber, newUser.id).FirstOrDefault();
 
                 if (testUser != null)
                 {
