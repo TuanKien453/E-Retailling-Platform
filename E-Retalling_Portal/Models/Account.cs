@@ -23,6 +23,7 @@ namespace E_Retalling_Portal.Models
         public Role role { get; set; }
 
         public User user { get; set; }
+        public List<Shop> shops { get; set; }
     }
 
 }

@@ -21,6 +21,7 @@ namespace E_Retalling_Portal.Models
         public string? lastName { get; set; }
 
         public List<Account> accounts { get; set; }
+        public List<Order> orders { get; set; }
 
 
 
