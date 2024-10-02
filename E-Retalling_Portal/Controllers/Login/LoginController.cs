@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Facebook;
 using System.Net.Http;
 using E_Retalling_Portal.Models.Enums;
+using Microsoft.AspNetCore.Http;
 
 namespace E_Retalling_Portal.Controllers.Login
 {
@@ -96,8 +97,8 @@ namespace E_Retalling_Portal.Controllers.Login
 
                             await SaveAccountToDatabase(acc);
 
-                            HttpContext.Session.SetString(SessionKeys.UserName.ToString(), info.Principal.FindFirstValue(ClaimTypes.Name) + "a");
-                            HttpContext.Session.SetString(SessionKeys.AccountId.ToString(), externalId);
+                            HttpContext.Session.SetString(SessionKeys.UserName.ToString(), info.Principal.FindFirstValue(ClaimTypes.Name));
+                            HttpContext.Session.SetInt32(SessionKeys.AccountId.ToString(), account.id);
 
                             return RedirectToAction("Index", "Home");
                         }
@@ -119,13 +120,15 @@ namespace E_Retalling_Portal.Controllers.Login
                         await SaveUserToDatabase(u);
                         acc.userId = u.id;
                         await SaveAccountToDatabase(acc);
+
+                        HttpContext.Session.SetString(SessionKeys.UserName.ToString(), info.Principal.FindFirstValue(ClaimTypes.Name));
+                        HttpContext.Session.SetInt32(SessionKeys.AccountId.ToString(), acc.id);
+
+                        return RedirectToAction("Index", "Home");
                     }
                 }
 
-                HttpContext.Session.SetString(SessionKeys.UserName.ToString(), info.Principal.FindFirstValue(ClaimTypes.Name));
-                HttpContext.Session.SetString(SessionKeys.AccountId.ToString(), externalId);
-
-                return RedirectToAction("Index", "Home");
+                
             }
 
             return RedirectToAction("Login");
@@ -154,7 +157,7 @@ namespace E_Retalling_Portal.Controllers.Login
                 if (account != null)
                 {
                     HttpContext.Session.SetString(SessionKeys.UserName.ToString(), info.Principal.FindFirstValue(ClaimTypes.Name));
-                    HttpContext.Session.SetString(SessionKeys.AccountId.ToString(), externalId);
+                    HttpContext.Session.SetInt32(SessionKeys.AccountId.ToString(), account.id);
                     return RedirectToAction("Index", "Home");
                 }
                 else
@@ -173,10 +176,12 @@ namespace E_Retalling_Portal.Controllers.Login
                     await SaveUserToDatabase(u);
                     acc.userId = u.id;
                     await SaveAccountToDatabase(acc);
+
+                    HttpContext.Session.SetString(SessionKeys.UserName.ToString(), info.Principal.FindFirstValue(ClaimTypes.Name));
+                    HttpContext.Session.SetInt32(SessionKeys.AccountId.ToString(), acc.id);
                 }
 
-                HttpContext.Session.SetString(SessionKeys.UserName.ToString(), info.Principal.FindFirstValue(ClaimTypes.Name));
-                HttpContext.Session.SetString(SessionKeys.AccountId.ToString(), externalId);
+                
 
                 return RedirectToAction("Index", "Home");
             }
