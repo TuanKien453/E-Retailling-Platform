@@ -184,7 +184,7 @@ namespace E_Retalling_Portal.Models
             modelBuilder.Entity<User>().HasData(
                 new User {
                     id=1, address="address",
-                    birthday="2000-12-04",
+                    birthday="2000-05-04",
                     displayName="kienhocgioi",
                     email="abc@gmail.com",
                     firstName="first",
@@ -194,7 +194,7 @@ namespace E_Retalling_Portal.Models
                 new User {
                     id=2,
                     address = "addresdds",
-                    birthday = "2000-15-04",
+                    birthday = "2000-01-04",
                     displayName = "anh",
                     email = "abcadsf@gmail.com",
                     firstName = "first",

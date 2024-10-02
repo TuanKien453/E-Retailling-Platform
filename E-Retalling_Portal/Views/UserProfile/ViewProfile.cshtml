@@ -10,23 +10,37 @@
             <div class="col-lg-4">
                 <div class="card mb-4 row">
                     <div class="card-body text-center">
-                        @if (ViewBag.User.gender == "Male")
-                        {
-                            <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp" alt="avatar"
-                                 class="rounded-circle img-fluid" style="width: 150px;">
-                        }
-                        else if (ViewBag.User.gender == "Female")
-                        {
-                            <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava4.webp" alt="avatar"
-                                 class="rounded-circle img-fluid" style="width: 150px;">
-                        }
+                      
+                            @if (  ViewBag.User.gender == null)
+                            {
+                                 <img src="https://emedia1.nhs.wales/HEIW2/cache/file/F4C33EF0-69EE-4445-94018B01ADCF6FD4.png" alt="avatar"
+                                     class="rounded-circle img-fluid" style="width: 150px;">
+                            }
+                            else if (ViewBag.User.gender == "Male")
+                            {
+                                <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp" alt="avatar"
+                                     class="rounded-circle img-fluid" style="width: 150px;">
+                            }
+                            else if (ViewBag.User.gender == "Female")
+                            {
+                                <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava4.webp" alt="avatar"
+                                     class="rounded-circle img-fluid" style="width: 150px;">
+                            }
+
+                        
+                        
 
                         <h5 class="my-3">@ViewBag.User.displayName</h5>
-                        <div class="d-flex justify-content-center mb-2">
-                            <button type="button" class="btn btn-outline-secondary ms-1" data-bs-toggle="modal" data-bs-target="#changePasswordModal">
-                                Change password
-                            </button>
-                        </div>
+
+                        @if(ViewBag.Account != null && ViewBag.Account.username != null)
+                        {
+                            <div class="d-flex justify-content-center mb-2">
+                                <button type="button" class="btn btn-outline-secondary ms-1" data-bs-toggle="modal" data-bs-target="#changePasswordModal">
+                                    Change password
+                                </button>
+                            </div>
+                        }
+                        
 
 
 
@@ -56,7 +70,8 @@
                                     <label for="email" class="form-label">Email</label>
                                 </div>
                                 <div class="col-sm-9">
-                                    <input type="email" id="email" name="email" class="form-control" required value="@ViewBag.User.email" />
+                                    <input type="email" id="email" name="email" class="form-control" required
+                                           value="@ViewBag.User.email" @(ViewBag.Account?.externalType == "Google" ? "readonly" : "") />
                                     @if (TempData["ErrorEmail"] != null)
                                     {
                                         <span class="text-danger">@TempData["ErrorEmail"]</span>
@@ -69,12 +84,14 @@
                                     <label for="phoneNumber" class="form-label">Phone Number</label>
                                 </div>
                                 <div class="col-sm-9">
-                                    <input type="text" id="phoneNumber" name="phoneNumber" pattern="0\d{9}" title="Please enter a valid phone number" class="form-control" required value="@ViewBag.User.phoneNumber" />
+                                    <input type="text" id="phoneNumber" name="phoneNumber" pattern="0\d{9}" title="Please enter a valid phone number" class="form-control" required
+                                           value="@(ViewBag.User?.phoneNumber ?? "")" />
                                     @if (TempData["ErrorPhone"] != null)
                                     {
                                         <span class="text-danger">@TempData["ErrorPhone"]</span>
                                     }
                                 </div>
+
                             </div>
 
                             <div class="row mb-3">
@@ -82,7 +99,8 @@
                                     <label for="birthday" class="form-label">Birthday</label>
                                 </div>
                                 <div class="col-sm-9">
-                                    <input type="date" class="form-control" id="birthday" name="birthday" value="@ViewBag.User.birthday">
+                                    <input type="date" class="form-control" id="birthday" name="birthday"
+                                           value="@(ViewBag.User?.birthday ?? "")" />
                                 </div>
                             </div>
 
@@ -110,6 +128,11 @@
                                             <option value="Female">Female</option>
                                         }
 
+                                        @if (ViewBag.User.gender == null)
+                                        {
+                                            <option value="" selected></option>
+                                        }
+
 
                                     </select>
                                 </div>
@@ -120,7 +143,7 @@
                                     <label for="firstName" class="form-label">First Name</label>
                                 </div>
                                 <div class="col-sm-9">
-                                    <input type="text" class="form-control" id="firstName" name="firstName" value="@ViewBag.User.firstName" placeholder="Enter your first name">
+                                    <input type="text" class="form-control" id="firstName" name="firstName" value="@(ViewBag.User?.firstName ?? "")" >
                                 </div>
                             </div>
 
@@ -129,7 +152,7 @@
                                     <label for="lastName" class="form-label">Last Name</label>
                                 </div>
                                 <div class="col-sm-9">
-                                    <input type="text" class="form-control" id="lastName" name="lastName" value="@ViewBag.User.lastName" placeholder="Enter your last name">
+                                    <input type="text" class="form-control" id="lastName" name="lastName" value="@(ViewBag.User?.lastName ?? "")" >
                                 </div>
                             </div>
 
@@ -138,7 +161,7 @@
                                     <label for="address" class="form-label">Address</label>
                                 </div>
                                 <div class="col-sm-9">
-                                    <input type="text" class="form-control" id="address" name="address" value="@ViewBag.User.address" placeholder="Enter your address">
+                                    <input type="text" class="form-control" id="address" name="address" value="@(ViewBag.User?.address ?? " ")" >
                                 </div>
                             </div>
 
