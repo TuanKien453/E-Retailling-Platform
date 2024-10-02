@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - E_Retalling_Portal</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="/kit/css/material-kit.min.css" />
+    <link rel="stylesheet" href="/kit/css/material-kit.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/E_Retalling_Portal.styles.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -75,10 +75,10 @@
                                     Account
                                 </button>
                                 <ul class="dropdown-menu px-2 py-3" aria-labelledby="dropdownMenuButton">
-                                    <li><a class="dropdown-item border-radius-md" href="UserProfile/ViewProfile">Profile</a></li>
+                                    <li><a class="dropdown-item border-radius-md" href="@Url.Action("ViewProfile","UserProfile")">Profile</a></li>
                                     <li><a class="dropdown-item border-radius-md" href="javascript:;">Change password</a></li>
                                     <li><a class="dropdown-item border-radius-md" href="javascript:;">Become Seller</a></li>
-                                    <li><a class="dropdown-item border-radius-md" href="login/logout">Logout</a></li>
+                                    <li><a class="dropdown-item border-radius-md" href="@Url.Action("logout","login")">Logout</a></li>
                                 </ul>
                             </div>
                         </li>

@@ -17,9 +17,7 @@ namespace E_Retalling_Portal.Controllers.UserProfile
             using (var context = new Context())
             {
                 int? accountId = (int)HttpContext.Session.GetInt32(SessionKeys.AccountId.ToString());
-                Console.WriteLine("slo "+ accountId);
                 Account account = context.Accounts.GetAccountByAccountId(accountId.Value).FirstOrDefault();
-                Console.WriteLine("sssss"+ account.userId);
                 int userId = account.userId;
 
                 User user = context.Users.GetUserByUserIdInAccount(userId).FirstOrDefault();
