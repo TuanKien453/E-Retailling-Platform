@@ -20,8 +20,8 @@
 
     <nav class="navbar navbar-expand-lg w-100 shadow-none my-3 navbar-transparent">
         <div class="container">
-            <a class="navbar-brand" href="https://demos.creative-tim.com/material-kit-pro/index" data-placement="bottom" target="_blank">
-                Name
+            <a class="navbar-brand" href="@Url.Action("ShopOwnerRegister","Register")" data-placement="bottom" target="_blank">
+                Become seller
             </a>
             <button class="navbar-toggler shadow-none ms-2" type="button" data-bs-toggle="collapse" data-bs-target="#navigation" aria-controls="navigation" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon mt-2">
@@ -59,6 +59,7 @@
                     var session = Context.Session;
                     int? AccountId = session.GetInt32(SessionKeys.AccountId.ToString());
                 }
+                
                 <ul class="navbar-nav d-lg-block d-none">
                     @if (AccountId == null)
                     {
@@ -68,6 +69,7 @@
                     }
                     else
                     {
+                        @AccountId.Value
                         <li>
                             <div class="dropdown">
                                 <button class="btn bg-gradient-dark dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">

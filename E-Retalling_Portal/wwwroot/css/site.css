@@ -54,3 +54,20 @@ body {
     color: gray;
     font-size: 0.8em;
 }
+
+#file-ip-1-preview {
+    border: 2px solid #de6c08;
+}
+
+.img-container {
+    border: 1px solid #eaeaea;
+    border-radius:2px;
+    padding: 15px;
+    width:65%;
+    margin-left:0px !important;
+}
+
+.next-btn{
+    margin-left:640px;
+    margin-top:30px;
+}
