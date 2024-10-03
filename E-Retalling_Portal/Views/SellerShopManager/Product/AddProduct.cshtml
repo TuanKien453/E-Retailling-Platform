@@ -1,177 +1,182 @@
 ﻿@{
-    ViewData["Title"] = "Add Product";
+    ViewData["Title"] = "Add product";
     Layout = "~/Views/Shared/ShopManagerSideBarLayout.cshtml";
 }
 
-<style>
-  .form-input {
-    width:100px;
-    padding:3px;
-    background:#fff;
-  }
-  .form-input input {
-    display:none;
-  }
-  .form-input label {
-    display:block;
-    width:80px;
-    height: auto;
-    max-height: 80px;
-    background:#333;
-    border-radius:10px;
-    cursor:pointer;
-  }
-  
-  .form-input img {
-    width:80px;
-    height: 80px;
-    opacity: .9;
-  }
-
-  .imgRemove{
-    position: relative;
-    bottom: 78px;
-    left: 70%;
-    background-color: transparent;
-    border: none;
-    font-size: 16px;
-    display: none;
-    color:lightgray;
-    font-weight:700;
-  }
-  .show{
-      display:block;
-  }
-
-
-
-  .small{
-    color: #7b809a;
-    font-size:15px;
-  }
-  
-</style>
 <div class="content m-4 pb-3">
     <div class="container-fluid ps-5">
         <div class="row pt-5 ">
             <h2 class="font-weight-bold">Product Information</h2>
         </div>
-        <div class="row">
-            <div class="col-8">
-                <h4 class="font-weight-bold mt-5">
-                    Images
-                    <span data-bs-toggle="tooltip" ata-bs-placement="right" title="First image is for page cover" style="font-weight:800;color:deepskyblue;">
-                        <i class="fa-solid fa-question"></i>
-                    </span>
-                </h4>
+        <form action="AddProductProcess">
 
 
-                <div class="row mt-3 img-container">
+            <div class="row">
+                <div class="col-8">
+                    <!--img-->
+                    <h4 class="font-weight-bold mt-5">
+                        Images
+                        <span data-bs-toggle="tooltip" ata-bs-placement="right" title="First image is for page cover" style="font-weight:800;color:deepskyblue;">
+                            <i class="fa-solid fa-question"></i>
+                        </span>
+                    </h4>
+                    <div class="row mt-3 img-container">
+                        <div class="col-2">
+                            <div class="">
+                                <div class="form-input mx-auto">
+                                    <label for="file-ip-1" class="mx-auto">
+                                        <img id="file-ip-1-preview" src="/img/no-image-icon-23485.png">
+                                        <button type="button" class="imgRemove" onclick="ImgRemove(1)" id="button-remove-1"><i class="fa-regular fa-trash-can"></i></button>
+                                    </label>
+                                    <input type="file" name="img" id="file-ip-1" accept="image/*" onchange="showPreview(event,1);" required>
+                                </div>
+                                <p class="text-center small small-ip-1">Image</p>
+                            </div>
+                        </div>
 
-                    <div class="col-2">
-                        <div class="">
-                            <div class="form-input mx-auto">
-                                <label for="file-ip-1" class="mx-auto">
-                                    <img id="file-ip-1-preview" src="/img/no-image-icon-23485.png">
-                                    <button type="button" class="imgRemove" onclick="ImgRemove(1)" id="button-remove-1"><i class="fa-regular fa-trash-can"></i></button>
-                                </label>
-                                <input type="file" name="img" id="file-ip-1" accept="image/*" onchange="showPreview(event,1);">
+                        <!-- ************************************************************************************************************ -->
+                        <div class="col-2">
+                            <div class="">
+                                <div class="form-input mx-auto">
+                                    <label for="file-ip-2" class="mx-auto">
+                                        <img id="file-ip-2-preview" src="/img/no-image-icon-23485.png">
+                                        <button type="button" class="imgRemove" onclick="ImgRemove(2)" id="button-remove-2"><i class="fa-regular fa-trash-can"></i></button>
+                                    </label>
+                                    <input type="file" name="img" id="file-ip-2" accept="image/*" onchange="showPreview(event,2);">
+                                </div>
+                                <p class="text-center small small-ip-2">Image</p>
                             </div>
-                            <p class="text-center small small-ip-1">Image</p>
                         </div>
-                    </div>
-                    <!-- ************************************************************************************************************ -->
-                    <div class="col-2">
-                        <div class="">
-                            <div class="form-input mx-auto">
-                                <label for="file-ip-2" class="mx-auto">
-                                    <img id="file-ip-2-preview" src="/img/no-image-icon-23485.png">
-                                    <button type="button" class="imgRemove" onclick="ImgRemove(2)" id="button-remove-2"><i class="fa-regular fa-trash-can"></i></button>
-                                </label>
-                                <input type="file" name="img" id="file-ip-2" accept="image/*" onchange="showPreview(event,2);">
+                        <!-- ************************************************************************************************************ -->
+                        <div class="col-2">
+                            <div class="">
+                                <div class="form-input mx-auto">
+                                    <label for="file-ip-3" class="mx-auto">
+                                        <img id="file-ip-3-preview" src="/img/no-image-icon-23485.png">
+                                        <button type="button" class="imgRemove" onclick="ImgRemove(3)" id="button-remove-3"><i class="fa-regular fa-trash-can"></i></button>
+                                    </label>
+                                    <input type="file" name="img" id="file-ip-3" accept="image/*" onchange="showPreview(event,3);">
+                                </div>
+                                <p class="text-center small small-ip-3">Image</p>
                             </div>
-                            <p class="text-center small small-ip-2">Image</p>
                         </div>
-                    </div>
-                    <!-- ************************************************************************************************************ -->
-                    <div class="col-2">
-                        <div class="">
-                            <div class="form-input mx-auto">
-                                <label for="file-ip-3" class="mx-auto">
-                                    <img id="file-ip-3-preview" src="/img/no-image-icon-23485.png">
-                                    <button type="button" class="imgRemove" onclick="ImgRemove(3)" id="button-remove-3"><i class="fa-regular fa-trash-can"></i></button>
-                                </label>
-                                <input type="file" name="img" id="file-ip-3" accept="image/*" onchange="showPreview(event,3);">
+                        <!-- ************************************************************************************************************ -->
+                        <div class="col-2">
+                            <div class="">
+                                <div class="form-input mx-auto">
+                                    <label for="file-ip-4" class="mx-auto">
+                                        <img id="file-ip-4-preview" src="/img/no-image-icon-23485.png">
+                                        <button type="button" class="imgRemove" onclick="ImgRemove(4)" id="button-remove-4"><i class="fa-regular fa-trash-can"></i></button>
+                                    </label>
+                                    <input type="file" name="img" id="file-ip-4" accept="image/*" onchange="showPreview(event,4);">
+                                </div>
+                                <p class="text-center small small-ip-4">Image</p>
                             </div>
-                            <p class="text-center small small-ip-3">Image</p>
                         </div>
-                    </div>
-                    <!-- ************************************************************************************************************ -->
-                    <div class="col-2">
-                        <div class="">
-                            <div class="form-input mx-auto">
-                                <label for="file-ip-4" class="mx-auto">
-                                    <img id="file-ip-4-preview" src="/img/no-image-icon-23485.png">
-                                    <button type="button" class="imgRemove" onclick="ImgRemove(4)" id="button-remove-4"><i class="fa-regular fa-trash-can"></i></button>
-                                </label>
-                                <input type="file" name="img" id="file-ip-4" accept="image/*" onchange="showPreview(event,4);">
+                        <!-- ************************************************************************************************************ -->
+                        <div class="col-2">
+                            <div class="">
+                                <div class="form-input mx-auto">
+                                    <label for="file-ip-5" class="mx-auto">
+                                        <img id="file-ip-5-preview" src="/img/no-image-icon-23485.png">
+                                        <button type="button" class="imgRemove" onclick="ImgRemove(5)" id="button-remove-5"><i class="fa-regular fa-trash-can"></i></button>
+                                    </label>
+                                    <input type="file" name="img" id="file-ip-5" accept="image/*" onchange="showPreview(event,5);">
+                                </div>
+                                <p class="text-center small small-ip-5">Image</p>
                             </div>
-                            <p class="text-center small small-ip-4">Image</p>
                         </div>
-                    </div>
-                    <!-- ************************************************************************************************************ -->
-                    <div class="col-2">
-                        <div class="">
-                            <div class="form-input mx-auto">
-                                <label for="file-ip-5" class="mx-auto">
-                                    <img id="file-ip-5-preview" src="/img/no-image-icon-23485.png">
-                                    <button type="button" class="imgRemove" onclick="ImgRemove(5)" id="button-remove-5"><i class="fa-regular fa-trash-can"></i></button>
-                                </label>
-                                <input type="file" name="img" id="file-ip-5" accept="image/*" onchange="showPreview(event,5);">
+                        <!-- ************************************************************************************************************ -->
+                        <div class="col-2">
+                            <div class="">
+                                <div class="form-input mx-auto">
+                                    <label for="file-ip-6" class="mx-auto">
+                                        <img id="file-ip-6-preview" src="/img/no-image-icon-23485.png">
+                                        <button type="button" class="imgRemove" onclick="ImgRemove(6)" id="button-remove-6"><i class="fa-regular fa-trash-can"></i></button>
+                                    </label>
+                                    <input type="file" name="img" id="file-ip-6" accept="image/*" onchange="showPreview(event,6);">
+                                </div>
+                                <p class="text-center small small-ip-6">Image</p>
                             </div>
-                            <p class="text-center small small-ip-5">Image</p>
                         </div>
+
+
+
                     </div>
-                    <!-- ************************************************************************************************************ -->
-                    <div class="col-2">
-                        <div class="">
-                            <div class="form-input mx-auto">
-                                <label for="file-ip-6" class="mx-auto">
-                                    <img id="file-ip-6-preview" src="/img/no-image-icon-23485.png">
-                                    <button type="button" class="imgRemove" onclick="ImgRemove(6)" id="button-remove-6"><i class="fa-regular fa-trash-can"></i></button>
-                                </label>
-                                <input type="file" name="img" id="file-ip-6" accept="image/*" onchange="showPreview(event,6);">
-                            </div>
-                            <p class="text-center small small-ip-6">Image</p>
-                        </div>
+                    <!--------------------------name------------------------------------------------>
+                    <h4 class="font-weight-bold mt-4">
+                        Name
+                    </h4>
+                    <input class="form-control" type="text" placeholder="Name" required maxlength="100" name="name">
+                    <!--------------------------desc------------------------------------------------>
+                    <h4 class="font-weight-bold mt-4">
+                        Description
+                    </h4>
+                    <textarea name="desc" rows="4" placeholder="Enter your description here" class="form-control" maxlength="2000"></textarea>
+                    <!----------------------------variation---------------------------->
+                    <div class="custom-control custom-switch mb-2 mt-3">
+                        <input type="checkbox" class="custom-control-input" id="customSwitch1-2" name="isVariation">
+                        <label class="custom-control-label" for="customSwitch1-2" style="color:black;">Use Variation</label>
+                        <span data-bs-toggle="tooltip" ata-bs-placement="right" title="allow to create variation for product" style="font-weight:800;color:deepskyblue;">
+                            <i class="fa-solid fa-question"></i>
+                        </span>
                     </div>
+                    <button type="submit" class="next-btn btn btn-dark btn-pill text-uppercase mb-2 mr-2 mr-md-4">&nbsp;&nbsp;Next&nbsp;&nbsp;<i class="fa-solid fa-arrow-right"></i></button>
                 </div>
-                <h4 class="font-weight-bold mt-4">
-                    Name
-                </h4>
-                <input class="form-control" type="text" placeholder="Name">
-                <h4 class="font-weight-bold mt-4">
-                    Description
-                </h4>
-                <textarea name="message" rows="4" placeholder="Enter your description here" class="form-control"></textarea>
 
-                <div class="custom-control custom-switch mb-2 mt-3">
-                    <input type="checkbox" class="custom-control-input" id="customSwitch1-2" checked="">
-                    <label class="custom-control-label" for="customSwitch1-2" style="color:black;">Use Variation</label>
+
+                <div class="col-4">
+                    <!----------------------------------cate------------------------------------------------>
+                    <h4 class="font-weight-bold mt-4">
+                        Category
+                        <span data-bs-toggle="tooltip" ata-bs-placement="right" title="Select the most specific category" style="font-weight:800;color:deepskyblue;">
+                            <i class="fa-solid fa-question"></i>
+                        </span>
+                    </h4>
+                    <select class="form-select mt-4" id="categorySelect" name="categoryId" required>
+                        <option value="" class="" disabled selected>select category</option>
+                        @foreach (var item in ViewBag.categories)
+                        {
+                            <option value="@item.id" class="@if(item.parentCategoryId==null){
+                    @:font-weight-bold
+                        }">@item.name</option>
+                        }
+                    </select>
+                    <!--------------------------price------------------------------------------------>
+                    <h4 class="font-weight-bold mt-4">
+                        Price
+                    </h4>
+                    <input id="price" class="form-control disabled" type="text" pattern="^\d+(\.\d{1,2})?$" title="Please enter a valid decimal number up to 2 decimal places." 
+                    placeholder="Price" required name="price">
+                    <!--------------------------quantity------------------------------------------------>
+                    <h4 class="font-weight-bold mt-4">
+                        Quatity
+                    </h4>
+                    <input id="quantity" class="form-control" type="text" pattern="^[1-9]\d*$" title="Please enter a positive integer greater than 0" 
+                    placeholder="Quantity" required name="quantity">
                 </div>
-                <button type="button" class="next-btn btn btn-dark btn-pill text-uppercase mb-2 mr-2 mr-md-4">&nbsp;&nbsp;Next&nbsp;&nbsp;<i class="fa-solid fa-arrow-right"></i></button>
             </div>
-            <div class="col-4"></div>
-        </div>
 
-       
+        </form>
 
     </div>
 </div>
-
 <script>
+
+    const priceInput = document.getElementById('price');
+    const quantityInput = document.getElementById('quantity');
+    const isVariationCheckbox = document.getElementById('customSwitch1-2');
+
+    isVariationCheckbox.addEventListener('change', function () {
+        if (this.checked) {
+            priceInput.disabled = true;
+            quantityInput.disabled = true;
+        } else {
+            priceInput.disabled = false;
+            quantityInput.disabled = false;
+        }
+    });
+
+    //tooltip
     var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl)
-    })
 </script>

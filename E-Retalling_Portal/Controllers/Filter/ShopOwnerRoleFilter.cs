@@ -17,7 +17,7 @@ namespace E_Retalling_Portal.Controllers.Filter
             {
                 using (var DbContext = new Context())
                 {
-                    Account acc = DbContext.Accounts.getAccountByAccId(accId.Value).FirstOrDefault();
+                    Account acc = DbContext.Accounts.GetAccountByAccountId(accId.Value).FirstOrDefault();
                     if (acc != null && acc.roleId == 2) { 
                         haveAccess = true;
                     }
@@ -26,7 +26,7 @@ namespace E_Retalling_Portal.Controllers.Filter
 
             if (!haveAccess)
             {
-                context.Result = new RedirectResult("/Login");
+                context.Result = new RedirectResult("/Home/Error505");
             }
         }
 

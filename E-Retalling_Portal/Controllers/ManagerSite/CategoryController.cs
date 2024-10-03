@@ -36,6 +36,7 @@ namespace E_Retalling_Portal.Controllers.Manager
         [HttpPost]
         public IActionResult Add(Category cate)
         {
+            Console.WriteLine(cate.parentCategoryId);
             if (ModelState.IsValid)
             {
                 if (cate.parentCategoryId == 0)

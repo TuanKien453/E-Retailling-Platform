@@ -1,8 +1,16 @@
 ﻿//upload image function
 //----------------------------------------------------------------------------------------
 function showPreview(event, index) {
+    const maxSize = 20 * 1024 * 1024;
+
+
     if (event.target.files.length > 0) {
         let file = event.target.files[0];
+        if (file.size > maxSize) {
+            alert('File size exceeds the limit of 20MB.');
+            event.target.value = '';
+            return;
+        } 
         let src = URL.createObjectURL(file);
         let preview = document.getElementById("file-ip-" + index + "-preview");
         preview.src = src;

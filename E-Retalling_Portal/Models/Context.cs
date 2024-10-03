@@ -8,20 +8,19 @@ namespace E_Retalling_Portal.Models
     {
         private static bool _initialized = false;
         private static bool _resetDb = true;
-        private static String? _connectionString= null;
-        public DbSet<Account> Accounts {  get; set; }
+        private static String? _connectionString = null;
+        public DbSet<Account> Accounts { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Attribute> Attributes { get; set; }
-        public DbSet<Attribute_type> AttributeTypes { get; set; }
+        public DbSet<AttributeType> AttributeTypes { get; set; }
         public DbSet<Image> Images { get; set; }
         public DbSet<Order> Orders { get; set; }
-        public DbSet<Order_Item> Order_Items { get; set; }
+        public DbSet<OrderItem> OrderItems { get; set; }
         public DbSet<Product> Products { get; set; }
-        public DbSet<Product_item> Product_items { get; set; }
-        public DbSet<Product_option> Product_options { get; set; }
-        public DbSet<Shipment> Shipments  { get; set; }
+        public DbSet<ProductItem> ProductItems { get; set; }
+        public DbSet<ProductOption> ProductOptions { get; set; }
         public DbSet<Shop> Shops { get; set; }
         public DbSet<Status> Statuses { get; set; }
 
@@ -78,81 +77,75 @@ namespace E_Retalling_Portal.Models
             modelBuilder.Entity<Shop>()
                 .HasOne(a => a.account)
                 .WithMany(a => a.shops)
-                .HasForeignKey(s => s.account_id);
+                .HasForeignKey(s => s.accountId);
 
-                modelBuilder.Entity<Product>()
-                .HasOne(s => s.shop)
-                .WithMany(s => s.products)
-                .HasForeignKey(p => p.shopId);
+            modelBuilder.Entity<Product>()
+            .HasOne(s => s.shop)
+            .WithMany(s => s.products)
+            .HasForeignKey(p => p.shopId);
 
             modelBuilder.Entity<Product>()
                 .HasOne(c => c.category)
                 .WithMany(c => c.products)
                 .HasForeignKey(p => p.categoryId);
 
-            modelBuilder.Entity<Attribute_type>()
+            modelBuilder.Entity<AttributeType>()
                 .HasOne(p => p.product)
-                .WithMany(p => p.attribute_types)
-                .HasForeignKey(a_t => a_t.product_id);
+                .WithMany(p => p.attributeTypes)
+                .HasForeignKey(a_t => a_t.productId);
 
             modelBuilder.Entity<Attribute>()
                 .HasOne(a_t => a_t.attributeType)
                 .WithMany(a_t => a_t.attributes)
                 .HasForeignKey(a => a.attributeTypeId);
 
-            modelBuilder.Entity<Product_option>()
+            modelBuilder.Entity<ProductOption>()
                 .HasOne(a => a.attribute)
-                .WithMany(a => a.product_Options)
-                .HasForeignKey(p_o => p_o.attribute_id);
+                .WithMany(a => a.productOptions)
+                .HasForeignKey(p_o => p_o.attributeId);
 
-            modelBuilder.Entity<Product_option>()
-                .HasOne(p_i => p_i.product_Item)
-                .WithMany(p_i => p_i.product_Options)
-                .HasForeignKey(p_o => p_o.product_item_id)
+            modelBuilder.Entity<ProductOption>()
+                .HasOne(p_i => p_i.productItem)
+                .WithMany(p_i => p_i.productOptions)
+                .HasForeignKey(p_o => p_o.productItemId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<Product_item>()
+            modelBuilder.Entity<ProductItem>()
                 .HasOne(p => p.product)
-                .WithMany(p => p.product_Items)
+                .WithMany(p => p.productItems)
                 .HasForeignKey(p_i => p_i.productId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<Product_item>()
+            modelBuilder.Entity<ProductItem>()
                 .HasOne(i => i.image)
-                .WithMany(i => i.product_items)
-                .HasForeignKey( p_i => p_i.image_id);
+                .WithOne(i => i.productItem)
+                .HasForeignKey<ProductItem>(p_i => p_i.imageId);
 
             modelBuilder.Entity<Image>()
                 .HasOne(p => p.product)
                 .WithMany(p => p.images)
-                .HasForeignKey(i => i.product_id);
+                .HasForeignKey(i => i.productId);
 
             modelBuilder.Entity<Order>()
                 .HasOne(u => u.user)
                 .WithMany(u => u.orders)
-                .HasForeignKey(o => o.user_id);
+                .HasForeignKey(o => o.userId);
 
-            modelBuilder.Entity<Order_Item>()
+            modelBuilder.Entity<OrderItem>()
                 .HasOne(o => o.order)
-                .WithMany(o => o.order_Items)
-                .HasForeignKey(o_i => o_i.order_id);
+                .WithMany(o => o.orderItems)
+                .HasForeignKey(o_i => o_i.orderId);
 
 
-            modelBuilder.Entity<Order_Item>()
-                .HasOne(p => p.product)
-                .WithMany(p => p.order_Items)
-                .HasForeignKey(o_i => o_i.product_Item_Id)
+            modelBuilder.Entity<OrderItem>()
+                .HasOne(p => p.productItem)
+                .WithOne(p=>p.orderItem)
+                .HasForeignKey<OrderItem>(oi=>oi.productItemId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<Shipment>()
-                .HasOne(o_i => o_i.order_Item)
-                .WithMany(o_i => o_i.shipments)
-                .HasForeignKey(s => s.order_Item_Id);
+            modelBuilder.Entity<ProductOption>()
+                .HasKey(p_o => new { p_o.productItemId, p_o.attributeId });
 
-            modelBuilder.Entity<Product_option>()
-                .HasKey(p_o => new { p_o.product_item_id, p_o.attribute_id });
-
-            base.OnModelCreating(modelBuilder);
 
             SeedingCategory(modelBuilder);
             SeedingRole(modelBuilder);
@@ -182,17 +175,21 @@ namespace E_Retalling_Portal.Models
         private static void SeedingUser(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<User>().HasData(
-                new User {
-                    id=1, address="address",
-                    birthday="2000-05-04",
-                    displayName="kienhocgioi",
-                    email="abc@gmail.com",
-                    firstName="first",
-                    lastName="last",
-                    phoneNumber="0123456789",
-                    gender="Female"},
-                new User {
-                    id=2,
+                new User
+                {
+                    id = 1,
+                    address = "address",
+                    birthday = "2000-05-04",
+                    displayName = "kienhocgioi",
+                    email = "abc@gmail.com",
+                    firstName = "first",
+                    lastName = "last",
+                    phoneNumber = "0123456789",
+                    gender = "Female"
+                },
+                new User
+                {
+                    id = 2,
                     address = "addresdds",
                     birthday = "2000-01-04",
                     displayName = "anh",
@@ -202,14 +199,14 @@ namespace E_Retalling_Portal.Models
                     phoneNumber = "0123459145",
                     gender = "Female"
                 }
-                
+
             );
         }
 
         private static void SeedingAccount(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Account>().HasData(
-                new Account { id=1,username="admin",password="123",roleId=1,externalId=null,externalType=null,userId=1},
+                new Account { id = 1, username = "admin", password = "123", roleId = 1, externalId = null, externalType = null, userId = 1 },
                 new Account { id = 2, username = "anh", password = "123", roleId = 1, externalId = null, externalType = null, userId = 2 }
             );
         }
