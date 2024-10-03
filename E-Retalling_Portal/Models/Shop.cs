@@ -6,10 +6,10 @@ namespace E_Retalling_Portal.Models
     {
         [Key]
         public int id { get; set; }
-        public int account_id { get; set; }
+        public int accountId { get; set; }
         public string name { get; set; }
-        public string created_at { get; set; }
-        public string shop_description { get; set; }
+        public string createdAt { get; set; }
+        public string shopDescription { get; set; }
         public int statusId {  get; set; }
         public string address {  get; set; }
         public Status status { get; set; }

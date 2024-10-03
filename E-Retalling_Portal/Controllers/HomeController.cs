@@ -16,6 +16,9 @@ namespace E_Retalling_Portal.Controllers
             _logger = logger;
         }
 
+        public IActionResult Error505() { 
+            return View("Views/Shared/ErrorPage/Error500.cshtml");
+        }
         public IActionResult Index()
         {
             

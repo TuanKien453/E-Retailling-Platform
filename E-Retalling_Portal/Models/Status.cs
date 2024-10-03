@@ -5,7 +5,7 @@ namespace E_Retalling_Portal.Models
     public class Status
     {
         [Key]
-        public int Id { get; set; }
+        public int id { get; set; }
 
         public string statusName { get; set; }
 

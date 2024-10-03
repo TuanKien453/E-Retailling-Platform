@@ -14,6 +14,6 @@ namespace E_Retalling_Portal.Models
 
         public Category? parent { get; set; }
         public List<Category>? childrens { get; set; }
-        public List<Product> products { get; set; }
+        public List<Product>? products { get; set; }
     }
 }
