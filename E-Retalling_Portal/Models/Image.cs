@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace E_Retalling_Portal.Models
 {
@@ -7,8 +8,9 @@ namespace E_Retalling_Portal.Models
         [Key]
         public int id { get; set; }
         public int productId { get; set; }
-        public byte imageData { get; set; }
-        public ProductItem productItem { get; set; }
-        public Product product { get; set; }
+        [MaxLength(200)]
+        public string imagePath { get; set; }
+        public ProductItem? productItem { get; set; }
+        public Product? product { get; set; }
     }
 }

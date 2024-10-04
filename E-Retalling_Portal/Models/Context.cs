@@ -13,14 +13,11 @@ namespace E_Retalling_Portal.Models
         public DbSet<User> Users { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<Category> Categories { get; set; }
-        public DbSet<Attribute> Attributes { get; set; }
-        public DbSet<AttributeType> AttributeTypes { get; set; }
         public DbSet<Image> Images { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<ProductItem> ProductItems { get; set; }
-        public DbSet<ProductOption> ProductOptions { get; set; }
         public DbSet<Shop> Shops { get; set; }
         public DbSet<Status> Statuses { get; set; }
 
@@ -89,27 +86,6 @@ namespace E_Retalling_Portal.Models
                 .WithMany(c => c.products)
                 .HasForeignKey(p => p.categoryId);
 
-            modelBuilder.Entity<AttributeType>()
-                .HasOne(p => p.product)
-                .WithMany(p => p.attributeTypes)
-                .HasForeignKey(a_t => a_t.productId);
-
-            modelBuilder.Entity<Attribute>()
-                .HasOne(a_t => a_t.attributeType)
-                .WithMany(a_t => a_t.attributes)
-                .HasForeignKey(a => a.attributeTypeId);
-
-            modelBuilder.Entity<ProductOption>()
-                .HasOne(a => a.attribute)
-                .WithMany(a => a.productOptions)
-                .HasForeignKey(p_o => p_o.attributeId);
-
-            modelBuilder.Entity<ProductOption>()
-                .HasOne(p_i => p_i.productItem)
-                .WithMany(p_i => p_i.productOptions)
-                .HasForeignKey(p_o => p_o.productItemId)
-                .OnDelete(DeleteBehavior.Restrict);
-
             modelBuilder.Entity<ProductItem>()
                 .HasOne(p => p.product)
                 .WithMany(p => p.productItems)
@@ -143,14 +119,25 @@ namespace E_Retalling_Portal.Models
                 .HasForeignKey<OrderItem>(oi=>oi.productItemId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<ProductOption>()
-                .HasKey(p_o => new { p_o.productItemId, p_o.attributeId });
-
 
             SeedingCategory(modelBuilder);
             SeedingRole(modelBuilder);
             SeedingUser(modelBuilder);
             SeedingAccount(modelBuilder);
+            SeedingStatus(modelBuilder);
+            SeedingShop(modelBuilder);
+        }
+        private static void SeedingShop(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Shop>().HasData(
+                new Shop {id=1,accountId=3,address="address",name="shopname",createdAt="2000-05-04",shopDescription="sd",statusId=1 }
+             );
+        }
+        private static void SeedingStatus(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Status>().HasData(
+                new Status { id=1,statusName="active"}
+             );
         }
 
         private static void SeedingCategory(ModelBuilder modelBuilder)
@@ -207,7 +194,8 @@ namespace E_Retalling_Portal.Models
         {
             modelBuilder.Entity<Account>().HasData(
                 new Account { id = 1, username = "admin", password = "123", roleId = 1, externalId = null, externalType = null, userId = 1 },
-                new Account { id = 2, username = "anh", password = "123", roleId = 1, externalId = null, externalType = null, userId = 2 }
+                new Account { id = 2, username = "anh", password = "123", roleId = 1, externalId = null, externalType = null, userId = 2 },
+                new Account { id = 3, username = "seller", password = "123", roleId = 2, externalId = null, externalType = null, userId = 2 }
             );
         }
     }

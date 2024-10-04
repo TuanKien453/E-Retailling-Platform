@@ -8,7 +8,7 @@
         <div class="row pt-5 ">
             <h2 class="font-weight-bold">Product Information</h2>
         </div>
-        <form action="AddProductProcess">
+        <form action="AddProductProcess" method="post" enctype="multipart/form-data">
 
 
             <div class="row">
@@ -115,7 +115,7 @@
                     <textarea name="desc" rows="4" placeholder="Enter your description here" class="form-control" maxlength="2000"></textarea>
                     <!----------------------------variation---------------------------->
                     <div class="custom-control custom-switch mb-2 mt-3">
-                        <input type="checkbox" class="custom-control-input" id="customSwitch1-2" name="isVariation">
+                        <input type="checkbox" class="custom-control-input" id="customSwitch1-2" name="isVariation" value="false" onchange="check()">
                         <label class="custom-control-label" for="customSwitch1-2" style="color:black;">Use Variation</label>
                         <span data-bs-toggle="tooltip" ata-bs-placement="right" title="allow to create variation for product" style="font-weight:800;color:deepskyblue;">
                             <i class="fa-solid fa-question"></i>
@@ -143,7 +143,7 @@
                         }
                     </select>
                     <!--------------------------price------------------------------------------------>
-                    <h4 class="font-weight-bold mt-4">
+                    <h4 class="font-weight-bold mt-6">
                         Price
                     </h4>
                     <input id="price" class="form-control disabled" type="text" pattern="^\d+(\.\d{1,2})?$" title="Please enter a valid decimal number up to 2 decimal places." 
@@ -162,11 +162,31 @@
     </div>
 </div>
 <script>
+    window.addEventListener('load', function () {
+        function resetImageInput(index) {
+            var input = document.getElementById('file-ip-' + index);
+            input.value = '';
+        }
+        for (var i = 1; i <= 6; i++) {
+            resetImageInput(i);
+        }
+    });
+
+    function check(){
+        var isChecked = document.getElementById("customSwitch1-2").checked;
+        document.getElementById("customSwitch1-2").value = isChecked ? "true" : "false";
+    }
 
     const priceInput = document.getElementById('price');
     const quantityInput = document.getElementById('quantity');
     const isVariationCheckbox = document.getElementById('customSwitch1-2');
-
+    if (this.checked) {
+        priceInput.disabled = true;
+        quantityInput.disabled = true;
+    } else {
+        priceInput.disabled = false;
+        quantityInput.disabled = false;
+    }
     isVariationCheckbox.addEventListener('change', function () {
         if (this.checked) {
             priceInput.disabled = true;

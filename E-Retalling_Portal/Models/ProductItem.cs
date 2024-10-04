@@ -10,8 +10,7 @@ namespace E_Retalling_Portal.Models
         public int quanityInStock { get; set; }
         public float price { get; set; }
         public int imageId { get; set; }
-
-        public List<ProductOption> productOptions { get; set; }
+        public String attribute { get; set; }
         public Product product { get; set; }
         public Image image { get; set; }
         public OrderItem orderItem { get; set; }
