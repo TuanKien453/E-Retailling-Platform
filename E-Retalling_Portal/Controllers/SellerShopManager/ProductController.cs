@@ -15,19 +15,47 @@ namespace E_Retalling_Portal.Controllers.ShopManager
         public IActionResult Index()
         {
 
-            return View("/Views/SellerShopManager/product/ViewProducts.cshtml");
+            return RedirectToAction("ViewProducts");
         }
 
         public IActionResult EditVariation(int productId)
         {
-            if (TempData["productId"] != null) {
-                productId = (int)TempData["productId"];
-            }
-            else
+
+            ViewBag.productId = productId;
+            using (var context = new Context())
             {
-                TempData["productId"] = productId;
+                //check valid product
+                var product = context.Products.FirstOrDefault(p => p.id == productId&&p.isVariation==true);
+                if (product == null)
+                {
+                    return View("Views/Shared/ErrorPage/Error500.cshtml");
+                }
+
+
+
+                ViewBag.images = context.Images.GetImagesByProductId(productId).ToList();
+                ViewBag.productItems = context.ProductItems.GetProductItem(productId).ToList();
             }
             return View("/Views/SellerShopManager/product/EditVariation.cshtml");
+        }
+        public IActionResult ViewProducts() {
+            int? accId = HttpContext.Session.GetInt32(SessionKeys.AccountId.ToString());
+            //delete when intergrate
+            accId = 3;
+            if (accId == null)
+            {
+                return View("Views/Shared/ErrorPage/Error500.cshtml");
+
+            }
+
+            using (var context = new Context())
+            {
+                var shop = context.Shops.GetShopbyAccId(accId.Value).FirstOrDefault();
+                List<Product> products = context.Products.GetProductsByShop(shop.id).ToList();
+                ViewBag.products = products;
+            }
+            
+            return View("/Views/SellerShopManager/product/ViewProducts.cshtml");
         }
 
         public IActionResult AddProduct()
@@ -57,12 +85,11 @@ namespace E_Retalling_Portal.Controllers.ShopManager
                     product.status = 1;
                     context.Products.Add(product);
                     context.SaveChanges();
-                    SaveImage(product.id,img,context);
+                    SaveImage(product.id,img,context,product);
                     //redicted to input more information
                     if (product.isVariation)
                     {
-                        TempData["productId"] = product.id;
-                        return RedirectToAction("EditVariation");
+                        return RedirectToAction("EditVariation",new {productId = product.id});
                     }
                     else
                     {
@@ -76,27 +103,68 @@ namespace E_Retalling_Portal.Controllers.ShopManager
             return View("Views/Shared/ErrorPage/Error500.cshtml");
         }
 
-        private static void SaveImage(int id, List<IFormFile> img,Context context)
+        public IActionResult AddVariation(ProductItem pi) {
+            if (ModelState.IsValid) {
+                ModelState.ReadErrors();
+                using (var context = new Context())
+                {
+                    context.ProductItems.Add(pi);
+                    context.SaveChanges();
+                }
+                return RedirectToAction("EditVariation", new { productId = pi.productId });
+            }
+            return View("Views/Shared/ErrorPage/Error500.cshtml");
+            
+        }
+        public IActionResult EditProductItem(ProductItem pi)
         {
+            if (ModelState.IsValid)
+            {
+                ModelState.ReadErrors();
+                using (var context = new Context())
+                {
+                    context.ProductItems.Update(pi);
+                    context.SaveChanges();
+                }
+                return RedirectToAction("EditVariation", new { productId = pi.productId });
+            }
+            return View("Views/Shared/ErrorPage/Error500.cshtml");
+
+        }
+        private static void SaveImage(int id, List<IFormFile> img, Context context, Product addedProduct)
+        {
+            bool isFirstImg = true;
+
             foreach (var file in img)
             {
                 if (file != null && file.Length > 0)
                 {
                     try
                     {
-                        if (!Directory.Exists("images"))
+                        if (!Directory.Exists("wwwroot/productImages"))
                         {
-                            Directory.CreateDirectory("images");
+                            Directory.CreateDirectory("wwwroot/productImages");
                         }
 
                         string uniqueFileName = GetUniquePath(file.FileName);
-                        string filePath = Path.Combine("images", uniqueFileName);
+                        string filePath = Path.Combine("wwwroot/productImages", uniqueFileName);
+
                         using (var fileStream = new FileStream(filePath, FileMode.Create))
                         {
                             file.CopyTo(fileStream);
                         }
-                        context.Images.Add(new Image{imagePath=filePath,productId=id });
+
+                        var newImg = new Image { imageName = uniqueFileName, productId = id };
+
+                        if (isFirstImg)
+                        {
+                            newImg.productCoveredId = addedProduct.id;
+                            isFirstImg = false;
+                        }
+
+                        context.Images.Add(newImg);
                         context.SaveChanges();
+
                         Console.WriteLine($"File saved: {file.FileName} at {filePath}");
                     }
                     catch (Exception ex)

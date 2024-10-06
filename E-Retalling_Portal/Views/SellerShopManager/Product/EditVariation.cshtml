@@ -2,8 +2,193 @@
     ViewData["Title"] = "Edit Variation";
     Layout = "~/Views/Shared/ShopManagerSideBarLayout.cshtml";
 }
+<link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.css" />
+<style>
+    .row-img {
+        width: 80px;
+        height: 80px;
+    }
 
+    .image-radio {
+        display: none;
+    }
+
+    .image-radio-label {
+        display: inline-block;
+        cursor: pointer;
+    }
+
+    .image-radio-label img {
+        width: 80px;
+        height: auto;
+        margin: 5px;
+        border: 2px solid transparent;
+     }
+
+    .image-radio:checked + .image-radio-label {
+        border: 2px solid blue;
+    }
+</style>
 <div class="content m-4 pb-3">
-    @TempData["productId"]
 
+    <div class="row p-4">
+        <div class="col-12">
+            <table id="myTable" class="display">
+                <thead>
+                    <tr>
+                        <th>Image</th>
+                        <th>Attribute</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in ViewBag.productItems)
+                    {   
+                        <tr>
+                            <td><img class="row-img" src="~/productImages/@item.image.imageName"/></td>
+                            <td>@item.attribute</td>
+                            <td>@item.price</td>
+                            <td>@item.quantity</td>
+                            <td>
+                                <a href="#" class="text-primary font-weight-bold text-xs" data-bs-toggle="modal" data-bs-target="#editModal"
+                                   onclick="edit(this)" data-imgId="@item.image.id" data-id="@item.id" data-variation="@item.attribute" data-price="@item.price" data-quantity="@item.quantity">
+                                    Edit
+                                </a>
+                                |
+                                <a href="#" class="text-danger font-weight-bold text-xs">
+                                    Delete
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <button type="button" class="btn btn-primary ms-5" data-bs-toggle="modal" data-bs-target="#addModal">
+        Create More
+    </button>
 </div>
+<!---------------------edit modal---------------------------------->
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form action="EditProductItem">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="productId" value="@ViewBag.productId" />
+                    <input type="hidden" name="id" value="" />
+                    @foreach (var item in ViewBag.images)
+                    {
+                        <input type="radio" name="imageId" value="@item.id" id="edit-image-@item.id" class="image-radio" required/>
+                        <label for="edit-image-@item.id" class="image-radio-label">
+                            <img src="~/productImages/@item.imageName" alt="Alternate Text" />
+                        </label>
+                    }
+                    <h4 class="font-weight-bold">
+                        Variation
+                    </h4>
+                    <input id="editVariation"  class="form-control" type="text" placeholder="Variation eg: red-xx" required maxlength="100" name="attribute">
+                    <!--------------------------price------------------------------------------------>
+                    <h4 class="font-weight-bold mt-2">
+                        Price
+                    </h4>
+                    <input id="editPrice" class="form-control disabled" type="text" pattern="^\d+(\.\d{1,2})?$" title="Please enter a valid decimal number up to 2 decimal places."
+                           placeholder="Price" required name="price">
+                    <!--------------------------quantity------------------------------------------------>
+                    <h4 class="font-weight-bold mt-2">
+                        Quatity
+                    </h4>
+                    <input id="editQuantity" class="form-control" type="text" pattern="^[1-9]\d*$" title="Please enter a positive integer greater than 0"
+                           placeholder="Quantity" required name="quantity">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Update</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<!---------------------add modal---------------------------------->
+<div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form action="AddVariation">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                        <input type="hidden" name="productId" value="@ViewBag.productId"/>
+                        @foreach(var item in ViewBag.images)
+                        {
+                        <input type="radio" name="imageId" value="@item.id" id="image-@item.id" class="image-radio" required/>
+                        <label for="image-@item.id" class="image-radio-label">
+                            <img src="~/productImages/@item.imageName" alt="Alternate Text" />
+                        </label>
+                        }
+                    <h4 class="font-weight-bold">
+                        Variation
+                    </h4>
+                    <input class="form-control" type="text" placeholder="Variation eg: red-xx" required maxlength="100" name="attribute">
+                    <!--------------------------price------------------------------------------------>
+                    <h4 class="font-weight-bold mt-2">
+                        Price
+                    </h4>
+                    <input id="price" class="form-control disabled" type="text" pattern="^\d+(\.\d{1,2})?$" title="Please enter a valid decimal number up to 2 decimal places."
+                           placeholder="Price" required name="price">
+                    <!--------------------------quantity------------------------------------------------>
+                    <h4 class="font-weight-bold mt-2">
+                        Quatity
+                    </h4>
+                    <input id="quantity" class="form-control" type="text" pattern="^[1-9]\d*$" title="Please enter a positive integer greater than 0"
+                           placeholder="Quantity" required name="quantity">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Add</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    function edit(element) {
+        var id = $(element).data('id');
+        var variation = $(element).data('variation');
+        var price = $(element).data('price');
+        var quantity = $(element).data('quantity');
+        var imgId = $(element).data('imgid');
+        console.log('current img:'+imgId);
+        $('#editModal input[name="id"]').val(id);
+        $('#editModal input[name="attribute"]').val(variation);
+        $('#editModal input[name="price"]').val(price);
+        $('#editModal input[name="quantity"]').val(quantity);
+        
+        $('#editModal input[type="radio"]').each(function () {
+            var targetImageId = $(this).val();
+            if (imgId == targetImageId) {
+                $(this).prop('checked', true);
+            }
+        });
+
+        $('#editModal').modal('show');
+    }
+</script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/2.1.8/js/dataTables.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#myTable').DataTable();
+    });
+</script>

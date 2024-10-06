@@ -16,7 +16,7 @@
 
         if (event.target.closest('.btn-toggle')) {
             const btn = event.target.closest('.btn-toggle');
-            btn.querySelector('.fa-chevron-down').classList.toggle('collapsed');
+
             sessionStorage.setItem('sidebarState', sidebar.innerHTML);
         }
     });

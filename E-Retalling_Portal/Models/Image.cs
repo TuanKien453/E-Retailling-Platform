@@ -8,9 +8,12 @@ namespace E_Retalling_Portal.Models
         [Key]
         public int id { get; set; }
         public int productId { get; set; }
-        [MaxLength(200)]
-        public string imagePath { get; set; }
-        public ProductItem? productItem { get; set; }
+        [MaxLength(400)]
+        public string imageName { get; set; }
+
+        public int? productCoveredId { get; set; }
+        public Product? productCovered { get; set; }
+        public List<ProductItem>? productItems { get; set; }
         public Product? product { get; set; }
     }
 }

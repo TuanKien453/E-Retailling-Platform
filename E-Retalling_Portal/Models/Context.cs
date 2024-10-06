@@ -94,8 +94,8 @@ namespace E_Retalling_Portal.Models
 
             modelBuilder.Entity<ProductItem>()
                 .HasOne(i => i.image)
-                .WithOne(i => i.productItem)
-                .HasForeignKey<ProductItem>(p_i => p_i.imageId);
+                .WithMany(i => i.productItems)
+                .HasForeignKey(p_i => p_i.imageId);
 
             modelBuilder.Entity<Image>()
                 .HasOne(p => p.product)
@@ -115,10 +115,14 @@ namespace E_Retalling_Portal.Models
 
             modelBuilder.Entity<OrderItem>()
                 .HasOne(p => p.productItem)
-                .WithOne(p=>p.orderItem)
-                .HasForeignKey<OrderItem>(oi=>oi.productItemId)
+                .WithMany(p=>p.orderItems)
+                .HasForeignKey(oi=>oi.productItemId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<Image>()
+                .HasOne(i=>i.productCovered)
+                .WithOne(p=>p.coverImage)
+                .HasForeignKey<Image>(i=>i.productCoveredId);
 
             SeedingCategory(modelBuilder);
             SeedingRole(modelBuilder);
