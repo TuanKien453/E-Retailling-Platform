@@ -15,6 +15,18 @@ namespace E_Retalling_Portal.Models.Query
         {
             return dbUser.Where(u => u.id == userId);
         }
+
+		public static IQueryable<User> GetUserByEmail(this DbSet<User> dbUser, string email)
+		{
+				return dbUser.Where(u => u.email == email);
+		}
+
+		public static async Task SaveUserToDatabase(this DbSet<User> dbUser, Context context, User user)
+		{
+				dbUser.Add(user);
+				await context.SaveChangesAsync();
+		}
+
     }
 
 }

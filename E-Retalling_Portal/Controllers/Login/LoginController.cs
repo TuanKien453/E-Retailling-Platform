@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authentication.Facebook;
 using System.Net.Http;
 using E_Retalling_Portal.Models.Enums;
 using Microsoft.AspNetCore.Http;
+using E_Retalling_Portal.Models.Query;
 
 namespace E_Retalling_Portal.Controllers.Login
 {
@@ -38,6 +39,7 @@ namespace E_Retalling_Portal.Controllers.Login
 					if (acc != null)
 					{
 						HttpContext.Session.SetInt32(SessionKeys.AccountId.ToString(), acc.id);
+						HttpContext.Session.SetString(SessionKeys.DisplayName.ToString(), context.Users.GetUserById(acc.userId).FirstOrDefault().displayName);
 						if (!rememberMe)
 						{
 							Response.Cookies.Append("Username", acc.username, new CookieOptions
@@ -86,23 +88,44 @@ namespace E_Retalling_Portal.Controllers.Login
 
 			if (info?.Principal != null)
 			{
-				var externalId = info.Principal.FindFirstValue("externalId");
-
-				var account = FindAccountByExternalId(externalId, ExternalLoginProvider.Google.ToString());
-
-				if (account != null)
+				using (var context = new Context())
 				{
-					HttpContext.Session.SetInt32(SessionKeys.AccountId.ToString(), account.id);
-					return RedirectToAction("Index", "Home");
-				}
-				else
-				{
-					User user = GetUserByEmail(info.Principal.FindFirstValue(ClaimTypes.Email));
-					if (user != null)
+					var externalId = info.Principal.FindFirstValue("externalId");
+
+					var account = context.Accounts.GetAccountByExternalId(externalId, ExternalLoginProvider.Google.ToString()).FirstOrDefault();
+
+					if (account != null)
 					{
-						if (GetAccountByRoleIdAndUserId(1, user) != null)
+						HttpContext.Session.SetInt32(SessionKeys.AccountId.ToString(), account.id);
+                        HttpContext.Session.SetString(SessionKeys.DisplayName.ToString(), context.Users.GetUserById(account.userId).FirstOrDefault().displayName);
+                        return RedirectToAction("Index", "Home");
+					}
+					else
+					{
+						User user = context.Users.GetUserByEmail(info.Principal.FindFirstValue(ClaimTypes.Email)).FirstOrDefault();
+						if (user != null)
 						{
-							return RedirectToAction("Login");
+							if (context.Accounts.GetAccountByRoleIdAndUserId(1, user).FirstOrDefault() != null)
+							{
+								return RedirectToAction("Login");
+							}
+							else
+							{
+								Account acc = new Account()
+								{
+									externalId = externalId,
+									externalType = "Google",
+									roleId = 1,
+									userId = user.id
+								};
+
+								await context.Accounts.SaveAccountToDatabase(context, acc);
+
+								HttpContext.Session.SetInt32(SessionKeys.AccountId.ToString(), acc.id);
+                                HttpContext.Session.SetString(SessionKeys.DisplayName.ToString(), context.Users.GetUserById(acc.userId).FirstOrDefault().displayName);
+
+                                return RedirectToAction("Index", "Home");
+							}
 						}
 						else
 						{
@@ -111,39 +134,22 @@ namespace E_Retalling_Portal.Controllers.Login
 								externalId = externalId,
 								externalType = "Google",
 								roleId = 1,
-								userId = user.id
+							};
+							User u = new User()
+							{
+								displayName = info.Principal.FindFirstValue(ClaimTypes.Name),
+								email = info.Principal.FindFirstValue(ClaimTypes.Email)
 							};
 
-							await SaveAccountToDatabase(acc);
+							await context.Users.SaveUserToDatabase(context, u);
+							acc.userId = u.id;
+							await context.Accounts.SaveAccountToDatabase(context, acc);
 
-							HttpContext.Session.SetString(SessionKeys.UserName.ToString(), info.Principal.FindFirstValue(ClaimTypes.Name));
 							HttpContext.Session.SetInt32(SessionKeys.AccountId.ToString(), acc.id);
+                            HttpContext.Session.SetString(SessionKeys.DisplayName.ToString(), context.Users.GetUserById(acc.userId).FirstOrDefault().displayName);
 
-							return RedirectToAction("Index", "Home");
+                            return RedirectToAction("Index", "Home");
 						}
-					}
-					else
-					{
-						Account acc = new Account()
-						{
-							externalId = externalId,
-							externalType = "Google",
-							roleId = 1,
-						};
-						User u = new User()
-						{
-							displayName = info.Principal.FindFirstValue(ClaimTypes.Name),
-							email = info.Principal.FindFirstValue(ClaimTypes.Email)
-						};
-
-						await SaveUserToDatabase(u);
-						acc.userId = u.id;
-						await SaveAccountToDatabase(acc);
-
-						HttpContext.Session.SetString(SessionKeys.UserName.ToString(), info.Principal.FindFirstValue(ClaimTypes.Name));
-						HttpContext.Session.SetInt32(SessionKeys.AccountId.ToString(), acc.id);
-
-						return RedirectToAction("Index", "Home");
 					}
 				}
 
@@ -168,82 +174,42 @@ namespace E_Retalling_Portal.Controllers.Login
 
 			if (info?.Principal != null)
 			{
-				var externalId = info.Principal.FindFirstValue("externalId");
-				var account = FindAccountByExternalId(externalId, ExternalLoginProvider.Facebook.ToString());
-				if (account != null)
+				using (var context = new Context())
 				{
-					HttpContext.Session.SetString(SessionKeys.UserName.ToString(), info.Principal.FindFirstValue(ClaimTypes.Name));
-					HttpContext.Session.SetInt32(SessionKeys.AccountId.ToString(), account.id);
-					return RedirectToAction("Index", "Home");
-				}
-				else
-				{
-					Account acc = new Account()
+					var externalId = info.Principal.FindFirstValue("externalId");
+					var account = context.Accounts.GetAccountByExternalId(externalId, ExternalLoginProvider.Facebook.ToString()).FirstOrDefault();
+					if (account != null)
 					{
-						externalId = externalId,
-						externalType = "Facebook",
-						roleId = 1,
-					};
-					User u = new User()
+						HttpContext.Session.SetInt32(SessionKeys.AccountId.ToString(), account.id);
+                        HttpContext.Session.SetString(SessionKeys.DisplayName.ToString(), context.Users.GetUserById(account.userId).FirstOrDefault().displayName);
+                        return RedirectToAction("Index", "Home");
+					}
+					else
 					{
-						displayName = info.Principal.FindFirstValue(ClaimTypes.Name),
-					};
+						Account acc = new Account()
+						{
+							externalId = externalId,
+							externalType = "Facebook",
+							roleId = 1,
+						};
+						User u = new User()
+						{
+							displayName = info.Principal.FindFirstValue(ClaimTypes.Name),
+						};
 
-					await SaveUserToDatabase(u);
-					acc.userId = u.id;
-					await SaveAccountToDatabase(acc);
+						await context.Users.SaveUserToDatabase(context, u);
+						acc.userId = u.id;
+						await context.Accounts.SaveAccountToDatabase(context, acc);
 
-					HttpContext.Session.SetString(SessionKeys.UserName.ToString(), info.Principal.FindFirstValue(ClaimTypes.Name));
-					HttpContext.Session.SetInt32(SessionKeys.AccountId.ToString(), acc.id);
+						HttpContext.Session.SetInt32(SessionKeys.AccountId.ToString(), acc.id);
+                        HttpContext.Session.SetString(SessionKeys.DisplayName.ToString(), context.Users.GetUserById(acc.userId).FirstOrDefault().displayName);
 
-					return RedirectToAction("Index", "Home");
+                        return RedirectToAction("Index", "Home");
+					}
 				}
 			}
 
 			return RedirectToAction("Login");
-		}
-
-		private Account FindAccountByExternalId(string externalId, string externalType)
-		{
-			using (var context = new Context())
-			{
-				return context.Accounts.FirstOrDefault(acc => acc.externalId == externalId && acc.externalType == externalType);
-			}
-		}
-
-		private async Task SaveAccountToDatabase(Account acc)
-		{
-			using (var context = new Context())
-			{
-				context.Accounts.Add(acc);
-				await context.SaveChangesAsync();
-			}
-		}
-
-		private async Task SaveUserToDatabase(User user)
-		{
-			using (var context = new Context())
-			{
-				context.Users.Add(user);
-				await context.SaveChangesAsync();
-			}
-		}
-
-		private User GetUserByEmail(string email)
-		{
-			using (var context = new Context())
-			{
-				return context.Users.FirstOrDefault(u => u.email == email);
-			}
-		}
-
-		private Account GetAccountByRoleIdAndUserId(int roleId, User user)
-		{
-			using (var context = new Context())
-			{
-				return context.Accounts.FirstOrDefault(acc => acc.roleId == roleId && acc.userId == user.id);
-			}
-
 		}
 	}
 }
