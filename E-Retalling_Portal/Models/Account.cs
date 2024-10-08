@@ -16,7 +16,7 @@ namespace E_Retalling_Portal.Models
 
         public int roleId { get; set; }
 
-        public int? externalId { get; set; }
+        public string? externalId { get; set; }
         [MaxLength(100)]
         public string? externalType { get; set; }
 

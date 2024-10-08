@@ -74,7 +74,7 @@ namespace E_Retalling_Portal.Models
             modelBuilder.Entity<Shop>()
                 .HasOne(a => a.account)
                 .WithOne(a => a.shop)
-                .HasForeignKey<Shop>(s => s.account_id);
+                .HasForeignKey<Shop>(s => s.accountId);
 
             modelBuilder.Entity<Product>()
             .HasOne(s => s.shop)

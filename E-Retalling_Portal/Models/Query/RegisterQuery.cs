@@ -21,10 +21,6 @@ namespace E_Retalling_Portal.Models.Query
             return dbUser.Where(u => (u.email == email || u.phoneNumber == phone) && u.id != userId);
         }
 
-        public static IQueryable<Account> GetVaildShopOwnerAccount(this DbSet<Account> dbAccount, string username, int roleId)
-        {
-            return dbUser.Where(u => (u.email == email || u.phoneNumber == phone) && u.id != userId);
-        }
 
         public static IQueryable<Account> GetValidShopOwnerAccount(this DbSet<Account> dbAccount, string username, int roleId)
         {
