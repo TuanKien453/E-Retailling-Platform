@@ -178,8 +178,9 @@ namespace E_Retalling_Portal.Controllers.AccountController
                 using (var context = new Context())
                 {
                         User testUser = context.Users.GetValidUserData(email, phoneNumber).FirstOrDefault();
-                        Account testAcc = context.Accounts.GetValidShopOwnerAccount(username, 1).FirstOrDefault();
-                        if (testAcc == null && password == passwordConfirm)
+                        Account testAcc1 = context.Accounts.GetValidShopOwnerAccount(username, 1).FirstOrDefault();
+                        Account testAcc2 = context.Accounts.GetValidShopOwnerAccount(username, 2).FirstOrDefault();
+                    if (testAcc1 == null && password == passwordConfirm && testAcc2 == null)
                         {
                             Account newAccount = new Account { userId = testUser.id, username = username, password = password, roleId = 1, externalId = null, externalType = null };
                             context.Add(newAccount);
@@ -194,14 +195,20 @@ namespace E_Retalling_Portal.Controllers.AccountController
                             ViewBag.Password = password;
                             ViewBag.PasswordConfirm = passwordConfirm;
                             ViewBag.Username = username;
-                            if (testAcc != null)
+                        if (testAcc1 != null)
+                        {
+                            if (testAcc1.username == username)
                             {
-                                if (testAcc.username == username)
-                                {
-                                    ViewBag.ErrorUsername = "This UserName is already been used.";
-                                }
-
+                                ViewBag.ErrorUsername = "This UserName is already been used.";
                             }
+                        }
+                        if (testAcc2 != null)
+                        {
+                            if (testAcc2.username == username)
+                            {
+                                ViewBag.ErrorUsername = "This UserName is already been used.";
+                            }
+                        }
                             if (passwordConfirm != password)
                             {
                                 ViewBag.ErrorPasswordConfirm = "Password and PasswordConfirm does not match";
@@ -244,8 +251,9 @@ namespace E_Retalling_Portal.Controllers.AccountController
                 using (var context = new Context())
                 {
                     User testUser = context.Users.GetValidUserData(email, phoneNumber).FirstOrDefault();
-                    Account testAcc = context.Accounts.GetValidShopOwnerAccount(username, 2).FirstOrDefault();
-                    if (testAcc == null && password == passwordConfirm)
+                    Account testAcc1 = context.Accounts.GetValidShopOwnerAccount(username, 1).FirstOrDefault();
+                    Account testAcc2 = context.Accounts.GetValidShopOwnerAccount(username, 2).FirstOrDefault();
+                    if (testAcc1 == null && password == passwordConfirm && testAcc2 == null)
                     {
                         Account newAccount = new Account { userId = testUser.id, username = username, password = password, roleId = 2, externalId = null, externalType = null };
                         context.Add(newAccount);
@@ -260,13 +268,19 @@ namespace E_Retalling_Portal.Controllers.AccountController
                         ViewBag.Password = password;
                         ViewBag.PasswordConfirm = passwordConfirm;
                         ViewBag.Username = username;
-                        if (testAcc != null)
+                        if (testAcc1 != null)
                         {
-                            if (testAcc.username == username)
+                            if (testAcc1.username == username)
                             {
                                 ViewBag.ErrorUsername = "This UserName is already been used.";
                             }
-
+                        }
+                        if (testAcc2 != null)
+                        {
+                            if (testAcc2.username == username)
+                            {
+                                ViewBag.ErrorUsername = "This UserName is already been used.";
+                            }
                         }
                         if (passwordConfirm != password)
                         {

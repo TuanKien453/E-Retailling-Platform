@@ -13,7 +13,6 @@
                 <div class="card z-index-0 mt-sm-8 mt-7 mb-3">
                     <div class="card-header text-center pt-4 pb-1">
                         <h4 class="font-weight-bolder mb-1">Information Sign Up</h4>
-                        <p class="mb-0">Join our network of professionals</p>
                     </div>
                     <div class="card-body">
                         <form asp-action="UserInformationRegisterCheck" method="post">
@@ -38,7 +37,7 @@
                             <!-- Birthday Field -->
                             <div class="input-group input-group-outline mb-3">
                                 <label for="birthday" class="form-label">Birthday</label>
-                                <input type="date" class="form-control"
+                                <input type="date" class="form-control" value="1999-10-10"
                                        id="birthday" name="birthday" placeholder="s" required value="@ViewBag.Birthday" />
                             </div>
                             <!-- Email Field -->
