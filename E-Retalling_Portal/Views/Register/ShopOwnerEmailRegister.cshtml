@@ -1,0 +1,96 @@
+﻿@{
+    ViewData["Title"] = "ShopOwnerEmailRegister";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["ShopOwnerEmailRegister"]</title>
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="~/kit/css/material-kit.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <section>
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-4 col-lg-5 col-md-7 mx-auto">
+                    <div class="card z-index-0 mt-sm-8 mt-7 mb-3">
+                        <div class="card-header text-center pt-4 pb-1">
+                            @if (ViewBag.Error != null)
+                            {
+                                <div class="error">
+                                    <strong>Error:</strong> @ViewBag.Error
+                                </div>
+                            }
+                            <h4 class="font-weight-bolder mb-1">Sign Up</h4>
+                        </div>
+                        <div class="card-body">
+                            <form asp-action="ShopOwnerEmailRegisterCheck" method="post">
+
+                                <!-- Email Field -->
+                                <div class="input-group input-group-outline mb-3">
+                                    <label for="email" class="form-label">Email</label>
+                                    <input style="width:100%;" type="email" class="form-control"
+                                           id="email" name="email" required value="@ViewBag.Email" />
+                                    @if (ViewBag.ErrorEmail != null)
+                                    {
+                                        <p class="text-danger">@ViewBag.ErrorEmail</p>
+                                    }
+                                </div>
+                                <div class="input-group input-group-outline mb-3">
+                                    <label for="phoneNumber" class="form-label">Phone Number</label>
+                                    <input style="width:100%;" type="text" class="form-control"
+                                           id="phoneNumber" name="phoneNumber" required value="@ViewBag.Phone" />
+                                    @if (ViewBag.ErrorPhone != null)
+                                    {
+                                        <p class="text-danger">@ViewBag.ErrorPhone</p>
+                                    }
+                                </div>
+                                <!-- Submit Button -->
+                                <div class="text-center">
+                                    <button type="submit" class="btn bg-gradient-dark w-100 my-4 mb-2">Sign up</button>
+                                </div>
+
+                                <!-- Sign In Redirect -->
+                                <p class="text-sm text-center mt-3 mb-0">Already have an account? <a href="">Sign in</a></p>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Scripts -->
+    <script src="~/js/materialkitpro.js"></script>
+    <script>
+        window.addEventListener('load', function () {
+            // Lấy tất cả các input có trong form
+            const inputs = document.querySelectorAll('.input-group input');
+
+            // Duyệt qua các input và kiểm tra xem có giá trị hay không
+            inputs.forEach(function (input) {
+                if (input.value.trim() !== '') {
+                    // Nếu có giá trị, thêm class 'is-filled' vào thẻ div cha của nó
+                    input.closest('.input-group').classList.add('is-filled');
+                }
+
+                // Lắng nghe sự kiện input để thêm class khi người dùng nhập
+                input.addEventListener('input', function () {
+                    if (input.value.trim() !== '') {
+                        input.closest('.input-group').classList.add('is-filled');
+                    } else {
+                        input.closest('.input-group').classList.remove('is-filled');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

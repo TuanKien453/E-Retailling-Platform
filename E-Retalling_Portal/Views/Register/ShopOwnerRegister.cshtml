@@ -3,90 +3,51 @@
     ViewData["Title"] = "ShopOwnerRegister";
     Layout = null;
 }
-<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-<section >
-    <div class="container py-5 h-100 ">
-        <div class="row justify-content-center align-items-center h-100">
-            <div class="col-12 col-lg-9 col-xl-7">
-                <div class="card shadow-2-strong card-registration" style="border-radius: 15px;">
-                    <div class="card-body p-4 p-md-5">
-                        @if (ViewBag.Error != null)
-                        {
-                            <span class="text-danger">@ViewBag.Error</span>
-                        }
-                        <h3 class="mb-4 pb-2 pb-md-0 mb-md-5"> Shop Owner Registration Form</h3>
-                        <h5 class="mb-4 pb-2">User Information</h5>
-                        <form asp-action="ShopOwnerRegisterCheck" method="post">                  
-                            <div class="row">
-                                <div class="col-md-6 mb-4 pb-2">
-
-                                    <div data-mdb-input-init class="form-outline">
-                                        <label for="email" class="control-label">Email</label>
-                                        <input type="email" id="email" name="email" class="form-control @(ViewBag.Email != null ? "is-valid" : "") @(ViewBag.ErrorEmail != null ? "is-invalid" : "")" required value="@ViewBag.Email" />
-                                        @if  ( ViewBag.ErrorEmail != null)
-                                        {
-                                            <span class="text-danger">@ViewBag.ErrorEmail</span>
-                                        }
-                                    </div>
-
-                                </div>
-                                <div class="col-md-6 mb-4 pb-2">
-
-                                    <div data-mdb-input-init class="form-outline">
-                                        <label for="phoneNumber" class="control-label">Phone Number</label>
-                                        <input type="text" id="phoneNumber" name="phoneNumber" class="form-control @(@ViewBag.Phone != null ? "is-valid" : "") @(ViewBag.ErrorPhone != null ? "is-invalid" : "") " required value="@ViewBag.Phone" />
-                                        @if(ViewBag.ErrorPhone != null)
-                                        {
-                                            <span class="text-danger">@ViewBag.ErrorPhone</span>
-                                        }
-                                    </div>
-
-                                </div>
-
-                              
-
-                            </div>
-                            <h5 class="mb-4 pb-2">Account Information</h5>
-                            <div class="row">
-                                <div class="col-12 mb-4">
-
-                                    <div class="form-group">
-                                        <label for="username" class="control-label">Username</label>
-                                        <input type="text" id="username" name="username" class="form-control @(@ViewBag.Username != null ? "is-valid" : "") @(ViewBag.ErrorUsername != null ? "is-invalid" : "")" required value="@ViewBag.Username" />
-                                                @if (ViewBag.ErrorUsername != null)
-                                                {                                                   
-                                                    <span class="text-danger">@ViewBag.ErrorUsername</span>
-                                                }
-                                    </div>
-
-                                </div>
+<link rel="stylesheet" href="~/kit/css/material-kit.css" />
+<link rel="stylesheet" href="~/css/site.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<section>
+    <div class="container">
+        <div class="row">
+            <div class="col-xl-4 col-lg-5 col-md-7 mx-auto">
+                <div class="card z-index-0 mt-sm-8 mt-7 mb-3">
+                    <div class="card-header text-center pt-4 pb-1">
+                        <h4 class="font-weight-bolder mb-1">Seller Sign Up</h4>
+                    </div>
+                    <div class="card-body">
+                        <form asp-action="ShopOwnerRegisterCheck" method="post">
+                                          
+                            <!-- Username Field -->
+                            <div class="input-group input-group-outline mb-3">
+                                <label for="username" class="form-label">Username</label>
+                                <input style="width:100%;" type="text" id="username" name="username" class="form-control" required value="@ViewBag.Username" />
+                                @if (ViewBag.ErrorUsername != null)
+                                {
+                                    <p class="text-danger">@ViewBag.ErrorUsername</p>
+                                }
                             </div>
 
-                            <div class="row">
-                                <div class="col-6 mb-4">
-
-                                    <div class="form-group">
-                                        <label for="password" class="control-label">Password</label>
-                                        <input type="password" id="password" name="password" class="form-control " required />
-                                    </div>
-
-                                </div>
-
-                                <div class="col-6 mb 4">
-                                    <div class="form-group">
-                                        <label for="passwordConfirm" class="control-label">PasswordConfirm</label>
-                                        <input type="password" id="passwordConfirm" name="passwordConfirm" class="form-control @(ViewBag.ErrorPasswordConfirm != null ? "is-invalid" : "")" required />
-                                        @if (ViewBag.ErrorPasswordConfirm != null)
-                                        {
-                                            <span class="text-danger">@ViewBag.ErrorPasswordConfirm</span>
-                                        }                                    
-                                    </div>
-                                </div>
+                            <!-- Password Field -->
+                            <div class="input-group input-group-outline mb-3">
+                                <label for="password" class="form-label">Password</label>
+                                <input type="password" id="password" name="password" class="form-control " required />
                             </div>
 
-                            <div class="mt-4 pt-2">
-                                <input data-mdb-ripple-init class="btn btn-primary btn-lg" type="submit" value="Submit" />
+                            <!-- Confirm Password Field -->
+                            <div class="input-group input-group-outline mb-3">
+                                <label for="passwordConfirm" class="form-label">PasswordConfirm</label>
+                                <input style="width:100%;"  type="password" id="passwordConfirm" name="passwordConfirm" class="form-control @(ViewBag.ErrorPasswordConfirm != null ? "is-invalid" : "")" required />
+                                @if (ViewBag.ErrorPasswordConfirm != null)
+                                {
+                                    <p class="text-danger">@ViewBag.ErrorPasswordConfirm</p>
+                                }
                             </div>
+                            <!-- Submit Button -->
+                            <div class="text-center">
+                                <button type="submit" class="btn bg-gradient-dark w-100 my-4 mb-2">Sign up</button>
+                            </div>
+                            <!-- Sign In Redirect -->
+                            <p class="text-sm text-center mt-3 mb-0">Already have an account? <a href="../../pages/sign-in/sign-in-basic.html" class="text-dark font-weight-bolder">Sign in</a></p>
                         </form>
                     </div>
                 </div>
@@ -94,5 +55,28 @@
         </div>
     </div>
 </section>
+<script src="~/js/materialkitpro.js"></script>
+<script>
+    window.addEventListener('load', function () {
+        // Lấy tất cả các input có trong form
+        const inputs = document.querySelectorAll('.input-group input');
 
+        // Duyệt qua các input và kiểm tra xem có giá trị hay không
+        inputs.forEach(function (input) {
+            if (input.value.trim() !== '') {
+                // Nếu có giá trị, thêm class 'is-filled' vào thẻ div cha của nó
+                input.closest('.input-group').classList.add('is-filled');
+            }
+
+            // Lắng nghe sự kiện input để thêm class khi người dùng nhập
+            input.addEventListener('input', function () {
+                if (input.value.trim() !== '') {
+                    input.closest('.input-group').classList.add('is-filled');
+                } else {
+                    input.closest('.input-group').classList.remove('is-filled');
+                }
+            });
+        });
+    });
+</script>
     
