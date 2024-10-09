@@ -41,3 +41,33 @@ function ImgRemove(index) {
     imgRemoveButton.classList.remove('show');
 }
 //----------------------------------------------------------------------------------------
+
+
+//Filter by price
+var slider = new Slider('#ex2', {
+    tooltip: 'hide',
+    range: true
+});
+
+function updatePriceLabels(value) {
+    document.getElementById('minPrice').textContent = '$ ' + value[0];
+    if (value[1] === 1000) {
+        document.getElementById('maxPrice').textContent = '$ 1000+';
+    } else {
+        document.getElementById('maxPrice').textContent = '$ ' + value[1];
+    }
+    document.getElementById('minPriceInput').value = value[0];
+    document.getElementById('maxPriceInput').value = value[1];
+}
+
+
+slider.on('slide', function (value) {
+    updatePriceLabels(value);
+});
+
+slider.on('change', function (event) {
+    var value = event.newValue;
+    updatePriceLabels(value);
+});
+//-----------------------------------------------------------------
+
