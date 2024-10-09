@@ -8,5 +8,10 @@ namespace E_Retalling_Portal.Models.Query
         {
             return dbProductItem.Include("image").Where(pi=>pi.productId==productId);
         }
+
+        public static IQueryable<ProductItem> GetProductItemByProductItemId(this DbSet<ProductItem> dbProductItem, int productItemId)
+        {
+            return dbProductItem.Where(pi => pi.id == productItemId);
+        }
     }
 }

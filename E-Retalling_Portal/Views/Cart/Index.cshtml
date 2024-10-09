@@ -1,0 +1,136 @@
+﻿@model List<CartItemModel>
+
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shopping Cart</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/MaterialDesign-Webfont/5.3.45/css/materialdesignicons.css" integrity="sha256-NAxhqDvtY0l4xn+YVa6WjAcmd94NNfttjNsDmNatFVc=" crossorigin="anonymous" />
+<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+
+<div class="container">
+	<div class="row">
+		<div class="col-xl-8">
+			@if (!Model.Any())
+			{
+				<p>Your Cart Is Empty</p>
+				<img src="https://png.pngtree.com/png-vector/20220119/ourlarge/pngtree-shopping-cart-icon-png-image_4231850.png" />
+			}
+			@foreach (var product in Model)
+			{
+				<div class="card border shadow-none">
+					<div class="card-body">
+						<div class="d-flex align-items-start border-bottom pb-3">
+							<div class="me-4">
+								<img src="@product.productItem.image.imageName" alt="@product.productItem.product.name" class="avatar-lg rounded">
+							</div>
+							<div class="flex-grow-1 align-self-center overflow-hidden">
+								<div>
+									<h5 class="text-truncate font-size-18">
+										<a href="#" class="text-dark">@product.productItem.product.name</a>
+									</h5>
+									<p class="text-muted mb-0">
+										@for (int i = 0; i < product.productItem.rating; i++)
+										{
+											<i class="bx bxs-star text-warning"></i>
+										}
+									</p>
+									<p class="mb-0 mt-1">Attribute: <span class="fw-medium">@product.productItem.attribute</span></p>
+								</div>
+							</div>
+							<div class="flex-shrink-0 ms-2">
+								<ul class="list-inline mb-0 font-size-16">
+									<li class="list-inline-item">
+										<a href="javascript:void(0);" class="text-muted px-1" onclick="deleteFromCart(@product.productItem.id)">
+											<i class="mdi mdi-trash-can-outline"></i>
+										</a>
+									</li>
+								</ul>
+							</div>
+						</div>
+
+						<div>
+							<div class="row">
+								<div class="col-md-4">
+									<div class="mt-3">
+										<p class="text-muted mb-2">Price</p>
+										<h5 class="mb-0 mt-2">
+											<span class="text-muted me-2">$@product.productItem.price</span>
+										</h5>
+									</div>
+								</div>
+								<div class="col-md-5">
+									<div class="mt-3">
+										<p class="text-muted mb-2">Quantity</p>
+										<div class="d-inline-flex">
+											<input type="number" class="form-control form-control-sm"
+												   min="1" value="@product.quantity"
+												   data-price="@product.productItem.price"
+												   data-total-id="total-@product.productItem.id"
+												   data-product-id="@product.productItem.id"
+											       data-quantityInStock="@product.productItem.quantity"
+												   oninput="this.value = this.value.replace(/[^0-9]/g, '')"> <!--only integer number -->
+										</div>
+									</div>
+								</div>
+								<div class="col-md-3">
+									<div class="mt-3">
+										<p class="text-muted mb-2">Total</p>
+										<h5 id="total-@product.productItem.id">$@((product.quantity * product.productItem.price).ToString("F2"))</h5>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- end card -->
+			}
+
+			<div class="row my-4">
+				<div class="col-sm-6">
+					<a href="" class="btn btn-link text-muted">
+						<i class="mdi mdi-arrow-left me-1"></i> Continue Shopping
+					</a>
+				</div> <!-- end col -->
+				<div class="col-sm-6">
+					<div class="text-sm-end mt-2 mt-sm-0">
+						<a href="" class="btn btn-success">
+							<i class="mdi mdi-cart-outline me-1"></i> Checkout
+						</a>
+					</div>
+				</div> <!-- end col -->
+			</div> <!-- end row-->
+		</div>
+
+		<div class="col-xl-4">
+			<div class="mt-5 mt-lg-0">
+				<div class="card border shadow-none">
+					<div class="card-header bg-transparent border-bottom py-3 px-4">
+						<h5 class="font-size-16 mb-0">Order Summary <span class="float-end">Order Code</span></h5>
+					</div>
+					<div class="card-body p-4 pt-2">
+
+						<div class="table-responsive">
+							<table class="table mb-0">
+								<tbody>
+									<tr>
+										<td>Sub Total :</td>
+										<td class="text-end" id="subtotal">$0.00</td>
+									</tr>
+									<tr>
+										<td>Shipping Charge :</td>
+										<td class="text-end">+$25.00</td>
+									</tr>
+									<tr class="border-top border-top-dashed">
+										<td>Total :</td>
+										<td class="text-end" id="total">$0.00</td>
+									</tr>
+								</tbody>
+							</table>
+						</div> <!-- end table-responsive -->
+					</div>
+				</div> <!-- end card -->
+			</div>
+		</div> <!-- end col -->
+	</div> <!-- end row -->
+</div> <!-- end container -->
+  <script src="/js/Cart.js"></script>

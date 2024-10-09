@@ -9,6 +9,8 @@ namespace E_Retalling_Portal.Models
         public int  productId { get; set; }
         public int quantity { get; set; }
         public float price { get; set; }
+        [Range(1, 5)]
+        public int rating { get; set; }
         public int imageId { get; set; }
         [Required,MaxLength(100)]
         public String attribute { get; set; }
