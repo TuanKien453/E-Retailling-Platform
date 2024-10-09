@@ -24,7 +24,7 @@
                         <div class="card-header text-center pt-4 pb-1">
                             @if (ViewBag.Error != null)
                             {
-                                <div class="error">
+                                <div class="error alert-danger">
                                     <strong>Error:</strong> @ViewBag.Error
                                 </div>
                             }
@@ -57,9 +57,9 @@
                                     <button type="submit" class="btn bg-gradient-dark w-100 my-4 mb-2">Sign up</button>
                                 </div>
 
-                                <!-- Sign In Redirect -->
-                                <p class="text-sm text-center mt-3 mb-0">Already have an account? <a href="">Sign in</a></p>
-                            </form>
+                                <!-- Sign In Redirect -->                
+                                <p class="text-sm text-center mt-3 mb-0">Already have an account? <a href="@Url.Action("Index","SellerLogin")">Sign in</a></p>
+                            </form>                            
                         </div>
                     </div>
                 </div>

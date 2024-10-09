@@ -5,7 +5,10 @@
 			UserName,
 			UserId,
 			AccountId,
-			DisplayName
+			DisplayName,
+			RoleID,
+			Email,
+			PhoneNumber
 		}
 
 }
