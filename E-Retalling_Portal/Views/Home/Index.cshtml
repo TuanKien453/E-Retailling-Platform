@@ -28,7 +28,6 @@
         <div class="row">
             <div class="col-lg-3">
                 <div class="filter-sidebar">
-                    <h4>Filter by Categories</h4>
                     <form method="get" action="@Url.Action("Index", "Home")">
                         @if (ViewBag.isParentCategory == true)
                         {
@@ -65,7 +64,7 @@
                             }
                             
                         }
-                        <label>Filter by price sadf:</label>
+                        <label>Filter by price :</label>
                         <b id="minPrice">$ @(ViewBag.minPrice ?? 250)</b> - <b id="maxPrice">$ @(ViewBag.maxPrice != null && ViewBag.maxPrice == 1000 ? "1000+" : ViewBag.maxPrice ?? 450)</b>
                         <input id="ex2" type="text" class="span2" value=""
                                data-slider-min="2" data-slider-max="1000"

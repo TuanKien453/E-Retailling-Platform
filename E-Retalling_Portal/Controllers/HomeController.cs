@@ -1,10 +1,12 @@
 using E_Retalling_Portal.Models;
 using E_Retalling_Portal.Models.Enums;
+using E_Retalling_Portal.Models.Query;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Newtonsoft.Json.Linq;
 using System.Diagnostics;
+using System.Linq;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace E_Retalling_Portal.Controllers
@@ -32,7 +34,7 @@ namespace E_Retalling_Portal.Controllers
                 var subcategoryList = context.Categories.Where(c => c.parentCategoryId != null).ToList();
                 List<BreadcrumbItem> breadcrumbList = new List<BreadcrumbItem>();
 
-                breadcrumbList = GetBreadcrumListFromCategoryList(categoryList, categoryId, breadcrumbList);
+                breadcrumbList = GetBreadcrumListFromCategoryList(categoryList, categoryId, breadcrumbList, context);
 
                 ViewBag.breadcrumbList = breadcrumbList;
 
@@ -40,7 +42,7 @@ namespace E_Retalling_Portal.Controllers
                 if (categoryId.HasValue)
                 {
                     ViewBag.isParentCategory = false;
-                    ViewBag.subcategory = subcategoryList.Where(c => c.parentCategoryId == categoryId).ToList();
+                    ViewBag.subcategory = context.Categories.GetSubCategoriesByParentCategoryId(categoryId).ToList();
                 }
                 else
                 {
@@ -51,13 +53,13 @@ namespace E_Retalling_Portal.Controllers
                 if (categoryId != null)
                 {
                     //Get productList by filter category
-                    productList = GetProductsBySubCategories(categoryId, categoryList, productList);
+                    productList = GetProductsBySubCategories(categoryId, categoryList, productList, context);
                 }
 
                 //Map images into product by productId
                 var productImageMap = productList.ToDictionary(
                     product => product.id,
-                    product => imageList.Where(img => img.productId == product.id).ToList()
+                    product => context.Images.GetImagesByProductId(product.id).ToList()
                 );
 
                 if (searchQuery != null)
@@ -69,7 +71,7 @@ namespace E_Retalling_Portal.Controllers
                 if (minPrice != null || maxPrice != null)
                 {
                     //Get product by filtery price
-                    productList = GetProductsByFilterPrice(productList, minPrice, maxPrice);
+                    productList = productList = context.Products.GetProdutsByPrice(minPrice, maxPrice).ToList();
                 }
 
                 ViewBag.categoryId = categoryId;
@@ -81,9 +83,9 @@ namespace E_Retalling_Portal.Controllers
             }
         }
 
-        private List<BreadcrumbItem> GetBreadcrumListFromCategoryList(List<Category> categoryList, int? categoryId, List<BreadcrumbItem> breadcrumbList)
+        private List<BreadcrumbItem> GetBreadcrumListFromCategoryList(List<Category> categoryList, int? categoryId, List<BreadcrumbItem> breadcrumbList, Context context)
         {
-            var currentCategory = categoryList.FirstOrDefault(c => c.id == categoryId);
+            var currentCategory = context.Categories.GetSubCategoriesByCategoryId(categoryId).FirstOrDefault();
 
             while (currentCategory != null)
             {
@@ -92,7 +94,7 @@ namespace E_Retalling_Portal.Controllers
                     Name = currentCategory.name,
                     Url = currentCategory.id.ToString()
                 });
-                currentCategory = categoryList.FirstOrDefault(c => c.id == currentCategory.parentCategoryId);
+                currentCategory = context.Categories.GetSubCategoriesByCategoryId(currentCategory.parentCategoryId).FirstOrDefault();
             }
             return breadcrumbList;
         }
@@ -106,30 +108,9 @@ namespace E_Retalling_Portal.Controllers
             }
             return productList;
         }
-        private List<Product> GetProductsByFilterPrice(List<Product> productList, double? minPrice, double? maxPrice)
-        {
-            if (minPrice.HasValue && maxPrice.HasValue)
-            {
-                if (minPrice >= 2 && maxPrice < 1000)
-                {
-                    productList = productList
-                        .Where(p => p.price >= minPrice.Value && p.price < maxPrice.Value)
-                        .ToList();
-                }
-                else
-                if (minPrice >= 2 && maxPrice >= 1000)
-                {
-                    productList = productList
-                        .Where(p => p.price >= minPrice.Value)
-                        .ToList();
-                }
-            }
-            return productList;
-        }
 
 
-
-        private List<Product> GetProductsBySubCategories(int? categoryId, List<Category> categoryList, List<Product> productList)
+        private List<Product> GetProductsBySubCategories(int? categoryId, List<Category> categoryList, List<Product> productList, Context context)
         {
             if (!categoryId.HasValue)
             {
@@ -144,7 +125,7 @@ namespace E_Retalling_Portal.Controllers
             {
                 subCategoryIds.Add(category.id);
 
-                subCategoryIds.AddRange(GetProductsBySubCategories(category.id, categoryList, productList)
+                subCategoryIds.AddRange(GetProductsBySubCategories(category.id, categoryList, productList, context)
                     .Select(p => p.categoryId));
             }
 
@@ -168,31 +149,3 @@ namespace E_Retalling_Portal.Controllers
         }
     }
 }
-
-
-//@functions {
-//    private void DisplaySubCategories(IEnumerable<Category> subCategories)
-//{
-//    foreach (var subCategory in subCategories)
-//    {
-//            < li style = "margin-left: 20px" >
-//                < input type = "checkbox"
-//                       id = "subcategory_@subCategory.id"
-//                       name = "selectedSubCategories"
-//                       value = "@subCategory.id"
-//                @(ViewBag.selectedSubCategories.Contains(subCategory.id) ? "checked" : "") />
-
-//            < label for= "subcategory_@subCategory.id" > @subCategory.name </ label >
-
-//        </ li >
-
-//            if (subCategory.childrens != null && subCategory.childrens.Any())
-//            {
-//                DisplaySubCategories(subCategory.childrens);
-//            }
-//    }
-//}
-//}
-//                                        @{
-//    DisplaySubCategories(category.childrens);
-//}
