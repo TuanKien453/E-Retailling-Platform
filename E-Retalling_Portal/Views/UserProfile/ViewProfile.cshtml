@@ -55,9 +55,8 @@
                                     <label for="displayName" class="form-label">Display Name</label>
                                 </div>
                                 <div class="col-sm-9">
-                                    <input type="text" class="form-control" id="displayName" name="displayName" minlength="3" maxlength="30"
-                                           value="@ViewBag.User.displayName" placeholder="Enter your display name"
-                                           pattern="[A-Za-z\s]+" required >
+                                    <input type="text" class="form-control" id="displayName" name="displayName" minlength="0" maxlength="30"
+                                           value="@ViewBag.User.displayName" placeholder="Enter your display name">
                                 </div>
                             </div>
 
@@ -66,7 +65,7 @@
                                     <label for="email" class="form-label">Email</label>
                                 </div>
                                 <div class="col-sm-9">
-                                    <input type="email" id="email" name="email" class="form-control" required
+                                    <input type="email" id="email" name="email" minlength="3" maxlength="50" class="form-control" required
                                            value="@ViewBag.User.email" @(ViewBag.Account?.externalType == "Google" ? "readonly" : "") />
                                     @if (TempData["ErrorEmail"] != null)
                                     {
@@ -96,7 +95,9 @@
                                 </div>
                                 <div class="col-sm-9">
                                     <input type="date" class="form-control" id="birthday" name="birthday"
-                                           value="@(ViewBag.User?.birthday ?? "")" />
+                                           value="@(ViewBag.User?.birthday ?? "")"
+                                           min="@DateTime.Now.AddYears(-100).ToString("yyyy-MM-dd")"
+                                           max="@DateTime.Now.AddYears(-13).ToString("yyyy-MM-dd")" />
                                 </div>
                             </div>
 
@@ -139,7 +140,7 @@
                                     <label for="firstName" class="form-label">First Name</label>
                                 </div>
                                 <div class="col-sm-9">
-                                    <input type="text" class="form-control" id="firstName" name="firstName" value="@(ViewBag.User?.firstName ?? "")" >
+                                    <input type="text" minlength="0" maxlength="20" class="form-control" id="firstName" name="firstName" value="@(ViewBag.User?.firstName ?? "")">
                                 </div>
                             </div>
 
@@ -148,7 +149,7 @@
                                     <label for="lastName" class="form-label">Last Name</label>
                                 </div>
                                 <div class="col-sm-9">
-                                    <input type="text" class="form-control" id="lastName" name="lastName" value="@(ViewBag.User?.lastName ?? "")" >
+                                    <input type="text" minlength="0" maxlength="20" class="form-control" id="lastName" name="lastName" value="@(ViewBag.User?.lastName ?? "")">
                                 </div>
                             </div>
 
@@ -157,7 +158,7 @@
                                     <label for="address" class="form-label">Address</label>
                                 </div>
                                 <div class="col-sm-9">
-                                    <input type="text" class="form-control" id="address" name="address" value="@(ViewBag.User?.address ?? " ")" >
+                                    <input type="text" minlength="3" maxlength="50" class="form-control" id="address" name="address" value="@(ViewBag.User?.address ?? " ")">
                                 </div>
                             </div>
 
