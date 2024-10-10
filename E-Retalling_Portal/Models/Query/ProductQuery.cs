@@ -12,5 +12,20 @@ namespace E_Retalling_Portal.Models.Query
         {
             return dbProduct.Include("coverImage").Include("images").Where(p => p.id == productId);
         }
+        public static IQueryable<Product> GetProdutsByPrice(this DbSet<Product> dbProduct, double? minPrice, double? maxPrice)
+        {
+
+            if (minPrice >= 2 && maxPrice < 1000)
+            {
+                return dbProduct.Where(p => p.price >= minPrice.Value && p.price < maxPrice.Value);
+            }
+            else
+                if (minPrice >= 2 && maxPrice >= 1000)
+            {
+                return dbProduct.Where(p => p.price >= minPrice.Value );
+            }
+            return dbProduct;
+        }
+
     }
 }

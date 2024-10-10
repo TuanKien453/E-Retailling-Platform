@@ -1,7 +1,134 @@
-﻿@{
+﻿
+@{
     ViewData["Title"] = "Home Page";
 }
 
-<div>
-    <h1>Welcome to the Home Page</h1>
-</div>
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="@Url.Action("Index", "Home")">Home</a>
+        </li>
+
+        @foreach (var breadcrumb in ViewBag.breadcrumbList)
+        {
+            <li class="breadcrumb-item">
+                <a href="@Url.Action("Index", "Home", new { categoryId = breadcrumb.Url })">@breadcrumb.Name</a>
+            </li>
+        }
+    </ol>
+</nav>
+
+
+
+
+<section class="py-7">
+    <div class="container">
+
+        <div class="row">
+            <div class="col-lg-3">
+                <div class="filter-sidebar">
+                    <form method="get" action="@Url.Action("Index", "Home")">
+                        @if (ViewBag.isParentCategory == true)
+                        {
+                            @foreach (var category in ViewBag.categoryList)
+                            {
+                                <div class="category-group">
+                                    @if (category.parentCategoryId == null)
+                                    {
+                                        <ul>
+                                            <li>
+                                                <a href="@Url.Action("Index", "Home", new { categoryId = category.id })"
+                                                   class="category-link">
+                                                    @category.name
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    }
+                                </div>
+                            }
+                        }
+                        else
+                        {
+
+                            @foreach (var subCategory in ViewBag.subcategory)
+                            {
+                                <ul>
+                                    <li>
+                                        <a href="@Url.Action("Index", "Home", new { categoryId = subCategory.id })"
+                                           class="subcategory-link">
+                                            @subCategory.name
+                                        </a>
+                                    </li>
+                                </ul>
+                            }
+                            
+                        }
+                        <label>Filter by price :</label>
+                        <b id="minPrice">$ @(ViewBag.minPrice ?? 250)</b> - <b id="maxPrice">$ @(ViewBag.maxPrice != null && ViewBag.maxPrice == 1000 ? "1000+" : ViewBag.maxPrice ?? 450)</b>
+                        <input id="ex2" type="text" class="span2" value=""
+                               data-slider-min="2" data-slider-max="1000"
+                               data-slider-step="5" data-slider-value="[@(ViewBag.minPrice ?? 250),@(ViewBag.maxPrice ?? 450)]" />
+                        <input type="hidden" name="minPrice" id="minPriceInput" value="@(ViewBag.minPrice ?? 250)" />
+                        <input type="hidden" name="maxPrice" id="maxPriceInput" value="@(ViewBag.maxPrice ?? 450)" />
+                        <input type="hidden" name="categoryId"  value="@ViewBag.categoryId" />
+                        <button type="submit" class="btn btn-primary mt-3">Apply Filter</button>
+                    </form>
+
+                </div>
+            </div>
+
+            <div class="col-lg-9">
+                <div class="row justify-content-end py-2">
+                    <div class="col-lg-4">
+                        <form method="get" action="@Url.Action("Index", "Home")">
+                            <div class="input-group input-group-dynamic mb-4">
+                                <span class="input-group-text"><i class="fas fa-search" aria-hidden="true"></i></span>
+                                <input class="form-control" placeholder="Search" type="text" name="searchQuery">
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+
+                <div class="row">
+                    @foreach (var product in ViewBag.productList)
+                    {
+                        var images = ViewBag.ProductImageMap[product.id] as List<Image>;
+
+                        if (images != null && images.Count > 0)
+                        {
+                            <div class="col-md-3 col-sm-6">
+                                <div class="product-grid">
+                                    <div class="product-image">
+                                        <a href="#" class="image">
+                                            <img class="img-1" src="@images[0].imageName">
+                                            <img class="img-2" src="@images[1].imageName">
+                                        </a>
+                                        <ul class="product-links">
+                                            <li><a href="#"><i class="fa fa-heart"></i></a></li>
+                                            <li><a href="#"><i class="fa fa-shopping-cart"></i></a></li>
+                                        </ul>
+                                        <a href="#" class="product-view"><i class="fa fa-search"></i></a>
+                                    </div>
+                                    <div class="product-content">
+                                        <ul class="rating">
+                                            <li class="fas fa-star"></li>
+                                            <li class="fas fa-star"></li>
+                                            <li class="fas fa-star"></li>
+                                            <li class="fas fa-star"></li>
+                                            <li class="fas fa-star disable"></li>
+                                            <li class="disable">(1 reviews)</li>
+                                        </ul>
+                                        <h3 class="title"><a href="#">@product.name</a></h3>
+                                        <div class="price">$@product.price</div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

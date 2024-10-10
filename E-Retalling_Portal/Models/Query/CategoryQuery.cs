@@ -16,5 +16,13 @@ namespace E_Retalling_Portal.Models.Query
         {
             return dbCate.Where(c => c.parentCategoryId == parentId);
         }
+        public static IQueryable<Category> GetSubCategoriesByParentCategoryId(this DbSet<Category> dbCate, int? categoryId)
+        {
+            return dbCate.Where(c => c.parentCategoryId == categoryId);
+        }
+        public static IQueryable<Category> GetSubCategoriesByCategoryId(this DbSet<Category> dbCate, int? categoryId)
+        {
+            return dbCate.Where(c => c.id == categoryId);
+        }
     }
 }
