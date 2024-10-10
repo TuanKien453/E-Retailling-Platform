@@ -5,11 +5,12 @@ using E_Retalling_Portal.Models.Query;
 using E_Retalling_Portal.Services.ExtendService;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using System.ComponentModel.DataAnnotations;
 namespace E_Retalling_Portal.Controllers.ShopManager
 {
-    //[TypeFilter(typeof(ShopOwnerRoleFilter))]
+    [TypeFilter(typeof(ShopOwnerRoleFilter))]
     public class ProductController : Controller
     {
         public IActionResult Index()
@@ -25,7 +26,7 @@ namespace E_Retalling_Portal.Controllers.ShopManager
             using (var context = new Context())
             {
                 //check valid product
-                var product = context.Products.FirstOrDefault(p => p.id == productId&&p.isVariation==true);
+                var product = context.Products.FirstOrDefault(p => p.id == productId && p.isVariation == true);
                 if (product == null)
                 {
                     return View("Views/Shared/ErrorPage/Error500.cshtml");
@@ -38,10 +39,9 @@ namespace E_Retalling_Portal.Controllers.ShopManager
             }
             return View("/Views/SellerShopManager/product/EditVariation.cshtml");
         }
-        public IActionResult ViewProducts() {
+        public IActionResult ViewProducts()
+        {
             int? accId = HttpContext.Session.GetInt32(SessionKeys.AccountId.ToString());
-            //delete when intergrate
-            accId = 3;
             if (accId == null)
             {
                 return View("Views/Shared/ErrorPage/Error500.cshtml");
@@ -54,7 +54,7 @@ namespace E_Retalling_Portal.Controllers.ShopManager
                 List<Product> products = context.Products.GetProductsByShop(shop.id).ToList();
                 ViewBag.products = products;
             }
-            
+
             return View("/Views/SellerShopManager/product/ViewProducts.cshtml");
         }
 
@@ -62,7 +62,7 @@ namespace E_Retalling_Portal.Controllers.ShopManager
         {
             using (var context = new Context())
             {
-                List<Category> categories = context.Categories.ToList();
+                List<Category> categories = context.Categories.GetCategories().ToList();
                 ViewBag.categories = BuildCategoryTree(categories);
             }
             return View("/Views/SellerShopManager/product/AddProduct.cshtml");
@@ -70,26 +70,28 @@ namespace E_Retalling_Portal.Controllers.ShopManager
         [HttpPost]
         public IActionResult AddProductProcess(Product product, List<IFormFile> img)
         {
-            if (!ModelState.IsValid) {
+            product.createAt = DateTime.Now.ToString();
+            if (!ModelState.IsValid)
+            {
                 ModelState.ReadErrors();
                 return View("Views/Shared/ErrorPage/Error500.cshtml");
             }
 
             int? accId = HttpContext.Session.GetInt32(SessionKeys.AccountId.ToString());
-            //delete when intergration
-            accId = 3;
-            if (accId != null) {
-                using (var context = new Context()) { 
+            if (accId != null)
+            {
+                using (var context = new Context())
+                {
                     var shop = context.Shops.GetShopbyAccId(accId.Value).FirstOrDefault();
                     product.shopId = shop.id;
                     product.status = 1;
                     context.Products.Add(product);
                     context.SaveChanges();
-                    SaveImage(product.id,img,context,product);
+                    SaveImage(img, context, product, true);
                     //redicted to input more information
                     if (product.isVariation)
                     {
-                        return RedirectToAction("EditVariation",new {productId = product.id});
+                        return RedirectToAction("EditVariation", new { productId = product.id });
                     }
                     else
                     {
@@ -103,8 +105,10 @@ namespace E_Retalling_Portal.Controllers.ShopManager
             return View("Views/Shared/ErrorPage/Error500.cshtml");
         }
 
-        public IActionResult AddVariation(ProductItem pi) {
-            if (ModelState.IsValid) {
+        public IActionResult AddVariation(ProductItem pi)
+        {
+            if (ModelState.IsValid)
+            {
                 ModelState.ReadErrors();
                 using (var context = new Context())
                 {
@@ -114,7 +118,7 @@ namespace E_Retalling_Portal.Controllers.ShopManager
                 return RedirectToAction("EditVariation", new { productId = pi.productId });
             }
             return View("Views/Shared/ErrorPage/Error500.cshtml");
-            
+
         }
         public IActionResult EditProductItem(ProductItem pi)
         {
@@ -131,7 +135,114 @@ namespace E_Retalling_Portal.Controllers.ShopManager
             return View("Views/Shared/ErrorPage/Error500.cshtml");
 
         }
-        private static void SaveImage(int id, List<IFormFile> img, Context context, Product addedProduct)
+        public IActionResult UpdateProduct(int Productid)
+        {
+            using (var context = new Context())
+            {
+                Product product = context.Products.GetProductById(Productid).FirstOrDefault();
+                //check valid parameter
+                if (product == null)
+                {
+                    return View("Views/Shared/ErrorPage/Error500.cshtml");
+                }
+
+                List<Category> categories = context.Categories.GetCategories().ToList();
+                ViewBag.categories = BuildCategoryTree(categories);
+                ViewBag.product = product;
+            }
+            return View("/Views/SellerShopManager/product/UpdateProduct.cshtml");
+        }
+        public IActionResult UpdateProductProcess(Product p, List<IFormFile> img)
+        {
+            Console.WriteLine("newImgCount:" + img.Count);
+            if (!ModelState.IsValid)
+            {
+
+                ModelState.ReadErrors();
+                return View("Views/Shared/ErrorPage/Error500.cshtml");
+            }
+
+            using (var context = new Context())
+            {
+                List<Image> imgs = context.Images.GetImagesByProductId(p.id).ToList();
+
+                if (imgs.Count + img.Count > 6)
+                {
+                    return View("Views/Shared/ErrorPage/Error500.cshtml");
+                }
+                //excute update for exit image
+                try
+                {
+                    foreach (var item in imgs)
+                    {
+                        bool isCovered = false;
+                        if (item.productCoveredId != null)
+                        {
+                            isCovered = true;
+                        }
+                        var file = Request.Form.Files.GetFile("img" + item.id);
+                        String isUpdate = Request.Form["isUpdate" + item.id];
+                        //update img in this img id
+                        if (file != null)
+                        {
+                            Console.WriteLine($"update image {item.id} to {file.FileName}");
+
+                            //update data in file System
+                            string uniqueFileName = GetUniquePath(file.FileName);
+                            string filePath = Path.Combine("wwwroot/productImages", uniqueFileName);
+                            using (var fileStream = new FileStream(filePath, FileMode.Create))
+                            {
+                                file.CopyTo(fileStream);
+                            }
+                            String exitImagePath = Path.Combine("wwwroot/productImages", item.imageName);
+                            if (System.IO.File.Exists(exitImagePath))
+                            {
+                                System.IO.File.Delete(exitImagePath);
+                            }
+
+                            //update db
+                            item.imageName = uniqueFileName;
+                            context.Images.Update(item);
+                            context.SaveChanges();
+                        }
+                        //delete image
+                        else if (string.Equals(isUpdate, "true", StringComparison.OrdinalIgnoreCase) && !isCovered)
+                        {
+                            Console.WriteLine($"delete image {item.id}");
+                            //delete in file system
+                            String exitImagePath = Path.Combine("wwwroot/productImages", item.imageName);
+                            if (System.IO.File.Exists(exitImagePath))
+                            {
+                                System.IO.File.Delete(exitImagePath);
+                            }
+                            //update db
+                            context.Images.Remove(item);
+                            context.SaveChanges();
+                        }
+                    }
+                }
+                catch (Exception ex) {
+                    return View("Views/Shared/ErrorPage/Error500.cshtml");
+                }
+                    
+
+                //new image
+                SaveImage(img, context, p, false);
+                //update product
+                var product = context.Products.GetProductById(p.id).FirstOrDefault();
+                product.name = p.name;
+                product.price = p.price;
+                product.quantity = p.quantity;
+                product.categoryId = p.categoryId;
+                product.desc = p.desc;
+                context.SaveChanges();
+            }
+
+
+
+            return RedirectToAction("ViewProducts");
+        }
+        private static void SaveImage(List<IFormFile> img, Context context, Product addedProduct, Boolean setCover)
         {
             bool isFirstImg = true;
 
@@ -154,9 +265,9 @@ namespace E_Retalling_Portal.Controllers.ShopManager
                             file.CopyTo(fileStream);
                         }
 
-                        var newImg = new Image { imageName = uniqueFileName, productId = id };
+                        var newImg = new Image { imageName = uniqueFileName, productId = addedProduct.id };
 
-                        if (isFirstImg)
+                        if (setCover && isFirstImg)
                         {
                             newImg.productCoveredId = addedProduct.id;
                             isFirstImg = false;
@@ -185,7 +296,7 @@ namespace E_Retalling_Portal.Controllers.ShopManager
             List<Category> result = new();
             foreach (var category in list.Where(c => c.parentCategoryId == parentid))
             {
-                string newName = new string('\u00A0', level*2) + category.name;
+                string newName = new string('\u00A0', level * 2) + category.name;
                 result.Add(new Category { id = category.id, name = newName, parentCategoryId = category.parentCategoryId });
 
                 var children = BuildCategoryTree(list, level + 1, category.id);
