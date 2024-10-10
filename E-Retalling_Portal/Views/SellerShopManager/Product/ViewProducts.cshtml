@@ -18,6 +18,7 @@
                     <tr>
                         <th>coverImage</th>
                         <th>Name</th>
+                        <th>Category</th>
                         <th>Description</th>
                         <th>Price</th>
                         <th>Quantity</th>
@@ -30,6 +31,7 @@
                         <tr>
                             <td><img class="row-img" src="~/productImages/@item.coverImage.imageName" /></td>
                             <td>@item.name</td>
+                            <td>@item.category.name</td>
                             <td>@item.desc</td>
                             @if (item.isVariation == true)
                             {
@@ -51,10 +53,10 @@
                                 @if (item.isVariation == true)
                                 {
                                     <a href="EditVariation?productId=@item.id" class="text-primary font-weight-bold text-xs btn ">
-                                        Detail
+                                        Variation
                                     </a>@:|
                                 }
-                                <a href="#" class="text-primary font-weight-bold text-xs btn">
+                                <a href="UpdateProduct?productId=@item.id" class="text-primary font-weight-bold text-xs btn">
                                     Edit
                                 </a>|
                                 <a href="#" class="text-danger font-weight-bold text-xs btn">
