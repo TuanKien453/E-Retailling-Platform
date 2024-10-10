@@ -121,7 +121,19 @@
                                             <li class="disable">(1 reviews)</li>
                                         </ul>
                                         <h3 class="title"><a href="#">@product.name</a></h3>
-                                        <div class="price">$@product.price</div>
+                                        @if (product.isVariation == false)
+                                        {
+                                            <div class="price">$@product.price</div>
+                                        }
+                                        else
+                                        {
+                                            @foreach (var productItem in ViewBag.productItemList)
+                                            {
+                                                <div class="price">$@productItem.price</div>
+                                                break; 
+                                            }
+                                        }
+
                                     </div>
                                 </div>
                             </div>

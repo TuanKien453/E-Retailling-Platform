@@ -55,7 +55,9 @@
                                     <label for="displayName" class="form-label">Display Name</label>
                                 </div>
                                 <div class="col-sm-9">
-                                    <input type="text" class="form-control" id="displayName" name="displayName" value="@ViewBag.User.displayName" placeholder="Enter your display name">
+                                    <input type="text" class="form-control" id="displayName" name="displayName" minlength="3" maxlength="30"
+                                           value="@ViewBag.User.displayName" placeholder="Enter your display name"
+                                           pattern="[A-Za-z\s]+" required >
                                 </div>
                             </div>
 
