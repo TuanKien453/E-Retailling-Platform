@@ -11,9 +11,10 @@ namespace E_Retalling_Portal.Models
         [MaxLength(40)]
         [Required(ErrorMessage = "Name is required")]
         public string name { get; set; }
-
+        [MaxLength(60)]
+        public string? deleteAt { get; set; }
         public Category? parent { get; set; }
-        public List<Category>? childrens { get; set; }
+        public List<Category>? childrens { get; set; } 
         public List<Product>? products { get; set; }
     }
 }

@@ -10,13 +10,16 @@ namespace E_Retalling_Portal.Models
         [Required,MaxLength(100)]
         public string name { get; set; }
         public int shopId { get; set; }
-        [MaxLength(2000)]
+        [MaxLength(5000)]
         public string desc { get; set; }
         public double price { get; set; }
         public int quantity {  get; set; }
         public bool isVariation { get; set; }
         public int status {  get; set; }
-
+        [MaxLength(60)]
+        public string? deleteAt { get; set; }
+        [MaxLength(60)]
+        public string? createAt { get; set; }
         public Image? coverImage { get; set; }
         public Shop? shop { get; set; }
         public Category? category { get; set; }

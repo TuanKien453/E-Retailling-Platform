@@ -115,14 +115,14 @@ namespace E_Retalling_Portal.Models
 
             modelBuilder.Entity<OrderItem>()
                 .HasOne(p => p.productItem)
-                .WithMany(p=>p.orderItems)
-                .HasForeignKey(oi=>oi.productItemId)
+                .WithMany(p => p.orderItems)
+                .HasForeignKey(oi => oi.productItemId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Image>()
-                .HasOne(i=>i.productCovered)
-                .WithOne(p=>p.coverImage)
-                .HasForeignKey<Image>(i=>i.productCoveredId);
+                .HasOne(i => i.productCovered)
+                .WithOne(p => p.coverImage)
+                .HasForeignKey<Image>(i => i.productCoveredId);
 
             SeedingCategory(modelBuilder);
             SeedingRole(modelBuilder);
@@ -130,30 +130,75 @@ namespace E_Retalling_Portal.Models
             SeedingAccount(modelBuilder);
             SeedingStatus(modelBuilder);
             SeedingShop(modelBuilder);
+            SeedingProduct(modelBuilder);
+            SeedingImage(modelBuilder);
+        }
+        private static void SeedingImage(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Image>().HasData(
+                new Image {id = 1, productId = 1, imageName = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRrR_VvLy3HYbsqzU7IKn8M5CQhguNszaK1pQ&s",productCoveredId=1 },
+                new Image { id = 2, productId = 1, imageName = "https://static.nike.com/a/images/t_PDP_936_v1/f_auto,q_auto:eco/450ed1df-8e17-4d87-a244-85697874661c/NIKE+REVOLUTION+7.png" },
+
+                new Image { id = 3, productId = 2, imageName = "https://product.hstatic.net/200000378371/product/_uog2187_829ce01e830942949271a3787398632b_master.jpg", productCoveredId = 2 },
+                new Image { id = 4, productId = 2, imageName = "https://product.hstatic.net/1000312752/product/atst747-2v-a_aa40e06550894efb82d4d066ea16b687.jpg" },
+
+                new Image { id = 5, productId = 3, imageName = "https://m.media-amazon.com/images/I/81T-W+2GShL._AC_SL1500_.jpg", productCoveredId = 3 },
+                new Image { id = 6, productId = 3, imageName = "https://m.media-amazon.com/images/I/714t39lASrL._AC_UY1100_.jpg" },
+
+                new Image { id = 7, productId = 4, imageName = "https://www.gap.com/webcontent/0056/081/447/cn56081447.jpg", productCoveredId = 4 },
+                new Image { id = 8, productId = 4, imageName = "https://product.hstatic.net/200000440297/product/sunday_jeans_1_dbbdb8e06e374c798e470a042a3971f8_master.jpg" },
+
+                new Image { id = 9, productId = 5, imageName = "https://tummachines.com/wp-content/uploads/2023/11/bomber-beige-1.jpg", productCoveredId = 5 },
+                new Image { id = 10, productId = 5, imageName = "https://cdn.shopify.com/s/files/1/0123/5065/2473/files/BM17064.473BLK_BLACK-STORM-STOPPER-BOMBER-JACKET.jpg?v=1696607398" },
+
+                new Image { id = 11, productId = 6, imageName = "https://cdn.viettelstore.vn/Images/Product/ProductImage/594842402.jpeg", productCoveredId = 6 },
+                new Image { id = 12, productId = 6, imageName = "https://m.media-amazon.com/images/I/61icsCcbdKL.jpg" },
+
+                new Image { id = 13, productId = 7, imageName = "https://m.media-amazon.com/images/I/61pz4pLftaL._AC_UY1000_.jpg", productCoveredId = 7 },
+                new Image { id = 14, productId = 7, imageName = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTZtBbaz34tgMvMivO0N8H2CK734QXj7qJ8PQ&s" }
+
+             );
+        }
+
+        private static void SeedingProduct(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Product>().HasData(
+                new Product { id = 1, categoryId = 6, name = "Sport Shoe", shopId = 1, desc = "this is a good product", price = 10, quantity = 10, isVariation = true, status = 1 },
+                new Product { id = 2, categoryId = 3, name = "T-shirt", shopId = 1, desc = "High-quality cotton T-shirt", price = 15, quantity = 50, isVariation = false, status = 1 },
+                new Product { id = 3, categoryId = 7, name = "Hat", shopId = 1, desc = "Stylish summer hat", price = 8, quantity = 30, isVariation = false, status = 1 },
+                new Product { id = 4, categoryId = 8, name = "Jeans", shopId = 1, desc = "Comfortable blue jeans", price = 20, quantity = 25, isVariation = true, status = 1 },
+                new Product { id = 5, categoryId = 4, name = "Jacket", shopId = 1, desc = "Warm winter jacket", price = 50, quantity = 15, isVariation = false, status = 1 },
+                new Product { id = 6, categoryId = 5, name = "Watch", shopId = 1, desc = "Elegant wristwatch", price = 100000, quantity = 5, isVariation = false, status = 1 },
+                new Product { id = 7, categoryId = 3, name = "Backpack", shopId = 1, desc = "Durable outdoor backpack", price = 30, quantity = 20, isVariation = true, status = 1 }
+);
+        }
+        private static void SeedingCategory(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Category>().HasData(
+                new Category { id = 1, name = "Clothes", parentCategoryId = null },
+                new Category { id = 2, name = "Watch", parentCategoryId = null },
+                new Category { id = 3, name = "Shirt", parentCategoryId = 1 },
+                new Category { id = 4, name = "Jacket", parentCategoryId = 3 },
+                new Category { id = 5, name = "Luxury watch", parentCategoryId = 2 },
+                new Category { id = 6, name = "Shoe", parentCategoryId = 1 },
+                new Category { id = 7, name = "hat", parentCategoryId = 1 },
+                new Category { id = 8, name = "trouser", parentCategoryId = 1 }
+             );
         }
         private static void SeedingShop(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Shop>().HasData(
-                new Shop {id=1,accountId=3,address="address",name="shopname",createdAt="2000-05-04",shopDescription="sd",statusId=1 }
+                new Shop { id = 1, accountId = 1, address = "address", name = "shopname", createdAt = "2000-05-04", shopDescription = "sd", statusId = 1 }
              );
         }
         private static void SeedingStatus(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Status>().HasData(
-                new Status { id=1,statusName="active"}
+                new Status { id = 1, statusName = "active" }
              );
         }
 
-        private static void SeedingCategory(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<Category>().HasData(
-                new Category { id = 1, name = "Categories 1", parentCategoryId = null },
-                new Category { id = 2, name = "Categories 2", parentCategoryId = null },
-                new Category { id = 3, name = "Subcategory 1", parentCategoryId = 1 },
-                new Category { id = 4, name = "Subcategory 2", parentCategoryId = 3 },
-                new Category { id = 5, name = "Subcategory 3", parentCategoryId = 2 }
-             );
-        }
+        
         private static void SeedingRole(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Role>().HasData(
@@ -197,7 +242,7 @@ namespace E_Retalling_Portal.Models
         private static void SeedingAccount(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Account>().HasData(
-                new Account { id = 1, username = "admin", password = "123", roleId = 1, externalId = null, externalType = null, userId = 1 },
+                new Account { id = 1, username = "admin", password = "123", roleId = 2, externalId = null, externalType = null, userId = 1 },
                 new Account { id = 2, username = "anh", password = "123", roleId = 1, externalId = null, externalType = null, userId = 2 },
                 new Account { id = 3, username = "seller", password = "123", roleId = 2, externalId = null, externalType = null, userId = 2 }
             );

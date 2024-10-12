@@ -2,6 +2,7 @@
     ViewData["Title"] = "Add product";
     Layout = "~/Views/Shared/ShopManagerSideBarLayout.cshtml";
 }
+<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
 
 <div class="content m-4 pb-3">
     <div class="container-fluid ps-5">
@@ -112,7 +113,9 @@
                     <h4 class="font-weight-bold mt-4">
                         Description
                     </h4>
-                    <textarea name="desc" rows="4" placeholder="Enter your description here" class="form-control" maxlength="2000"></textarea>
+                    <div id="editor-container" class="form-control" style="height: 200px;"></div>
+                    <input type="hidden" name="desc" id="desc-hidden">
+                    <p id="char-count">Characters: 0</p>
                     <!----------------------------variation---------------------------->
                     <div class="custom-control custom-switch mb-2 mt-3">
                         <input type="checkbox" class="custom-control-input" id="customSwitch1-2" name="isVariation" value="false" onchange="check()">
@@ -146,14 +149,14 @@
                     <h4 class="font-weight-bold mt-6">
                         Price
                     </h4>
-                    <input id="price" class="form-control disabled" type="text" pattern="^\d+(\.\d{1,2})?$" title="Please enter a valid decimal number up to 2 decimal places." 
-                    placeholder="Price" required name="price">
+                    <input id="price" class="form-control disabled" type="text" pattern="^\d+(\.\d{1,2})?$" title="Please enter a valid decimal number up to 2 decimal places."
+                           placeholder="Price" required name="price">
                     <!--------------------------quantity------------------------------------------------>
                     <h4 class="font-weight-bold mt-4">
                         Quatity
                     </h4>
-                    <input id="quantity" class="form-control" type="text" pattern="^[1-9]\d*$" title="Please enter a positive integer greater than 0" 
-                    placeholder="Quantity" required name="quantity">
+                    <input id="quantity" class="form-control" type="text" pattern="^[1-9]\d*$" title="Please enter a positive integer greater than 0"
+                           placeholder="Quantity" required name="quantity">
                 </div>
             </div>
 
@@ -161,6 +164,49 @@
 
     </div>
 </div>
+
+<script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+<script>
+    var quill = new Quill('#editor-container', {
+        theme: 'snow',
+        placeholder: 'Enter your description here',
+        modules: {
+            toolbar: [
+                // Header options (font size)
+                [{ 'header': [1, 2, 3, false] }],
+                // Font family
+                [{ 'font': [] }],
+                // Text formatting options
+                ['bold', 'italic', 'underline', 'strike'],
+                // Text color and background color
+                [{ 'color': [] }, { 'background': [] }],
+                // List and indent
+                [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                [{ 'indent': '-1' }, { 'indent': '+1' }], // outdent/indent
+                ['link'],
+                // Alignment options
+                [{ 'align': [] }]
+            ]
+        }
+    });
+    const maxLength = 3000;
+
+    quill.on('text-change', function () {
+        var contentLength = quill.getLength();
+
+        if (contentLength > maxLength) {
+            alert("Content exceeds the maximum length of " + maxLength + " characters.");
+            quill.deleteText(maxLength, contentLength);  
+        }
+        document.getElementById('char-count').innerText = "Characters: " + (contentLength - 1); 
+    });
+
+    var form = document.querySelector('form');
+    form.onsubmit = function () {
+        var description = document.querySelector('input[name=desc]');
+        description.value = quill.root.innerHTML;
+    };
+</script>
 <script>
     window.addEventListener('load', function () {
         function resetImageInput(index) {
@@ -172,7 +218,7 @@
         }
     });
 
-    function check(){
+    function check() {
         var isChecked = document.getElementById("customSwitch1-2").checked;
         document.getElementById("customSwitch1-2").value = isChecked ? "true" : "false";
     }
