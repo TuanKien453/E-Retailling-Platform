@@ -101,15 +101,22 @@
                             <div class="col-md-3 col-sm-6">
                                 <div class="product-grid">
                                     <div class="product-image">
-                                        <a href="#" class="image">
-                                            <img class="img-1" src="@images[0].imageName">
-                                            <img class="img-2" src="@images[1].imageName">
+                                        <a href="@Url.Action("Index", "ViewProductDetail", new { area = "Home", productId = product.id })" class="image">
+                                            <img class="img-1" src="~/productImages/@images[0].imageName">
+                                            @if (images.Count > 1 && !string.IsNullOrEmpty(images[1].imageName))
+                                            {
+                                                <img class="img-2" src="~/productImages/@images[1].imageName">
+                                            }
+                                            else
+                                            {
+                                                <img class="img-2">
+                                            }
                                         </a>
                                         <ul class="product-links">
                                             <li><a href="#"><i class="fa fa-heart"></i></a></li>
                                             <li><a href="#"><i class="fa fa-shopping-cart"></i></a></li>
                                         </ul>
-                                        <a href="#" class="product-view"><i class="fa fa-search"></i></a>
+                                        <a href="@Url.Action("Index", "ViewProductDetail", new { area = "Home", productId = product.id })" class="product-view"><i class="fa fa-search"></i></a>
                                     </div>
                                     <div class="product-content">
                                         <ul class="rating">

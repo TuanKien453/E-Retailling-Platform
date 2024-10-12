@@ -125,31 +125,31 @@ body {
     font-family: 'Poppins', sans-serif;
 }
 
-.product-grid .product-image {
+    .product-grid .product-image {
         overflow: hidden;
         position: relative;
         z-index: 1;
-}
+    }
 
-.product-grid .product-image a.image {
-        display: block;
-}
+        .product-grid .product-image a.image {
+            display: block;
+        }
 
-.product-grid .product-image img {
-        width: 100%;
-        height: 300px;
-        object-fit: cover;
-}
+        .product-grid .product-image img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+        }
 
-.product-grid .product-image .img-1 {
-        transition: all 0.3s ease 0s;
-}
+        .product-grid .product-image .img-1 {
+            transition: all 0.3s ease 0s;
+        }
 
-.product-grid:hover .product-image .img-1 {
+    .product-grid:hover .product-image .img-1 {
         opacity: 0;
-}
+    }
 
-.product-grid .product-image .img-2 {
+    .product-grid .product-image .img-2 {
         width: 100%;
         height: 100%;
         opacity: 0;
@@ -159,14 +159,14 @@ body {
         top: 0;
         z-index: -1;
         transition: all 0.3s ease 0s;
-}
+    }
 
-.product-grid:hover .product-image .img-2 {
+    .product-grid:hover .product-image .img-2 {
         opacity: 1;
-}
+    }
 
-.product-grid .product-hot-label,
-.product-grid .product-discount-label {
+    .product-grid .product-hot-label,
+    .product-grid .product-discount-label {
         color: #fff;
         background: #ff6f00;
         font-size: 12px;
@@ -176,15 +176,15 @@ body {
         position: absolute;
         top: 10px;
         left: 10px;
-}
+    }
 
-.product-grid .product-discount-label {
+    .product-grid .product-discount-label {
         background: #ff3939;
         left: auto;
         right: 10px;
-}
+    }
 
-.product-grid .product-view {
+    .product-grid .product-view {
         color: #fff;
         background: #000;
         font-size: 16px;
@@ -200,20 +200,20 @@ body {
         bottom: -40px;
         left: -40px;
         transition: all .3s ease;
-}
+    }
 
-.product-grid:hover .product-view {
+    .product-grid:hover .product-view {
         opacity: 1;
         transform: scale(1);
         bottom: -20px;
         left: -20px;
-}
+    }
 
-.product-grid .product-view:hover {
+    .product-grid .product-view:hover {
         background: #ff6f00;
-}
+    }
 
-.product-grid .product-links {
+    .product-grid .product-links {
         padding: 0;
         margin: 0;
         list-style: none;
@@ -222,29 +222,29 @@ body {
         bottom: 50%;
         right: 10px;
         z-index: 1;
-}
+    }
 
-.product-grid .product-links li {
-         margin: 5px 0;
-         opacity: 0;
-         transform: translateX(100%);
-         transition: all .3s ease;
- }
+        .product-grid .product-links li {
+            margin: 5px 0;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all .3s ease;
+        }
 
-.product-grid .product-links li:nth-child(2) {
-          transition-delay: .1s;
-}
+            .product-grid .product-links li:nth-child(2) {
+                transition-delay: .1s;
+            }
 
-.product-grid .product-links li:nth-child(3) {
-          transition-delay: .2s;
- }
+            .product-grid .product-links li:nth-child(3) {
+                transition-delay: .2s;
+            }
 
-.product-grid:hover .product-links li {
+    .product-grid:hover .product-links li {
         opacity: 1;
         transform: translateX(0);
-}
+    }
 
-.product-grid .product-links li a {
+    .product-grid .product-links li a {
         color: #000;
         background: #fff;
         font-size: 18px;
@@ -255,67 +255,157 @@ body {
         border: 1px solid #000;
         display: block;
         transition: all .3s ease;
-}
+    }
 
-.product-grid .product-links li a:hover {
-          color: #fff;
-          background: #ff6f00;
-          border-color: #ff6f00;
-}
+        .product-grid .product-links li a:hover {
+            color: #fff;
+            background: #ff6f00;
+            border-color: #ff6f00;
+        }
 
-.product-grid .product-content {
+    .product-grid .product-content {
         background: #fff;
         padding: 15px 0 0;
-}
+    }
 
-.product-grid .rating {
+    .product-grid .rating {
         color: #f7bc3d;
         font-size: 11px;
         padding: 0;
         margin: 0 0 8px;
         list-style: none;
-}
+    }
 
-.product-grid .rating li {
+        .product-grid .rating li {
             display: inline-block;
- }
+        }
 
-.product-grid .rating .disable {
+        .product-grid .rating .disable {
             color: #a3a3a3;
-}
+        }
 
-.product-grid .title {
+    .product-grid .title {
         font-size: 15px;
         font-weight: 500;
         text-transform: capitalize;
         margin: 0 0 8px;
-}
+    }
 
-.product-grid .title a {
-        color: #333;
-        transition: all 0.3s ease 0s;
-}
+        .product-grid .title a {
+            color: #333;
+            transition: all 0.3s ease 0s;
+        }
 
-.product-grid .title a:hover {
-         color: #ff6f00;
-}
+            .product-grid .title a:hover {
+                color: #ff6f00;
+            }
 
-.product-grid .price {
+    .product-grid .price {
         color: #a3a3a3;
         font-size: 15px;
         font-weight: 500;
-}
+    }
 
-.product-grid .price span {
-         color: #999;
-         font-size: 14px;
-         font-weight: 400;
-         text-decoration: line-through;
-         margin-right: 5px;
-}
+        .product-grid .price span {
+            color: #999;
+            font-size: 14px;
+            font-weight: 400;
+            text-decoration: line-through;
+            margin-right: 5px;
+        }
 
 @media screen and (max-width: 990px) {
     .product-grid {
         margin-bottom: 30px;
     }
+}
+
+.icon-hover:hover {
+    border-color: #3b71ca !important;
+    background-color: white !important;
+    color: #3b71ca !important;
+}
+
+    .icon-hover:hover i {
+        color: #3b71ca !important;
+    }
+
+.product-grid {
+    display: flex;
+    flex-wrap: wrap; /* ?? các s?n ph?m t? ??ng xu?ng dòng n?u không ?? ch? */
+    gap: 8px; /* Gi?m kho?ng cách gi?a các s?n ph?m nh? h?n */
+    justify-content: flex-start; /* C?n các s?n ph?m t? trái sang ph?i */
+}
+
+.custom-button {
+    display: inline-flex; /* S? d?ng inline-flex ?? nút ch? dài theo n?i dung */
+    align-items: center; /* C?n gi?a n?i dung theo chi?u d?c */
+    justify-content: flex-start; /* C?n l? trái cho n?i dung */
+    min-width: 100px; /* ??t chi?u r?ng t?i thi?u (có th? ?i?u ch?nh theo nhu c?u) */
+    padding: 8px 10px; /* Padding cho nút */
+    border: 1px solid #ddd; /* ???ng vi?n cho nút */
+    background-color: #f9f9f9; /* Màu n?n cho nút */
+    font-size: 12px; /* Kích th??c font ch? */
+    text-align: left; /* C?n trái cho ch? */
+    position: relative; /* V? trí t??ng ??i */
+    border-radius: 4px; /* Bo tròn góc cho nút */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* ?? bóng cho nút */
+    transition: background-color 0.3s ease; /* Hi?u ?ng chuy?n màu n?n */
+    overflow: hidden; /* ?n n?i dung tràn */
+    white-space: nowrap; /* Ng?n không cho ch? xu?ng dòng */
+    text-overflow: ellipsis; /* Hi?n th? ba d?u ch?m n?u ch? quá dài */
+}
+
+
+    .custom-button img {
+        max-width: 50px;
+        margin-right: 10px; /* Thêm kho?ng cách gi?a ?nh và ch? */
+    }
+
+    .custom-button span {
+        display: block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100%;
+    }
+
+
+    .custom-button img {
+        width: 40px; /* Chi?u r?ng ?nh nh? h?n */
+        height: 40px; /* Chi?u cao ?nh t??ng ?ng ?? ?nh vuông */
+        object-fit: contain; /* ??m b?o ?nh không b? méo */
+        margin-right: 8px; /* T?o kho?ng cách gi?a ?nh và ch? */
+    }
+
+    .custom-button:hover {
+        background-color: #e0e0e0; /* ??i màu khi hover ?? t?o hi?u ?ng */
+    }
+
+
+.custom-button.selected .checkmark {
+    display: block; /* Hi?n th? d?u check khi s?n ph?m ???c ch?n */
+}
+
+.custom-button.selected {
+    border-color: green; /* Thay ??i màu vi?n khi s?n ph?m ???c ch?n */
+    background-color: #d0ffd0; /* Thêm hi?u ?ng khi ch?n s?n ph?m */
+}
+#quantityInput {
+    width: 50px; /* Chi?u r?ng c?a input */
+    height: 41px; /* Chi?u cao c?a input */
+    padding: 0; /* B? padding ?? làm cho nó nh? h?n */
+    text-align: center; /* C?n gi?a v?n b?n trong input */
+}
+
+.popup-message {
+    position: fixed;
+    bottom: 20px; /* V? trí popup */
+    right: 20px; /* V? trí popup */
+    background-color: #28a745; /* Màu n?n */
+    color: white; /* Màu ch? */
+    padding: 10px 20px; /* Kho?ng cách trong */
+    border-radius: 5px; /* Bo góc */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2); /* ?? bóng */
+    z-index: 1000; /* ??m b?o nó n?m trên các ph?n t? khác */
+    transition: opacity 0.5s; /* Hi?u ?ng chuy?n ??ng m? d?n */
 }

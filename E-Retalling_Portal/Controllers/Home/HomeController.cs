@@ -9,7 +9,7 @@ using System.Diagnostics;
 using System.Linq;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
-namespace E_Retalling_Portal.Controllers
+namespace E_Retalling_Portal.Controllers.Home
 {
     public class HomeController : Controller
     {

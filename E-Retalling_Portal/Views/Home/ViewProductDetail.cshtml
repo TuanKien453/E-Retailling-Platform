@@ -1,0 +1,193 @@
+﻿@{
+    ViewData["Title"] = "View Product";
+}
+
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="@Url.Action("Index", "Home")">Home</a>
+        </li>
+    </ol>
+</nav>
+<!-- content -->
+<section class="py-5">
+    <div class="container">
+        <div class="row gx-5">
+            <aside class="col-lg-6">
+                <div class="border rounded-4 mb-3 d-flex justify-content-center">
+                    <a data-fslightbox="mygalley" class="rounded-4" target="_blank" data-type="image" href="~/productImages/@(ViewBag.coverImage?.imageName)">
+                        <img id="mainImage" style="width: 610px; height: 300px; margin: auto;" class="rounded-4 fit" src="~/productImages/@(ViewBag.coverImage?.imageName)" />
+                    </a>
+                </div>
+
+                <!-- Danh sách các ảnh nhỏ -->
+                <div class="d-flex justify-content-center mb-3">
+                    @foreach (var image in ViewBag.imageList)
+                    {
+                        <a onmouseover="updateMainImage('/productImages/@(image.imageName)')"
+                           onmouseout="resetMainImage('/productImages/@(ViewBag.coverImage?.imageName)')"
+                           data-fslightbox="mygalley" class="border mx-1 rounded-2" target="_blank" data-type="image" href="~/productImages/@(image.imageName)">
+                            <img width="60" height="60" class="rounded-2" src="~/productImages/@(image.imageName)" />
+                        </a>
+                    }
+                </div>
+            </aside>
+
+            <!-- Khởi tạo lightbox -->
+
+            <main class="col-lg-6">
+                <div class="ps-lg-3">
+                    <h4 class="title text-dark">
+                        @ViewBag.product.name
+                    </h4>
+                    <div class="d-flex flex-row my-3">
+                        <div class="text-warning mb-1 me-2">
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                            <span class="ms-1">
+                                4.5
+                            </span>
+                        </div>
+                        <span class="text-muted"><i class="fas fa-shopping-basket fa-sm mx-1"></i>@ViewBag.product.quantity</span>
+                        <span class="text-success ms-2">In stock</span>
+                    </div>
+
+                    <div class="mb-3">
+                        <span class="h5">$@ViewBag.product.price</span>
+                    </div>
+
+                    <p>
+                        @ViewBag.product.desc
+                    </p>
+
+
+                    <div class="product-grid">
+                        @foreach (var productItem in ViewBag.productItemList)
+                        {
+                            @if (productItem.image.productCoveredId == null)
+                            {
+                                <button class="custom-button" onclick="toggleSelection(this, @productItem.quantity, '/productImages/@(productItem.image.imageName)')"
+                                        onmouseover="updateMainImage('/productImages/@(productItem.image.imageName)')"
+                                        onmouseout="resetMainImage('/productImages/@(ViewBag.coverImage?.imageName)')">
+                                    <img src="~/productImages/@(productItem.image.imageName)" alt="Alternate Text" />
+                                    @ViewBag.product.name - @productItem.attribute
+                                </button>
+                            }
+                        }
+                    </div>
+
+
+                    <hr />
+                    <div class="col-md-4 col-6 mb-3">
+                        <label class="mb-2 d-block">Quantity: </label>
+                        <div class="input-group mb-3" style="width: 170px;">
+                            <button class="btn btn-white border border-secondary px-3" type="button" id="button-addon1" data-mdb-ripple-color="dark" onclick="decreaseValue()">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                            <input type="text" id="quantityInput" class="form-control text-center border border-secondary" value="1" aria-label="Example text with button addon" aria-describedby="button-addon1" style="width: 50px; padding: 0;" />
+                            <button class="btn btn-white border border-secondary px-3" type="button" id="button-addon2" data-mdb-ripple-color="dark" onclick="increaseValue()">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                            Quantity available:<span id="quantityDisplay">@ViewBag.product.quantity</span>
+                        </div>
+                    </div>
+                    <a href="#" class="btn btn-warning shadow-0"> Buy now </a>
+                    <a href="#" class="btn btn-primary shadow-0" onclick="addToCart()"> <i class="me-1 fa fa-shopping-basket"></i> Add to cart </a>
+                    <div id="popupMessage" class="popup-message" style="display: none;">Added to cart successfully!</div>
+                    <a href="#" class="btn btn-light border border-secondary py-2 icon-hover px-3"> <i class="me-1 fa fa-heart fa-lg"></i> Save </a>
+                </div>
+            </main>
+
+
+
+        </div>
+    </div>
+</section>
+<!-- content -->
+<script src="https://cdn.jsdelivr.net/npm/fslightbox/index.js"></script>
+<script>
+    let maxQuantity = 1; // Lấy giá trị mặc định từ sản phẩm hoặc đặt mặc định là 1
+    let selectedButton = null;
+
+    function toggleSelection(button, quantity, imagePath) {
+        // Check if the current button is already selected
+        if (selectedButton === button) {
+            // If the current button is selected, unselect it
+            button.classList.remove('selected');
+            selectedButton = null; // Reset selectedButton to null
+            document.getElementById('quantityInput').value = 1; // Reset value to 1
+            document.getElementById('quantityDisplay').innerText = @ViewBag.product.quantity; // Update max quantity display
+
+            // Reset main image to the default image
+            resetMainImage('/productImages/@(ViewBag.coverImage?.imageName)');
+        } else {
+            // Deselect all other buttons before selecting the new button
+            let allButtons = document.querySelectorAll('.custom-button');
+            allButtons.forEach(btn => btn.classList.remove('selected'));
+
+            // Select the current product button
+            button.classList.add('selected');
+            selectedButton = button; // Update selectedButton to the current button
+
+            // Update max quantity
+            maxQuantity = quantity;
+            document.getElementById('quantityInput').value = 1; // Reset value to 1
+            document.getElementById('quantityDisplay').innerText = maxQuantity; // Update max quantity display
+
+            // Update main image
+            updateMainImage(imagePath);
+        }
+    }
+
+
+    function increaseValue() {
+        const quantityInput = document.getElementById('quantityInput');
+        if (selectedButton === null){
+            maxQuantity = @ViewBag.product.quantity;
+        }
+        if (parseInt(quantityInput.value) < maxQuantity) {
+            quantityInput.value = parseInt(quantityInput.value) + 1; // Tăng giá trị lên 1
+        }
+
+    }
+
+    function decreaseValue() {
+        const quantityInput = document.getElementById('quantityInput');
+        if (parseInt(quantityInput.value) > 1) {
+            quantityInput.value = parseInt(quantityInput.value) - 1; // Giảm giá trị xuống 1
+        }
+    }
+    function updateMainImage(imageSrc) {
+        if (selectedButton === null) {
+            document.getElementById('mainImage').src = imageSrc;
+        }
+    }
+
+    function resetMainImage(defaultImageSrc) {
+        if (selectedButton === null) { // Only reset if no button is selected
+            document.getElementById('mainImage').src = defaultImageSrc;
+        }
+    }
+    function addToCart() {
+        // Giả lập hành động thêm vào giỏ hàng
+        // Thêm logic của bạn ở đây nếu cần thiết
+
+        // Hiển thị popup
+        const popupMessage = document.getElementById('popupMessage');
+        popupMessage.style.display = 'block'; // Hiển thị popup
+        popupMessage.style.opacity = '1'; // Đặt độ mờ cho popup
+
+        // Ẩn popup sau 3 giây
+        setTimeout(() => {
+            popupMessage.style.opacity = '0'; // Thay đổi độ mờ
+            setTimeout(() => {
+                popupMessage.style.display = 'none'; // Ẩn hoàn toàn
+            }, 500); // Thời gian để mờ dần
+        }, 3000); // Thời gian hiển thị popup
+    }
+
+</script>
