@@ -1,0 +1,130 @@
+﻿@{
+    ViewData["Title"] = "CreateShop";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop Registration</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <style>
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        p {
+            text-align: center;
+            color: #777;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+            .form-group label {
+                margin-bottom: 8px;
+                font-weight: 500;
+                color: #555;
+                margin-top: 20px
+            }
+
+            .form-group input,
+            .form-group textarea {
+                padding: 10px;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                font-size: 16px;
+            }
+
+            .form-group textarea {
+                resize: vertical;
+                min-height: 100px;
+                margin-top: 20px;
+            }
+
+            .form-group input[readonly] {
+                background-color: #e9ecef;
+                cursor: not-allowed;
+            }
+
+        .text-danger {
+            color: #d9534f;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        button[type="submit"] {
+            width: 100%;
+            padding: 12px;
+            background-color: #3498db;
+            color: white;
+            font-size: 18px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 20px
+
+        }
+
+            button[type="submit"]:hover {
+                background-color: #2980b9;
+            }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Register Your Shop</h2>
+        <p>It looks like you don't have a Shop. Please register to continue.</p>
+        <form asp-action="CreateShopProcess" method="post">
+            <div class="form-row">
+                <div class="form-group col-6">
+                    <label for="name">Shop Name</label>
+                    <input type="text" id="name" name="name" maxlength="100" required placeholder="Enter shop name" value="@ViewBag.Shop?.name">
+                    @if (ViewBag.ErrorName != null)
+                    {
+                        <p class="text-danger">@ViewBag.ErrorName</p>
+                    }
+                </div>
+                <div class="form-group col-6">
+                    <label for="createdAt">Created At</label>
+                    <input type="text" id="createdAt" name="createdAt" readonly>
+                </div>
+            </div>
+            <div class="form-group col-12">
+                <label for="address">Address</label>
+                <input type="text" id="address" name="address" maxlength="100" required placeholder="Enter shop address" value="@ViewBag.Shop?.address">
+            </div>
+            <div class="form-group col-12">
+                <label for="shopDescription">Shop Description</label>
+                <textarea type="text" id="shopDescription" name="shopDescription" maxlength="2000" required placeholder="Describe your shop">@ViewBag.Shop?.shopDescription</textarea>
+            </div>
+            <button type="submit">Register</button>
+        </form>
+    </div>
+
+</body>
+</html>
+

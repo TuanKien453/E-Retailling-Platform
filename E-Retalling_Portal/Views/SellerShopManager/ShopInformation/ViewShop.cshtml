@@ -1,0 +1,108 @@
+﻿@{
+    ViewData["Title"] = "ViewShop";
+    Layout = "~/Views/Shared/ShopManagerSideBarLayout.cshtml";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop Details</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            background: #fff;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        .shop-details {
+            margin-top: 20px;
+        }
+
+            .shop-details label {
+                display: block;
+                margin: 10px 0 5px;
+                color: #555;
+            }
+
+            .shop-details input {
+                width: 100%;
+                padding: 10px;
+                font-size: 1em;
+                margin-bottom: 10px;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+                background-color: #f9f9f9;
+            }
+
+            .shop-details textarea {
+                resize: vertical; /* Allows the textarea to be resized vertically */
+                min-height: 100px; /* Sets a minimum height */
+                min-width: 750px;
+            }
+
+        .back-button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 15px;
+            background: #007BFF;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+            .back-button:hover {
+                background: #0056b3;
+            }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Shop Details</h1>
+        <div class="shop-details">
+            <form asp-action ="ViewShop">
+                <label for="name">Name:</label>
+                <input type="text" id="name" readonly>
+
+                <label for="createdAt">Created At:</label>
+                <input type="text" id="createdAt" readonly>
+
+
+                <label for="address">Address:</label>
+                <input type="text" id="address" readonly>
+
+                <label for="shopDescription">Description:</label>
+                <textarea id="shopDescription" readonly></textarea>
+             
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const shopData = JSON.parse('@Html.Raw(Json.Serialize(ViewBag.Shop))');
+
+        // Populate the input fields with the shop details
+        document.getElementById('name').value = shopData.name;
+        document.getElementById('createdAt').value = shopData.createdAt;
+        document.getElementById('shopDescription').value = shopData.shopDescription;
+        document.getElementById('address').value = shopData.address;
+    </script>
+</body>
+</html>
+
+

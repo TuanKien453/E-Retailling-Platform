@@ -51,7 +51,7 @@ namespace E_Retalling_Portal.Controllers.Login
 
 							});
 						}
-						return RedirectToAction("Index", "ShopDashBoard");
+						return RedirectToAction("Index", "Shop");
 					}
 					else { ViewBag.ErrorMessage = "Invalid username or password"; }
 				}
