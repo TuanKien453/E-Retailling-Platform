@@ -71,7 +71,7 @@ namespace E_Retalling_Portal.Controllers.ShopManager
         public IActionResult AddProductProcess(Product product, List<IFormFile> img)
         {
             product.createAt = DateTime.Now.ToString();
-            if (!ModelState.IsValid)
+            if (!ModelState.IsValid&&img.Count==0)
             {
                 ModelState.ReadErrors();
                 return View("Views/Shared/ErrorPage/Error500.cshtml");

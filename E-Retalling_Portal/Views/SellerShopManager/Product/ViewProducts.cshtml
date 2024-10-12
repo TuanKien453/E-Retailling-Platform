@@ -19,7 +19,6 @@
                         <th>coverImage</th>
                         <th>Name</th>
                         <th>Category</th>
-                        <th>Description</th>
                         <th>Price</th>
                         <th>Quantity</th>
                         <th>Action</th>
@@ -32,7 +31,7 @@
                             <td><img class="row-img" src="~/productImages/@item.coverImage.imageName" /></td>
                             <td>@item.name</td>
                             <td>@item.category.name</td>
-                            <td>@item.desc</td>
+
                             @if (item.isVariation == true)
                             {
                                 <td class="font-weight-bold text-xs" style="color:gray;">N/A</td>

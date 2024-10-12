@@ -136,25 +136,25 @@ namespace E_Retalling_Portal.Models
         private static void SeedingImage(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Image>().HasData(
-                new Image {id = 1, productId = 1, imageName = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRrR_VvLy3HYbsqzU7IKn8M5CQhguNszaK1pQ&s" },
+                new Image {id = 1, productId = 1, imageName = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRrR_VvLy3HYbsqzU7IKn8M5CQhguNszaK1pQ&s",productCoveredId=1 },
                 new Image { id = 2, productId = 1, imageName = "https://static.nike.com/a/images/t_PDP_936_v1/f_auto,q_auto:eco/450ed1df-8e17-4d87-a244-85697874661c/NIKE+REVOLUTION+7.png" },
 
-                new Image { id = 3, productId = 2, imageName = "https://product.hstatic.net/200000378371/product/_uog2187_829ce01e830942949271a3787398632b_master.jpg" },
+                new Image { id = 3, productId = 2, imageName = "https://product.hstatic.net/200000378371/product/_uog2187_829ce01e830942949271a3787398632b_master.jpg", productCoveredId = 2 },
                 new Image { id = 4, productId = 2, imageName = "https://product.hstatic.net/1000312752/product/atst747-2v-a_aa40e06550894efb82d4d066ea16b687.jpg" },
 
-                new Image { id = 5, productId = 3, imageName = "https://m.media-amazon.com/images/I/81T-W+2GShL._AC_SL1500_.jpg" },
+                new Image { id = 5, productId = 3, imageName = "https://m.media-amazon.com/images/I/81T-W+2GShL._AC_SL1500_.jpg", productCoveredId = 3 },
                 new Image { id = 6, productId = 3, imageName = "https://m.media-amazon.com/images/I/714t39lASrL._AC_UY1100_.jpg" },
 
-                new Image { id = 7, productId = 4, imageName = "https://www.gap.com/webcontent/0056/081/447/cn56081447.jpg" },
+                new Image { id = 7, productId = 4, imageName = "https://www.gap.com/webcontent/0056/081/447/cn56081447.jpg", productCoveredId = 4 },
                 new Image { id = 8, productId = 4, imageName = "https://product.hstatic.net/200000440297/product/sunday_jeans_1_dbbdb8e06e374c798e470a042a3971f8_master.jpg" },
 
-                new Image { id = 9, productId = 5, imageName = "https://tummachines.com/wp-content/uploads/2023/11/bomber-beige-1.jpg" },
+                new Image { id = 9, productId = 5, imageName = "https://tummachines.com/wp-content/uploads/2023/11/bomber-beige-1.jpg", productCoveredId = 5 },
                 new Image { id = 10, productId = 5, imageName = "https://cdn.shopify.com/s/files/1/0123/5065/2473/files/BM17064.473BLK_BLACK-STORM-STOPPER-BOMBER-JACKET.jpg?v=1696607398" },
 
-                new Image { id = 11, productId = 6, imageName = "https://cdn.viettelstore.vn/Images/Product/ProductImage/594842402.jpeg" },
+                new Image { id = 11, productId = 6, imageName = "https://cdn.viettelstore.vn/Images/Product/ProductImage/594842402.jpeg", productCoveredId = 6 },
                 new Image { id = 12, productId = 6, imageName = "https://m.media-amazon.com/images/I/61icsCcbdKL.jpg" },
 
-                new Image { id = 13, productId = 7, imageName = "https://m.media-amazon.com/images/I/61pz4pLftaL._AC_UY1000_.jpg" },
+                new Image { id = 13, productId = 7, imageName = "https://m.media-amazon.com/images/I/61pz4pLftaL._AC_UY1000_.jpg", productCoveredId = 7 },
                 new Image { id = 14, productId = 7, imageName = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTZtBbaz34tgMvMivO0N8H2CK734QXj7qJ8PQ&s" }
 
              );

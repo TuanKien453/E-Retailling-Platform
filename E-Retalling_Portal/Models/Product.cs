@@ -10,7 +10,7 @@ namespace E_Retalling_Portal.Models
         [Required,MaxLength(100)]
         public string name { get; set; }
         public int shopId { get; set; }
-        [MaxLength(2000)]
+        [MaxLength(5000)]
         public string desc { get; set; }
         public double price { get; set; }
         public int quantity {  get; set; }
