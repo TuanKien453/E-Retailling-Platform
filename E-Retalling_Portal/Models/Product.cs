@@ -17,6 +17,8 @@ namespace E_Retalling_Portal.Models
         public bool isVariation { get; set; }
         public int status {  get; set; }
         [MaxLength(60)]
+        public string? deleteAt { get; set; }
+        [MaxLength(60)]
         public string? createAt { get; set; }
         public Image? coverImage { get; set; }
         public Shop? shop { get; set; }

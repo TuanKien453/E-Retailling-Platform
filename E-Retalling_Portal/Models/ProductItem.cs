@@ -12,6 +12,8 @@ namespace E_Retalling_Portal.Models
         public int imageId { get; set; }
         [Required,MaxLength(100)]
         public String attribute { get; set; }
+        [MaxLength(60)]
+        public string? deleteAt { get; set; }
         public Product? product { get; set; }
         public Image? image { get; set; }
         public List<OrderItem>? orderItems { get; set; }
