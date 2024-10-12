@@ -19,16 +19,16 @@ builder.Services.AddSingleton<RolePermissionService>();
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(30);
-    options.Cookie.HttpOnly = true; 
-    options.Cookie.IsEssential = true; 
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
 });
 
 // Set up Google authentication
 builder.Services.AddAuthentication(options =>
 {
-    options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme; 
+    options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
-   options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
 })
 .AddCookie() // 
 .AddGoogle(googleOptions =>
@@ -37,18 +37,24 @@ builder.Services.AddAuthentication(options =>
     googleOptions.ClientId = "354187502456-5c57ueucqrim692amg4emevq6ntpc99f.apps.googleusercontent.com";
     googleOptions.ClientSecret = "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";
     googleOptions.CallbackPath = new PathString("/signin-from-google");
-	googleOptions.ClaimActions.MapJsonKey("externalId", "sub");
-	googleOptions.ClaimActions.MapJsonKey("provider", "google");
+    googleOptions.ClaimActions.MapJsonKey("externalId", "sub");
+    googleOptions.ClaimActions.MapJsonKey("provider", "google");
 })
 .AddFacebook(facebookOptions =>
 {
     facebookOptions.AppId = "1568270060736221";
-	facebookOptions.AppSecret = "7b662f21147322f4a933c0f1faf98308";
-	facebookOptions.CallbackPath = new PathString("/signin-from-facebook");
-	facebookOptions.Scope.Add("email"); 
-	facebookOptions.SaveTokens = true;
-	facebookOptions.ClaimActions.MapJsonKey("externalId", "id");
-	facebookOptions.ClaimActions.MapJsonKey("provider", "facebook");
+    facebookOptions.AppSecret = "7b662f21147322f4a933c0f1faf98308";
+    facebookOptions.CallbackPath = new PathString("/signin-from-facebook");
+    facebookOptions.Scope.Add("email");
+    facebookOptions.SaveTokens = true;
+    facebookOptions.ClaimActions.MapJsonKey("externalId", "id");
+    facebookOptions.ClaimActions.MapJsonKey("provider", "facebook");
+});
+
+builder.Services.AddSingleton<GroqAiService>(sp =>
+{
+    var apiKey = builder.Configuration.GetValue<string>("GropClound:ApiKey");
+    return new GroqAiService(apiKey);
 });
 
 var app = builder.Build();
