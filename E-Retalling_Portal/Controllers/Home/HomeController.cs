@@ -29,12 +29,11 @@ namespace E_Retalling_Portal.Controllers.Home
             using (var context = new Context())
             {
                 var imageList = context.Images.ToList();
-                var productList = context.Products.ToList();
-                var categoryList = context.Categories.ToList();
-                var subcategoryList = context.Categories.Where(c => c.parentCategoryId != null).ToList();
+                var productList = context.Products.GetProduct().ToList();
+                var categoryList = context.Categories.GetCategories().ToList();
+                var subcategoryList = context.Categories.GetSubCategories().ToList();
                 var productItemList = context.ProductItems.ToList();
                 List<BreadcrumbItem> breadcrumbList = new List<BreadcrumbItem>();
-
                 breadcrumbList = GetBreadcrumListFromCategoryList(categoryList, categoryId, breadcrumbList, context);
 
                 ViewBag.breadcrumbList = breadcrumbList;
@@ -57,12 +56,6 @@ namespace E_Retalling_Portal.Controllers.Home
                     productList = GetProductsBySubCategories(categoryId, categoryList, productList, context);
                 }
 
-                //Map images into product by productId
-                var productImageMap = productList.ToDictionary(
-                    product => product.id,
-                    product => context.Images.GetImagesByProductId(product.id).ToList()
-                );
-
                 if (searchQuery != null)
                 {
                     //Get product by filter search
@@ -74,11 +67,11 @@ namespace E_Retalling_Portal.Controllers.Home
                     //Get product by filtery price
                     productList = productList = context.Products.GetProdutsByPrice(minPrice, maxPrice).ToList();
                 }
+                ViewBag.imageList = imageList;
                 ViewBag.productItemList = productItemList;
                 ViewBag.categoryId = categoryId;
                 ViewBag.minPrice = minPrice;
                 ViewBag.maxPrice = maxPrice;
-                ViewBag.ProductImageMap = productImageMap;
                 ViewBag.productList = productList;
                 return View();
             }
@@ -104,7 +97,7 @@ namespace E_Retalling_Portal.Controllers.Home
         {
             if (!string.IsNullOrEmpty(searchQuery))
             {
-                return productList.Where(p => p.name.Contains(searchQuery, StringComparison.OrdinalIgnoreCase))
+                return productList.Where(p => p.name.Contains(searchQuery, StringComparison.OrdinalIgnoreCase) && p.deleteAt != null)
                         .ToList(); ;
             }
             return productList;
@@ -120,7 +113,7 @@ namespace E_Retalling_Portal.Controllers.Home
 
             List<int> subCategoryIds = new List<int> { categoryId.Value };
 
-            var childCategories = categoryList.Where(c => c.parentCategoryId == categoryId.Value).ToList();
+            var childCategories = categoryList.Where(c => c.parentCategoryId == categoryId.Value && c.deleteAt == null).ToList();
 
             foreach (var category in childCategories)
             {

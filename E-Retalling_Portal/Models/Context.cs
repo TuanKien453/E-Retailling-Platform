@@ -137,32 +137,43 @@ namespace E_Retalling_Portal.Models
         private static void SeedingProductItem(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<ProductItem>().HasData(
-                new ProductItem { id = 1, productId = 1, quantity = 5, price = 15, imageId = 1, attribute = "s" },
-                new ProductItem { id = 2, productId = 1, quantity = 7, price = 15, imageId = 2, attribute = "S" }
+                new ProductItem { id = 1, productId = 1, quantity = 5, price = 15, imageId = 1, attribute = "L" },
+                new ProductItem { id = 2, productId = 1, quantity = 7, price = 20, imageId = 2, attribute = "S" },
+                new ProductItem { id = 3, productId = 3, quantity = 10, price = 25, imageId = 3, attribute = "X" },
+                new ProductItem { id = 4, productId = 3, quantity = 10, price = 25, imageId = 4, attribute = "X" }
             );
         }
         private static void SeedingImage(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Image>().HasData(
                 new Image { id = 1, productId = 1, imageName = "Screenshot 2024-09-13 154422.png", productCoveredId = 1 },
-                new Image { id = 2, productId = 1, imageName = "Screenshot 2024-09-14 075432.png"  },
-                new Image { id = 3, productId = 2, imageName = "Screenshot 2024-09-14 080322.png", productCoveredId = 2 },
-                new Image { id = 4, productId = 2, imageName = "Screenshot 2024-09-16 214607.png" }
+                new Image { id = 2, productId = 1, imageName = "Screenshot 2024-09-14 075432.png" },
+                new Image { id = 3, productId = 2, imageName = "Screenshot 2024-09-14 075432.png", productCoveredId = 2 },
+                new Image { id = 4, productId = 3, imageName = "Screenshot 2024-09-14 080322.png", productCoveredId = 3 },
+                new Image { id = 5, productId = 3, imageName = "Screenshot 2024-09-16 214607.png" },
+                                new Image { id = 6, productId = 4, imageName = "Screenshot 2024-09-16 214607.png", productCoveredId = 4 }
+
                              );
         }
 
         private static void SeedingProduct(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Product>().HasData(
-                new Product { id = 1, categoryId = 1, name = "Sport Shoe", shopId = 1, desc = "this is a good product", price = 10, quantity = 10, isVariation = true, status = 1 },
-                new Product { id = 2, categoryId = 2, name = "T-shirt", shopId = 1, desc = "High-quality cotton T-shirt", price = 15, quantity = 50, isVariation = false, status = 1 }
+                new Product { id = 1, categoryId = 3, name = "Sport Shoe", shopId = 1, desc = "this is a good product", price = 10, quantity = 10, isVariation = true, status = 1 },
+                new Product { id = 2, categoryId = 4, name = "T-shirt", shopId = 1, desc = "High-quality cotton T-shirt", price = 15, quantity = 5, isVariation = false, status = 1 },
+                new Product { id = 3, categoryId = 5, name = "Jacket", shopId = 1, desc = "High-quality cotton T-shirt", price = 10, quantity = 6, isVariation = true, status = 1 },
+                 new Product { id = 4, categoryId = 6, name = "Jacket", shopId = 1, desc = "High-quality cotton T-shirt", price = 10, quantity = 6, isVariation = true, status = 1 }
 );
         }
         private static void SeedingCategory(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Category>().HasData(
                 new Category { id = 1, name = "Clothes", parentCategoryId = null },
-                new Category { id = 2, name = "Watch", parentCategoryId = null }
+                new Category { id = 2, name = "Watch", parentCategoryId = null },
+                new Category { id = 3, name = "Jean", parentCategoryId = 1 },
+                new Category { id = 4, name = "Shirt", parentCategoryId = 1 },
+                new Category { id = 5, name = "Jacket", parentCategoryId = 3 },
+                new Category { id = 6, name = "abc", parentCategoryId = 1 }
 
              );
         }
