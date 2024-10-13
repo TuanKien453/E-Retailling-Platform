@@ -16,19 +16,19 @@
         <div class="row gx-5">
             <aside class="col-lg-6">
                 <div class="border rounded-4 mb-3 d-flex justify-content-center">
-                    <a data-fslightbox="mygalley" class="rounded-4" target="_blank" data-type="image" href="~/productImages/@(ViewBag.coverImage?.imageName)">
-                        <img id="mainImage" style="width: 610px; height: 300px; margin: auto;" class="rounded-4 fit" src="~/productImages/@(ViewBag.coverImage?.imageName)" />
+                    <a data-fslightbox="mygalley" class="rounded-4" target="_blank" data-type="image" href="~/productImages/@(ViewBag.product.coverImage.imageName)">
+                        <img id="mainImage" style="width: 610px; height: 300px; margin: auto;" class="rounded-4 fit" src="~/productImages/@(ViewBag.product.coverImage.imageName)" />
                     </a>
                 </div>
 
                 <!-- Danh sách các ảnh nhỏ -->
                 <div class="d-flex justify-content-center mb-3">
-                    @foreach (var image in ViewBag.imageList)
+                    @foreach (var productItem in ViewBag.productItemList)
                     {
-                        <a onmouseover="updateMainImage('/productImages/@(image.imageName)')"
-                           onmouseout="resetMainImage('/productImages/@(ViewBag.coverImage?.imageName)')"
-                           data-fslightbox="mygalley" class="border mx-1 rounded-2" target="_blank" data-type="image" href="~/productImages/@(image.imageName)">
-                            <img width="60" height="60" class="rounded-2" src="~/productImages/@(image.imageName)" />
+                        <a onmouseover="updateMainImage('/productImages/@(productItem.image.imageName)')"
+                           onmouseout="resetMainImage('/productImages/@ViewBag.product.coverImage.imageName')"
+                           data-fslightbox="mygalley" class="border mx-1 rounded-2" target="_blank" data-type="image" href="~/productImages/@(productItem.image.imageName)">
+                            <img width="60" height="60" class="rounded-2" src="~/productImages/@(productItem.image.imageName)" />
                         </a>
                     }
                 </div>
@@ -72,7 +72,7 @@
                             {
                                 <button class="custom-button" onclick="toggleSelection(this, @productItem.quantity, '/productImages/@(productItem.image.imageName)',@productItem.id)"
                                         onmouseover="updateMainImage('/productImages/@(productItem.image.imageName)')"
-                                        onmouseout="resetMainImage('/productImages/@(ViewBag.coverImage?.imageName)')">
+                                        onmouseout="resetMainImage('/productImages/@ViewBag.product.coverImage.imageName')">
                                     <img src="~/productImages/@(productItem.image.imageName)" alt="Alternate Text" />
                                     @ViewBag.product.name - @productItem.attribute
                                 </button>
@@ -154,7 +154,7 @@
             document.getElementById('quantityDisplay').innerText = @ViewBag.product.quantity;
             selectedProductId = null;
 
-            resetMainImage('/productImages/@(ViewBag.coverImage?.imageName)');
+            resetMainImage('/productImages/@ViewBag.product.coverImage.imageName');
         } else {
             let allButtons = document.querySelectorAll('.custom-button');
             allButtons.forEach(btn => btn.classList.remove('selected'));

@@ -13,9 +13,5 @@ namespace E_Retalling_Portal.Models.Query
         {
             return dbProductItem.Where(pi => pi.id == productItemId && pi.deleteAt == null); 
         }
-        public static IQueryable<ProductItem> GetProductItemByProduct(this DbSet<ProductItem> dbProductItem, int productId)
-        {
-            return dbProductItem.Include("image").Where(pi => pi.productId == productId && pi.deleteAt == null);
-        }
     }
 }

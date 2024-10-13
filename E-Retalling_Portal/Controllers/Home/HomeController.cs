@@ -29,10 +29,10 @@ namespace E_Retalling_Portal.Controllers.Home
             using (var context = new Context())
             {
                 var imageList = context.Images.ToList();
+
                 var productList = context.Products.GetProduct().ToList();
                 var categoryList = context.Categories.GetCategories().ToList();
-                var subcategoryList = context.Categories.GetSubCategories().ToList();
-                var productItemList = context.ProductItems.ToList();
+                var subcategoryList = context.Categories.GetSubCategories().ToList();         
                 List<BreadcrumbItem> breadcrumbList = new List<BreadcrumbItem>();
                 breadcrumbList = GetBreadcrumListFromCategoryList(categoryList, categoryId, breadcrumbList, context);
 
@@ -68,7 +68,6 @@ namespace E_Retalling_Portal.Controllers.Home
                     productList = productList = context.Products.GetProdutsByPrice(minPrice, maxPrice).ToList();
                 }
                 ViewBag.imageList = imageList;
-                ViewBag.productItemList = productItemList;
                 ViewBag.categoryId = categoryId;
                 ViewBag.minPrice = minPrice;
                 ViewBag.maxPrice = maxPrice;
