@@ -11,13 +11,14 @@ namespace E_Retalling_Portal.Controllers.Home
             using (var context = new Context())
             {
                 int? accountId = HttpContext.Session.GetInt32(SessionKeys.AccountId.ToString());
-                var imageList = context.Images.GetImagesByProductId(productId.Value).ToList();
                 var product = context.Products.GetProductById(productId.Value).FirstOrDefault();
                 var productItemList = context.ProductItems.GetProductItem(productId.Value).ToList();
-                var similarProducts = context.Products.GetSimilarProductByProductCategory(product.category).ToList();
+                var similarProducts = context.Products.GetSimilarProductByProductCategory(product.category,product.id).ToList();
+                double minPrice = productItemList.Min(pi => pi.price);
+                double maxPrice = productItemList.Max(pi => pi.price);
 
+                ViewBag.minPrice = minPrice; ViewBag.maxPrice = maxPrice;
                 ViewBag.accountId = accountId;
-                ViewBag.imageList = imageList;
                 ViewBag.product = product;
                 ViewBag.productItemList = productItemList;
                 ViewBag.similarProducts = similarProducts;

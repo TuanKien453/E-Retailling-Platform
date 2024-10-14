@@ -137,10 +137,10 @@ namespace E_Retalling_Portal.Models
         private static void SeedingProductItem(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<ProductItem>().HasData(
-                new ProductItem { id = 1, productId = 1, quantity = 5, price = 15, imageId = 2, attribute = "L" },
-                new ProductItem { id = 2, productId = 1, quantity = 7, price = 20, imageId = 3, attribute = "S" },
-                new ProductItem { id = 3, productId = 3, quantity = 10, price = 25, imageId = 8, attribute = "X" },
-                new ProductItem { id = 4, productId = 3, quantity = 10, price = 25, imageId = 9, attribute = "X" }
+                new ProductItem { id = 1, productId = 1, quantity = 5, price = 15, imageId = 1, attribute = "L" },
+                new ProductItem { id = 2, productId = 1, quantity = 7, price = 13, imageId = 3, attribute = "S" },
+                new ProductItem { id = 3, productId = 3, quantity = 10, price = 20, imageId = 8, attribute = "X" },
+                new ProductItem { id = 4, productId = 3, quantity = 10, price = 14, imageId = 9, attribute = "X" }
             );
         }
         private static void SeedingImage(ModelBuilder modelBuilder)
@@ -162,10 +162,10 @@ namespace E_Retalling_Portal.Models
         private static void SeedingProduct(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Product>().HasData(
-                new Product { id = 1, categoryId = 3, name = "Sport Shoe", shopId = 1, desc = "this is a good product", price = 11, quantity = 10, isVariation = true, status = 1 },
-                new Product { id = 2, categoryId = 4, name = "T-shirt", shopId = 1, desc = "High-quality cotton T-shirt", price = 12, quantity = 5, isVariation = false, status = 1 },
-                new Product { id = 3, categoryId = 5, name = "Jacket", shopId = 1, desc = "High-quality cotton T-shirt", price = 13, quantity = 6, isVariation = true, status = 1 },
-                 new Product { id = 4, categoryId = 6, name = "Jacketooo", shopId = 1, desc = "High-quality cotton T-shirt", price = 14, quantity = 6, isVariation = false, status = 1 }
+                new Product { id = 1, categoryId = 3, name = "Sport Shoe", shopId = 1, desc = "<p>this is a good product<p/>", price = 11, quantity = 10, isVariation = true, status = 1 },
+                new Product { id = 2, categoryId = 4, name = "T-shirt", shopId = 1, desc = "<p>this is a good product<p/>", price = 12, quantity = 5, isVariation = false, status = 1 },
+                new Product { id = 3, categoryId = 4, name = "Jacket", shopId = 1, desc = "<p>this is a good product<p/>", price = 13, quantity = 6, isVariation = true, status = 1 },
+                 new Product { id = 4, categoryId = 6, name = "Jacketooo", shopId = 1, desc = "<p>this is a good product<p/>", price = 14, quantity = 6, isVariation = false, status = 1 }
 );
         }
         private static void SeedingCategory(ModelBuilder modelBuilder)
@@ -183,7 +183,8 @@ namespace E_Retalling_Portal.Models
         private static void SeedingShop(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Shop>().HasData(
-                new Shop { id = 1, accountId = 1, address = "address", name = "shopname", createdAt = "2000-05-04", shopDescription = "sd", statusId = 1 }
+                new Shop { id = 1, accountId = 1, address = "address", name = "shopname", createdAt = "2000-05-04", shopDescription = "sd", statusId = 1 },
+                new Shop { id = 2, accountId = 3, address = "address", name = "shopname", createdAt = "2000-05-04", shopDescription = "sd", statusId = 1 }
              );
         }
         private static void SeedingStatus(ModelBuilder modelBuilder)

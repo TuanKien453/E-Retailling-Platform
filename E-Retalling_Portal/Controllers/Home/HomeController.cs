@@ -31,8 +31,8 @@ namespace E_Retalling_Portal.Controllers.Home
                 var imageList = context.Images.ToList();
 
                 var productList = context.Products.GetProduct().ToList();
-                var categoryList = context.Categories.GetCategories().ToList();
-                var subcategoryList = context.Categories.GetSubCategories().ToList();         
+                var categoryList = context.Categories.GetCategories().ToList();             
+                var subcategoryList = context.Categories.GetSubCategories().ToList();       
                 List<BreadcrumbItem> breadcrumbList = new List<BreadcrumbItem>();
                 breadcrumbList = GetBreadcrumListFromCategoryList(categoryList, categoryId, breadcrumbList, context);
 
@@ -67,6 +67,18 @@ namespace E_Retalling_Portal.Controllers.Home
                     //Get product by filtery price
                     productList = productList = context.Products.GetProdutsByPrice(minPrice, maxPrice).ToList();
                 }
+
+                //Get min price of productItems
+                foreach (var product in productList)
+                {
+                    if (product.productItems != null && product.productItems.Count > 0)
+                    {
+                        var min = product.productItems.Min(item => item.price);
+
+                        product.price = min; 
+                    }
+                }
+
                 ViewBag.imageList = imageList;
                 ViewBag.categoryId = categoryId;
                 ViewBag.minPrice = minPrice;

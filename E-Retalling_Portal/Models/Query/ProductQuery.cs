@@ -21,12 +21,12 @@ namespace E_Retalling_Portal.Models.Query
         .Where(p => p.deleteAt == null
                     && p.isVariation == true
                     && p.productItems != null
-                    && p.productItems.Count > 1);
+                    && p.productItems.Count > 0);
         }
-        public static IQueryable<Product> GetSimilarProductByProductCategory(this DbSet<Product> dbProduct, Category category)
+        public static IQueryable<Product> GetSimilarProductByProductCategory(this DbSet<Product> dbProduct, Category category, int productId)
         {
-            return dbProduct.Include(p => p.coverImage).Include(p => p.images).Include(p => p.productItems).Include(p => p.category).Where(p => p.deleteAt == null && p.category.parentCategoryId == category.parentCategoryId && p.category.id != category.id && p.productItems != null
-                    && p.productItems.Count > 1);
+            return dbProduct.Include(p => p.coverImage).Include(p => p.images).Include(p => p.productItems).Include(p => p.category).Where(p => p.deleteAt == null && p.category.parentCategoryId == category.parentCategoryId && p.productItems != null && p.id != productId
+                    && p.productItems.Count > 0);
         }
 
 
