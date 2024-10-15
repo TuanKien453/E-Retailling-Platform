@@ -126,7 +126,7 @@
                                         <li class="fas fa-star disable"></li>
                                         <li class="disable">(1 reviews)</li>
                                     </ul>
-                                    <h3 class="title"><a href="#">@product.name</a></h3>
+                                    <h3 class="title"><a href="@Url.Action("Index", "ViewProductDetail", new { area = "Home", productId = product.id })">@product.name</a></h3>
                                     <div class="price">$@product.price</div>
                                 </div>
                             </div>
