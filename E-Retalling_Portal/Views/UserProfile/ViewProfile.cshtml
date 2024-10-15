@@ -10,29 +10,29 @@
             <div class="col-lg-4">
                 <div class="card mb-4 row">
                     <div class="card-body text-center">
-                      
-                            @if (  ViewBag.User.gender == null)
-                            {
-                                 <img src="https://emedia1.nhs.wales/HEIW2/cache/file/F4C33EF0-69EE-4445-94018B01ADCF6FD4.png" alt="avatar"
-                                     class="rounded-circle img-fluid" style="width: 150px;">
-                            }
-                            else if (ViewBag.User.gender == "Male")
-                            {
-                                <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp" alt="avatar"
-                                     class="rounded-circle img-fluid" style="width: 150px;">
-                            }
-                            else if (ViewBag.User.gender == "Female")
-                            {
-                                <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava4.webp" alt="avatar"
-                                     class="rounded-circle img-fluid" style="width: 150px;">
-                            }
 
-                        
-                        
+                        @if (ViewBag.User.gender == null)
+                        {
+                            <img src="https://emedia1.nhs.wales/HEIW2/cache/file/F4C33EF0-69EE-4445-94018B01ADCF6FD4.png" alt="avatar"
+                                 class="rounded-circle img-fluid" style="width: 150px;">
+                        }
+                        else if (ViewBag.User.gender == "Male")
+                        {
+                            <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp" alt="avatar"
+                                 class="rounded-circle img-fluid" style="width: 150px;">
+                        }
+                        else if (ViewBag.User.gender == "Female")
+                        {
+                            <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava4.webp" alt="avatar"
+                                 class="rounded-circle img-fluid" style="width: 150px;">
+                        }
+
+
+
 
                         <h5 class="my-3">@ViewBag.User.displayName</h5>
 
-                        @if(ViewBag.Account != null && ViewBag.Account.username != null)
+                        @if (ViewBag.Account != null && ViewBag.Account.username != null)
                         {
                             <div class="d-flex justify-content-center mb-2">
                                 <button type="button" class="btn btn-outline-secondary ms-1" data-bs-toggle="modal" data-bs-target="#changePasswordModal">
@@ -40,7 +40,7 @@
                                 </button>
                             </div>
                         }
-                       
+
                     </div>
                 </div>
 
@@ -55,8 +55,9 @@
                                     <label for="displayName" class="form-label">Display Name</label>
                                 </div>
                                 <div class="col-sm-9">
-                                    <input type="text" class="form-control" id="displayName" name="displayName" minlength="0" maxlength="30"
-                                           value="@ViewBag.User.displayName" placeholder="Enter your display name">
+                                    <input type="text" class="form-control" id="displayName" name="displayName" minlength="3" maxlength="30"
+                                           value="@ViewBag.User.displayName" placeholder="Enter your display name"
+                                           pattern="[A-Za-z\s]+" required>
                                 </div>
                             </div>
 

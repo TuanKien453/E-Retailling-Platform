@@ -66,7 +66,10 @@
                         </a>
                     </li>
                 </ul>
-                
+                <a class="navbar-brand position-relative" href="@Url.Action("Index","Cart")" target="_blank">
+                    <i class="fas fa-shopping-cart" style="font-size: 20px;"></i>
+                    <span class="badge bg-dark position-absolute top-10 start-100 translate-middle rounded-pill" style="padding: 0.1em 0.3em; height: 1.2rem; min-width: 1.2rem; line-height: 1.2rem;"></span>
+                </a>
                 <ul class="navbar-nav d-lg-block d-none">
                     @if (AccountId == null)
                     {
@@ -76,7 +79,7 @@
                     }
                     else
                     {
-                        
+
                         <li>
                             <div class="dropdown">
                                 <button class="btn bg-gradient-dark dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
@@ -134,14 +137,7 @@
             &copy; 2024 - E_Retalling_Portal - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
-
-
-
-
-
-
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/11.0.2/css/bootstrap-slider.min.css" /
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/11.0.2/css/bootstrap-slider.min.css" />
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/11.0.2/bootstrap-slider.min.js"></script>
     <script src="~/kit/js/material-kit.min.js" asp-append-version="true"></script>

@@ -8,5 +8,9 @@ namespace E_Retalling_Portal.Models.Query
         {
             return dbImage.Where(i => i.productId == productId);
         }
+        public static IQueryable<Image> GetCoverImagesByProductId(this DbSet<Image> dbImage, int productId)
+        {
+            return dbImage.Where(i => i.productCoveredId == productId);
+        }
     }
 }

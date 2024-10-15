@@ -1,0 +1,255 @@
+﻿@{
+    ViewData["Title"] = "View Product";
+    var displayedImages = new HashSet<string>();
+}
+
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="@Url.Action("Index", "Home")">Home</a>
+        </li>
+    </ol>
+</nav>
+<!-- content -->
+<section class="py-5">
+    <div class="container">
+        <div class="row gx-5">
+            <aside class="col-lg-6">
+                <div class="border rounded-4 mb-3 d-flex justify-content-center">
+                    <a data-fslightbox="mygalley" class="rounded-4" target="_blank" data-type="image" href="~/productImages/@(ViewBag.product.coverImage.imageName)">
+                        <img id="mainImage" style="width: 100%; height: 300px; object-fit: cover; margin: auto;" class="rounded-4 fit" src="~/productImages/@(ViewBag.product.coverImage.imageName)" />
+                    </a>
+
+                </div>
+
+                <!-- Danh sách các ảnh nhỏ -->
+                <div class="d-flex justify-content-center mb-3">
+                    @foreach (var productItem in ViewBag.productItemList)
+                    {
+                        var imageName = productItem.image.imageName;
+
+                        if (!displayedImages.Contains(imageName))
+                        {
+                            displayedImages.Add(imageName);
+                            <a onmouseover="updateMainImage('/productImages/@imageName')"
+                               onmouseout="resetMainImage('/productImages/@ViewBag.product.coverImage.imageName')"
+                               data-fslightbox="mygalley" class="border mx-1 rounded-2" target="_blank" data-type="image" href="~/productImages/@imageName">
+                                <img width="60" height="60" class="rounded-2" src="~/productImages/@imageName" />
+                            </a>
+                        }
+                    }
+                </div>
+            </aside>
+
+            <!-- Khởi tạo lightbox -->
+
+            <main class="col-lg-6">
+                <div class="ps-lg-3">
+                    <h4 class="title text-dark">
+                        @ViewBag.product.name
+                    </h4>
+                    <div class="d-flex flex-row my-3">
+                        <div class="text-warning mb-1 me-2">
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                            <span class="ms-1">
+                                4.5
+                            </span>
+                        </div>
+                        <span class="text-muted"><i class="fas fa-shopping-basket fa-sm mx-1"></i>@ViewBag.product.quantity</span>
+                        <span class="text-success ms-2">In stock</span>
+                    </div>
+
+                    <div class="mb-3">
+                        <span class="h5" id="productPrice">$@ViewBag.minPrice-@ViewBag.maxPrice</span>
+                    </div>
+
+                    <p>
+                        @Html.Raw(ViewBag.product.desc)
+                    </p>
+
+
+                    <div class="product-grid">
+                        @foreach (var productItem in ViewBag.productItemList)
+                        {
+                            <button class="custom-button" onclick="toggleSelection(this, @productItem.quantity, '/productImages/@(productItem.image.imageName)', @productItem.id, @productItem.price)"
+                                    onmouseover="updateMainImage('/productImages/@(productItem.image.imageName)')"
+                                    onmouseout="resetMainImage('/productImages/@ViewBag.product.coverImage.imageName')">
+                                <img src="~/productImages/@(productItem.image.imageName)" alt="Alternate Text" />
+                                @ViewBag.product.name - @productItem.attribute
+                            </button>
+                        }
+                    </div>
+
+
+                    <hr />
+                    <div class="col-md-4 col-6 mb-3">
+                        <label class="mb-2 d-block">Quantity: </label>
+                        <div class="input-group mb-3" style="width: 170px;">
+                            <button class="btn btn-white border border-secondary px-3" type="button" id="button-addon1" data-mdb-ripple-color="dark" onclick="decreaseValue()">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                            <input type="text" id="quantityInput" class="form-control text-center border border-secondary" value="1" aria-label="Example text with button addon" aria-describedby="button-addon1" style="width: 50px; padding: 0;" oninput="validateQuantity(this)" />
+                            <button class="btn btn-white border border-secondary px-3" type="button" id="button-addon2" data-mdb-ripple-color="dark" onclick="increaseValue()">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                            Quantity available:<span id="quantityDisplay">@ViewBag.product.quantity</span>
+                        </div>
+                    </div>
+                    <a href="/Cart" class="btn btn-warning shadow-0"> Buy now </a>
+                    <form id="addToCartForm" style="display: none;">
+                        <input type="hidden" name="productItemId" id="productItemId" />
+                        <input type="hidden" name="quantity" id="quantity" />
+                    </form>
+
+                    <button onclick="addToCart(selectedProductId, document.getElementById('quantityInput').value)" class="btn btn-primary shadow-0">
+                        <i class="me-1 fa fa-shopping-basket"></i> Add to cart
+                    </button>
+                    <div id="popupMessage" class="popup-message" style="display: none;">Added to cart successfully!</div>
+                    <div id="errorMessage" class="popup-message" style="display: none; color: red;">Please choose a product!</div>
+                </div>
+            </main>
+        </div>
+        <div class="row g-3">
+            <h5 class="card-title">Similar items</h5>
+            @foreach (var similarProduct in ViewBag.similarProducts)
+            {
+                <div class="col-lg-3 col-md-4 col-sm-6">
+                    <div class="px-0 border rounded-2 shadow-0">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="d-flex mb-3">
+                                    <a href="@Url.Action("Index", "ViewProductDetail", new { area = "Home", productId = @similarProduct.id })" class="me-3">
+                                        <img src="~/productImages/@similarProduct.coverImage.imageName" style="min-width: 96px; height: 96px;" class="img-md img-thumbnail" />
+                                    </a>
+                                    <div class="info">
+                                        <a href="#" class="nav-link mb-1">
+                                            @similarProduct.name
+                                        </a>
+                                        <strong class="text-dark"> $@similarProduct.price</strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+
+    </div>
+</section>
+<!-- content -->
+<script src="https://cdn.jsdelivr.net/npm/fslightbox/index.js"></script>
+<script>
+    let maxQuantity = 1;
+    let selectedButton = null;
+    let selectedProductId = null;
+    function toggleSelection(button, quantity, imagePath, productId, productPrice) {
+
+        if (selectedButton === button) {
+
+            button.classList.remove('selected');
+            selectedButton = null;
+            document.getElementById('quantityInput').value = 1;
+            document.getElementById('quantityDisplay').innerText = @ViewBag.product.quantity;
+            selectedProductId = null;
+
+            resetMainImage('/productImages/@ViewBag.product.coverImage.imageName');
+            document.getElementById('productPrice').innerText = '$@ViewBag.product.price';
+
+        } else {
+            let allButtons = document.querySelectorAll('.custom-button');
+            allButtons.forEach(btn => btn.classList.remove('selected'));
+
+            button.classList.add('selected');
+            selectedButton = button;
+
+            maxQuantity = quantity;
+            document.getElementById('quantityInput').value = 1;
+            document.getElementById('quantityDisplay').innerText = maxQuantity;
+            selectedProductId = productId;
+
+            updateMainImage(imagePath);
+            document.getElementById('productPrice').innerText = '$' + productPrice;
+        }
+    }
+
+
+    function increaseValue() {
+        const quantityInput = document.getElementById('quantityInput');
+        if (selectedButton === null) {
+            maxQuantity = @ViewBag.product.quantity;
+        }
+        if (parseInt(quantityInput.value) < maxQuantity) {
+            quantityInput.value = parseInt(quantityInput.value) + 1;
+        }
+
+    }
+
+    function decreaseValue() {
+        const quantityInput = document.getElementById('quantityInput');
+        if (parseInt(quantityInput.value) > 1) {
+            quantityInput.value = parseInt(quantityInput.value) - 1;
+        }
+    }
+    function validateQuantity(input) {
+        let currentValue = parseInt(input.value);
+
+        if (isNaN(currentValue) || currentValue < 1) {
+            input.value = 1;
+        } else if (currentValue > maxQuantity) {
+            input.value = maxQuantity;
+        }
+    }
+    function updateMainImage(imageSrc) {
+        if (selectedButton === null) {
+            document.getElementById('mainImage').src = imageSrc;
+        }
+    }
+
+    function resetMainImage(defaultImageSrc) {
+        if (selectedButton === null) {
+            document.getElementById('mainImage').src = defaultImageSrc;
+        }
+    }
+    function addToCart(productItemId, quantity) {
+        var accountId = '@(ViewBag.accountId ?? "null")';
+
+        if (selectedProductId == null) {
+            const errorMessage = document.getElementById('errorMessage');
+            errorMessage.style.display = 'block';
+            setTimeout(() => {
+                errorMessage.style.display = 'none';
+            }, 3000);
+            return;
+        } else {
+            const xhr = new XMLHttpRequest();
+            xhr.open('GET', `/Cart/AddToCart?productItemId=${productItemId}&quantity=${quantity}`, true);
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    const popupMessage = document.getElementById('popupMessage');
+                    popupMessage.style.display = 'block';
+                    popupMessage.style.opacity = '1';
+
+                    setTimeout(() => {
+                        popupMessage.style.opacity = '0';
+                    }, 3000);
+
+                    setTimeout(() => {
+                        popupMessage.style.display = 'none';
+                    }, 3500);
+                }
+            };
+
+            xhr.send();
+        }
+
+    }
+
+
+</script>

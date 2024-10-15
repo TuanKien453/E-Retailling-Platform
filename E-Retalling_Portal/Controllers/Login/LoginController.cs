@@ -11,6 +11,7 @@ using System.Net.Http;
 using E_Retalling_Portal.Models.Enums;
 using Microsoft.AspNetCore.Http;
 using E_Retalling_Portal.Models.Query;
+using E_Retalling_Portal.Services.EnodeAndDecode;
 
 namespace E_Retalling_Portal.Controllers.Login
 {
@@ -18,10 +19,26 @@ namespace E_Retalling_Portal.Controllers.Login
 	{
 		public IActionResult Index()
 		{
-			if (HttpContext.Session.GetString(SessionKeys.AccountId.ToString()) != null)
+			var passwordCookie = HttpContext.Request.Cookies["Password_Customer"] ?? "";
+			if(passwordCookie != null)
+			{
+				passwordCookie = Base64.DecodeFromBase64(passwordCookie);
+				ViewBag.PasswordCookie_Customer = passwordCookie;
+				
+			}
+			int ?accountId = HttpContext.Session.GetInt32(SessionKeys.AccountId.ToString());
+			if ( accountId != null) {
+				using (var context = new Context())
+				{
+					//If login session is not customer, delete old session and go to login
+					if(context.Accounts.GetAccountByAccountId((int)accountId).FirstOrDefault().id != 1)
+					{
+						HttpContext.Session.Clear();
+						return View("LoginForm");
+					}
+				}
 				return RedirectToAction("Index", "Home");
-
-
+		    }
 			return View("LoginForm");
 		}
 
@@ -31,7 +48,7 @@ namespace E_Retalling_Portal.Controllers.Login
 		{
 			using (var context = new Context())
 			{
-				if (HttpContext.Session.GetString(SessionKeys.AccountId.ToString()) == null)
+				if (HttpContext.Session.GetInt32(SessionKeys.AccountId.ToString()) == null)
 				{
 					var acc = context.Accounts
 									 .FirstOrDefault(x => x.username == account.username && x.password == account.password && x.roleId == account.roleId);
@@ -42,7 +59,7 @@ namespace E_Retalling_Portal.Controllers.Login
 						HttpContext.Session.SetString(SessionKeys.DisplayName.ToString(), context.Users.GetUserById(acc.userId).FirstOrDefault().displayName);
 						if (!rememberMe)
 						{
-							Response.Cookies.Append("Username", acc.username, new CookieOptions
+							Response.Cookies.Append("Username_Customer", acc.username, new CookieOptions
 							{
 								Expires = DateTime.Now.AddDays(30),
 								HttpOnly = true,
@@ -50,7 +67,8 @@ namespace E_Retalling_Portal.Controllers.Login
 								SameSite = SameSiteMode.Strict
 
 							});
-							Response.Cookies.Append("Password", acc.password, new CookieOptions
+							String password = Base64.EncodeToBase64(acc.password);
+							Response.Cookies.Append("Password_Customer", password, new CookieOptions
 							{
 								Expires = DateTime.Now.AddDays(30),
 								HttpOnly = true,

@@ -1,5 +1,4 @@
-﻿
-@{
+﻿@{
     ViewData["Title"] = "Home Page";
 }
 
@@ -62,7 +61,7 @@
                                     </li>
                                 </ul>
                             }
-                            
+
                         }
                         <label>Filter by price :</label>
                         <b id="minPrice">$ @(ViewBag.minPrice ?? 250)</b> - <b id="maxPrice">$ @(ViewBag.maxPrice != null && ViewBag.maxPrice == 1000 ? "1000+" : ViewBag.maxPrice ?? 450)</b>
@@ -71,7 +70,7 @@
                                data-slider-step="5" data-slider-value="[@(ViewBag.minPrice ?? 250),@(ViewBag.maxPrice ?? 450)]" />
                         <input type="hidden" name="minPrice" id="minPriceInput" value="@(ViewBag.minPrice ?? 250)" />
                         <input type="hidden" name="maxPrice" id="maxPriceInput" value="@(ViewBag.maxPrice ?? 450)" />
-                        <input type="hidden" name="categoryId"  value="@ViewBag.categoryId" />
+                        <input type="hidden" name="categoryId" value="@ViewBag.categoryId" />
                         <button type="submit" class="btn btn-primary mt-3">Apply Filter</button>
                     </form>
 
@@ -94,57 +93,44 @@
                 <div class="row">
                     @foreach (var product in ViewBag.productList)
                     {
-                        var images = ViewBag.ProductImageMap[product.id] as List<Image>;
+                        <div class="col-md-3 col-sm-6">
+                            <div class="product-grid">
+                                <div class="product-image">
+                                    <a href="@Url.Action("Index", "ViewProductDetail", new { area = "Home", productId = product.id })" class="image">
+                                        <img class="img-1" src="~/productImages/@product.coverImage.imageName">
 
-                        if (images != null && images.Count > 0)
-                        {
-                            <div class="col-md-3 col-sm-6">
-                                <div class="product-grid">
-                                    <div class="product-image">
-                                        <a href="#" class="image">
-                                            <img class="img-1" src="~/productImages/@images[0].imageName">
-                                            @if (images[1].imageName != null)
-                                            {
-                                                <img class="img-2" src="~/productImages/@images[1].imageName">
-                                            }
-                                            else
-                                            {
-                                                <img class="img-2" src="" alt="image">
-                                            }
-                                        </a>
-                                        <ul class="product-links">
-                                            <li><a href="#"><i class="fa fa-heart"></i></a></li>
-                                            <li><a href="#"><i class="fa fa-shopping-cart"></i></a></li>
-                                        </ul>
-                                        <a href="#" class="product-view"><i class="fa fa-search"></i></a>
-                                    </div>
-                                    <div class="product-content">
-                                        <ul class="rating">
-                                            <li class="fas fa-star"></li>
-                                            <li class="fas fa-star"></li>
-                                            <li class="fas fa-star"></li>
-                                            <li class="fas fa-star"></li>
-                                            <li class="fas fa-star disable"></li>
-                                            <li class="disable">(1 reviews)</li>
-                                        </ul>
-                                        <h3 class="title"><a href="#">@product.name</a></h3>
-                                        @if (product.isVariation == false)
+                                        @foreach (var image in ViewBag.imageList)
                                         {
-                                            <div class="price">$@product.price</div>
-                                        }
-                                        else
-                                        {
-                                            @foreach (var productItem in ViewBag.productItemList)
+                                            @if (image.productId == product.id && image.productCoveredId == null)
                                             {
-                                                <div class="price">$@productItem.price</div>
-                                                break; 
+                                                <img class="img-2" src="~/productImages/@image.imageName">
+                                                break;
                                             }
                                         }
 
-                                    </div>
+
+
+                                    </a>
+                                    <ul class="product-links">
+                                        <li><a href="#"><i class="fa fa-heart"></i></a></li>
+                                        <li><a href="#"><i class="fa fa-shopping-cart"></i></a></li>
+                                    </ul>
+                                    <a href="@Url.Action("Index", "ViewProductDetail", new { area = "Home", productId = product.id })" class="product-view"><i class="fa fa-search"></i></a>
+                                </div>
+                                <div class="product-content">
+                                    <ul class="rating">
+                                        <li class="fas fa-star"></li>
+                                        <li class="fas fa-star"></li>
+                                        <li class="fas fa-star"></li>
+                                        <li class="fas fa-star"></li>
+                                        <li class="fas fa-star disable"></li>
+                                        <li class="disable">(1 reviews)</li>
+                                    </ul>
+                                    <h3 class="title"><a href="@Url.Action("Index", "ViewProductDetail", new { area = "Home", productId = product.id })">@product.name</a></h3>
+                                    <div class="price">$@product.price</div>
                                 </div>
                             </div>
-                        }
+                        </div>
                     }
                 </div>
             </div>

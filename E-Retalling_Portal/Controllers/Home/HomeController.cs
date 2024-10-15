@@ -9,7 +9,7 @@ using System.Diagnostics;
 using System.Linq;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
-namespace E_Retalling_Portal.Controllers
+namespace E_Retalling_Portal.Controllers.Home
 {
     public class HomeController : Controller
     {
@@ -29,12 +29,11 @@ namespace E_Retalling_Portal.Controllers
             using (var context = new Context())
             {
                 var imageList = context.Images.ToList();
-                var productList = context.Products.ToList();
-                var categoryList = context.Categories.ToList();
-                var subcategoryList = context.Categories.Where(c => c.parentCategoryId != null).ToList();
-                var productItemList = context.ProductItems.ToList();
-                List<BreadcrumbItem> breadcrumbList = new List<BreadcrumbItem>();
 
+                var productList = context.Products.GetProduct().ToList();
+                var categoryList = context.Categories.GetCategories().ToList();             
+                var subcategoryList = context.Categories.GetSubCategories().ToList();       
+                List<BreadcrumbItem> breadcrumbList = new List<BreadcrumbItem>();
                 breadcrumbList = GetBreadcrumListFromCategoryList(categoryList, categoryId, breadcrumbList, context);
 
                 ViewBag.breadcrumbList = breadcrumbList;
@@ -57,12 +56,6 @@ namespace E_Retalling_Portal.Controllers
                     productList = GetProductsBySubCategories(categoryId, categoryList, productList, context);
                 }
 
-                //Map images into product by productId
-                var productImageMap = productList.ToDictionary(
-                    product => product.id,
-                    product => context.Images.GetImagesByProductId(product.id).ToList()
-                );
-
                 if (searchQuery != null)
                 {
                     //Get product by filter search
@@ -74,11 +67,22 @@ namespace E_Retalling_Portal.Controllers
                     //Get product by filtery price
                     productList = productList = context.Products.GetProdutsByPrice(minPrice, maxPrice).ToList();
                 }
-                ViewBag.productItemList = productItemList;
+
+                //Get min price of productItems
+                foreach (var product in productList)
+                {
+                    if (product.productItems != null && product.productItems.Count > 0)
+                    {
+                        var min = product.productItems.Min(item => item.price);
+
+                        product.price = min; 
+                    }
+                }
+
+                ViewBag.imageList = imageList;
                 ViewBag.categoryId = categoryId;
                 ViewBag.minPrice = minPrice;
                 ViewBag.maxPrice = maxPrice;
-                ViewBag.ProductImageMap = productImageMap;
                 ViewBag.productList = productList;
                 return View();
             }
@@ -104,7 +108,7 @@ namespace E_Retalling_Portal.Controllers
         {
             if (!string.IsNullOrEmpty(searchQuery))
             {
-                return productList.Where(p => p.name.Contains(searchQuery, StringComparison.OrdinalIgnoreCase))
+                return productList.Where(p => p.name.Contains(searchQuery, StringComparison.OrdinalIgnoreCase) && p.deleteAt != null)
                         .ToList(); ;
             }
             return productList;
@@ -120,7 +124,7 @@ namespace E_Retalling_Portal.Controllers
 
             List<int> subCategoryIds = new List<int> { categoryId.Value };
 
-            var childCategories = categoryList.Where(c => c.parentCategoryId == categoryId.Value).ToList();
+            var childCategories = categoryList.Where(c => c.parentCategoryId == categoryId.Value && c.deleteAt == null).ToList();
 
             foreach (var category in childCategories)
             {

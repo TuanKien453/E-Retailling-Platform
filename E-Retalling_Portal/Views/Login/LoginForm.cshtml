@@ -66,8 +66,8 @@
 <body class="bg-gray-200">
 	@{
 		// Lấy dữ liệu từ cooki
-		var usernameCookie = Context.Request.Cookies["Username"] ?? "";
-		var passwordCookie = Context.Request.Cookies["Password"] ?? "";
+		var usernameCookie = Context.Request.Cookies["Username_Customer"] ?? "";
+		var passwordCookie = ViewBag.PasswordCookie_Customer;
 	}
 
 	<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NKDMSK6" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>

@@ -132,44 +132,40 @@ namespace E_Retalling_Portal.Models
             SeedingShop(modelBuilder);
             SeedingProduct(modelBuilder);
             SeedingImage(modelBuilder);
+            SeedingProductItem(modelBuilder);
+        }
+        private static void SeedingProductItem(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<ProductItem>().HasData(
+                new ProductItem { id = 1, productId = 1, quantity = 5, price = 15, imageId = 1, attribute = "L" },
+                new ProductItem { id = 2, productId = 1, quantity = 7, price = 13, imageId = 3, attribute = "S" },
+                new ProductItem { id = 3, productId = 3, quantity = 10, price = 20, imageId = 8, attribute = "X" },
+                new ProductItem { id = 4, productId = 3, quantity = 10, price = 14, imageId = 9, attribute = "X" }
+            );
         }
         private static void SeedingImage(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Image>().HasData(
-                new Image {id = 1, productId = 1, imageName = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRrR_VvLy3HYbsqzU7IKn8M5CQhguNszaK1pQ&s",productCoveredId=1 },
-                new Image { id = 2, productId = 1, imageName = "https://static.nike.com/a/images/t_PDP_936_v1/f_auto,q_auto:eco/450ed1df-8e17-4d87-a244-85697874661c/NIKE+REVOLUTION+7.png" },
-
-                new Image { id = 3, productId = 2, imageName = "https://product.hstatic.net/200000378371/product/_uog2187_829ce01e830942949271a3787398632b_master.jpg", productCoveredId = 2 },
-                new Image { id = 4, productId = 2, imageName = "https://product.hstatic.net/1000312752/product/atst747-2v-a_aa40e06550894efb82d4d066ea16b687.jpg" },
-
-                new Image { id = 5, productId = 3, imageName = "https://m.media-amazon.com/images/I/81T-W+2GShL._AC_SL1500_.jpg", productCoveredId = 3 },
-                new Image { id = 6, productId = 3, imageName = "https://m.media-amazon.com/images/I/714t39lASrL._AC_UY1100_.jpg" },
-
-                new Image { id = 7, productId = 4, imageName = "https://www.gap.com/webcontent/0056/081/447/cn56081447.jpg", productCoveredId = 4 },
-                new Image { id = 8, productId = 4, imageName = "https://product.hstatic.net/200000440297/product/sunday_jeans_1_dbbdb8e06e374c798e470a042a3971f8_master.jpg" },
-
-                new Image { id = 9, productId = 5, imageName = "https://tummachines.com/wp-content/uploads/2023/11/bomber-beige-1.jpg", productCoveredId = 5 },
-                new Image { id = 10, productId = 5, imageName = "https://cdn.shopify.com/s/files/1/0123/5065/2473/files/BM17064.473BLK_BLACK-STORM-STOPPER-BOMBER-JACKET.jpg?v=1696607398" },
-
-                new Image { id = 11, productId = 6, imageName = "https://cdn.viettelstore.vn/Images/Product/ProductImage/594842402.jpeg", productCoveredId = 6 },
-                new Image { id = 12, productId = 6, imageName = "https://m.media-amazon.com/images/I/61icsCcbdKL.jpg" },
-
-                new Image { id = 13, productId = 7, imageName = "https://m.media-amazon.com/images/I/61pz4pLftaL._AC_UY1000_.jpg", productCoveredId = 7 },
-                new Image { id = 14, productId = 7, imageName = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTZtBbaz34tgMvMivO0N8H2CK734QXj7qJ8PQ&s" }
-
-             );
+                new Image { id = 1, productId = 1, imageName = "Screenshot 2024-09-13 154422.png", productCoveredId = 1 },
+                new Image { id = 2, productId = 1, imageName = "Screenshot 2024-09-14 075432.png" },
+                new Image { id = 3, productId = 1, imageName = "Screenshot 2024-09-14 075432.png" },
+                new Image { id = 4, productId = 2, imageName = "Screenshot 2024-09-14 075432.png", productCoveredId = 2 },
+                new Image { id = 5, productId = 2, imageName = "Screenshot 2024-09-14 080322.png" },
+                new Image { id = 6, productId = 2, imageName = "Screenshot 2024-09-14 080322.png" },
+                new Image { id = 7, productId = 3, imageName = "Screenshot 2024-09-16 214607.png", productCoveredId = 3 },
+                new Image { id = 8, productId = 3, imageName = "Screenshot 2024-09-16 214607.png" },
+                 new Image { id = 9, productId = 3, imageName = "Screenshot 2024-09-16 214607.png" },
+                  new Image { id = 10, productId = 4, imageName = "Screenshot 2024-09-16 214607.png", productCoveredId = 4 }
+);
         }
 
         private static void SeedingProduct(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Product>().HasData(
-                new Product { id = 1, categoryId = 6, name = "Sport Shoe", shopId = 1, desc = "this is a good product", price = 10, quantity = 10, isVariation = true, status = 1 },
-                new Product { id = 2, categoryId = 3, name = "T-shirt", shopId = 1, desc = "High-quality cotton T-shirt", price = 15, quantity = 50, isVariation = false, status = 1 },
-                new Product { id = 3, categoryId = 7, name = "Hat", shopId = 1, desc = "Stylish summer hat", price = 8, quantity = 30, isVariation = false, status = 1 },
-                new Product { id = 4, categoryId = 8, name = "Jeans", shopId = 1, desc = "Comfortable blue jeans", price = 20, quantity = 25, isVariation = true, status = 1 },
-                new Product { id = 5, categoryId = 4, name = "Jacket", shopId = 1, desc = "Warm winter jacket", price = 50, quantity = 15, isVariation = false, status = 1 },
-                new Product { id = 6, categoryId = 5, name = "Watch", shopId = 1, desc = "Elegant wristwatch", price = 100000, quantity = 5, isVariation = false, status = 1 },
-                new Product { id = 7, categoryId = 3, name = "Backpack", shopId = 1, desc = "Durable outdoor backpack", price = 30, quantity = 20, isVariation = true, status = 1 }
+                new Product { id = 1, categoryId = 3, name = "Sport Shoe", shopId = 1, desc = "<p>this is a good product<p/>", price = 11, quantity = 10, isVariation = true, status = 1 },
+                new Product { id = 2, categoryId = 4, name = "T-shirt", shopId = 1, desc = "<p>this is a good product<p/>", price = 12, quantity = 5, isVariation = false, status = 1 },
+                new Product { id = 3, categoryId = 4, name = "Jacket", shopId = 1, desc = "<p>this is a good product<p/>", price = 13, quantity = 6, isVariation = true, status = 1 },
+                 new Product { id = 4, categoryId = 6, name = "Jacketooo", shopId = 1, desc = "<p>this is a good product<p/>", price = 14, quantity = 6, isVariation = false, status = 1 }
 );
         }
         private static void SeedingCategory(ModelBuilder modelBuilder)
@@ -177,18 +173,18 @@ namespace E_Retalling_Portal.Models
             modelBuilder.Entity<Category>().HasData(
                 new Category { id = 1, name = "Clothes", parentCategoryId = null },
                 new Category { id = 2, name = "Watch", parentCategoryId = null },
-                new Category { id = 3, name = "Shirt", parentCategoryId = 1 },
-                new Category { id = 4, name = "Jacket", parentCategoryId = 3 },
-                new Category { id = 5, name = "Luxury watch", parentCategoryId = 2 },
-                new Category { id = 6, name = "Shoe", parentCategoryId = 1 },
-                new Category { id = 7, name = "hat", parentCategoryId = 1 },
-                new Category { id = 8, name = "trouser", parentCategoryId = 1 }
+                new Category { id = 3, name = "Jean", parentCategoryId = 1 },
+                new Category { id = 4, name = "Shirt", parentCategoryId = 1 },
+                new Category { id = 5, name = "Jacket", parentCategoryId = 3 },
+                new Category { id = 6, name = "abc", parentCategoryId = 1 }
+
              );
         }
         private static void SeedingShop(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Shop>().HasData(
-                new Shop { id = 1, accountId = 1, address = "address", name = "shopname", createdAt = "2000-05-04", shopDescription = "sd", statusId = 1 }
+                new Shop { id = 1, accountId = 1, address = "address", name = "shopname", createdAt = "2000-05-04", shopDescription = "sd", statusId = 1 },
+                new Shop { id = 2, accountId = 3, address = "address", name = "shopname", createdAt = "2000-05-04", shopDescription = "sd", statusId = 1 }
              );
         }
         private static void SeedingStatus(ModelBuilder modelBuilder)
@@ -198,7 +194,7 @@ namespace E_Retalling_Portal.Models
              );
         }
 
-        
+
         private static void SeedingRole(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Role>().HasData(
