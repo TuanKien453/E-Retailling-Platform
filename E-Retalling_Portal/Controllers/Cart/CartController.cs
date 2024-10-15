@@ -31,17 +31,17 @@ namespace E_Retalling_Portal.Controllers.Cart
                 // Get the items currently in the cart.
                 Dictionary<int, int> cartItems = GetCartItems();
 
-                // If there are no items in the cart, add some sample items for demonstration.
+                //If there are no items in the cart, add some sample items for demonstration.
                 if (!cartItems.Any())
-                {
-                    AddToCart(1, 2);
-                    AddToCart(2, 3);
-                    AddToCart(1, 3);
-                    cartItems = GetCartItems();
-                }
+                    {
+                        AddToCart(1, 2);
+                        AddToCart(2, 3);
+                        AddToCart(1, 3);
+                        cartItems = GetCartItems();
+                    }
 
                 // Retrieve all product items from the database.
-                var productItems = context.ProductItems.Include(p => p.product).Include(p => p.image).ToList();
+                var productItems = context.ProductItems.GetAllProductItem().ToList();
 
                 // Map cart items to CartItemModel for the view.
                 var cartDetails = cartItems.Select(ci => new CartItemModel
@@ -55,7 +55,7 @@ namespace E_Retalling_Portal.Controllers.Cart
         }
 
         // Adds an item to the cart with a specified quantity.
-        [HttpGet]
+        [HttpPost]
         public IActionResult AddToCart(int productItemId, int quantity)
         {
             var cartItems = GetCartItems();
@@ -91,7 +91,7 @@ namespace E_Retalling_Portal.Controllers.Cart
             else
             {
                 // Check cookies for cart items associated with the account ID.
-                var cookieValue = Request.Cookies["Cart" + accountId];
+                var cookieValue = Request.Cookies["Cart"];
                 if (!string.IsNullOrEmpty(cookieValue))
                 {
                     var items = cookieValue.Split(',');
@@ -123,7 +123,7 @@ namespace E_Retalling_Portal.Controllers.Cart
 
             // Update the cookie with the remaining cart items.
             var cartString = string.Join(",", cartItems.Select(ci => $"{ci.Key}:{ci.Value}"));
-            Response.Cookies.Append("Cart" + accountId, cartString, new CookieOptions
+            Response.Cookies.Append("Cart", cartString, new CookieOptions
             {
                 Expires = DateTime.Now.AddDays(30),
                 HttpOnly = true,
@@ -145,7 +145,7 @@ namespace E_Retalling_Portal.Controllers.Cart
 
             // Update the cookie with the modified cart items.
             var cartString = string.Join(",", cartItems.Select(ci => $"{ci.Key}:{ci.Value}"));
-            Response.Cookies.Append("Cart" + accountId, cartString, new CookieOptions
+            Response.Cookies.Append("Cart", cartString, new CookieOptions
             {
                 Expires = DateTime.Now.AddDays(30),
                 HttpOnly = true,
@@ -159,7 +159,7 @@ namespace E_Retalling_Portal.Controllers.Cart
         // Sets the cart items in the cookie by merging new items with existing ones.
         private void SetCartItems(string cartItems)
         {
-            var existingCart = Request.Cookies["Cart" + accountId];
+            var existingCart = Request.Cookies["Cart"];
 
             var existingItems = new Dictionary<int, int>();
 
@@ -193,7 +193,7 @@ namespace E_Retalling_Portal.Controllers.Cart
             var updatedCartItems = string.Join(",", existingItems.Select(ci => $"{ci.Key}:{ci.Value}"));
 
             // Update the cookie with the merged cart items.
-            Response.Cookies.Append("Cart" + accountId, updatedCartItems, new CookieOptions
+            Response.Cookies.Append("Cart", updatedCartItems, new CookieOptions
             {
                 Expires = DateTime.Now.AddDays(30),
                 HttpOnly = true,

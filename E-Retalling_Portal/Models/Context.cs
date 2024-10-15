@@ -243,5 +243,15 @@ namespace E_Retalling_Portal.Models
                 new Account { id = 3, username = "seller", password = "123", roleId = 2, externalId = null, externalType = null, userId = 2 }
             );
         }
-    }
+
+		private static void SeedingProductItem(ModelBuilder modelBuilder)
+		{
+			modelBuilder.Entity<ProductItem>().HasData(
+				new ProductItem { id = 1, productId = 1, quantity = 5, price = 15, imageId = 2, attribute = "L" },
+				new ProductItem { id = 2, productId = 1, quantity = 7, price = 20, imageId = 3, attribute = "S" },
+				new ProductItem { id = 3, productId = 3, quantity = 10, price = 25, imageId = 8, attribute = "X" },
+				new ProductItem { id = 4, productId = 3, quantity = 10, price = 25, imageId = 9, attribute = "X" }
+			);
+		}
+	}
 }
