@@ -229,7 +229,7 @@
             return;
         } else {
             const xhr = new XMLHttpRequest();
-            xhr.open('GET', `/Cart/AddToCart?productItemId=${productItemId}&quantity=${quantity}`, true);
+            xhr.open('GET', '/Cart/AddToCart?productItemId=${productItemId}&quantity=${quantity}', true);
             xhr.onreadystatechange = function () {
                 if (xhr.readyState == 4 && xhr.status == 200) {
                     const popupMessage = document.getElementById('popupMessage');

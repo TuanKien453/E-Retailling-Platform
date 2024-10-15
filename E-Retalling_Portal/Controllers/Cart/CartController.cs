@@ -10,35 +10,22 @@ namespace E_Retalling_Portal.Controllers.Cart
     public class CartController : Controller
     {
 
-        private int? accountId;
-
-        public override void OnActionExecuting(ActionExecutingContext context)
-        {
-            base.OnActionExecuting(context);
-            accountId = HttpContext.Session.GetInt32(SessionKeys.AccountId.ToString());
-        }
-
         public IActionResult Index()
         {
             using (var context = new Context())
             {
-                // Redirects to login if no account ID is found.
-                if (accountId == null)
-                {
-                    return RedirectToAction("Index", "Login");
-                }
 
                 // Get the items currently in the cart.
                 Dictionary<int, int> cartItems = GetCartItems();
 
                 //If there are no items in the cart, add some sample items for demonstration.
                 if (!cartItems.Any())
-                    {
-                        AddToCart(1, 2);
-                        AddToCart(2, 3);
-                        AddToCart(1, 3);
-                        cartItems = GetCartItems();
-                    }
+                {
+                    AddToCart(1, 2);
+                    AddToCart(2, 3);
+                    AddToCart(1, 3);
+                    cartItems = GetCartItems();
+                }
 
                 // Retrieve all product items from the database.
                 var productItems = context.ProductItems.GetAllProductItem().ToList();
@@ -55,7 +42,6 @@ namespace E_Retalling_Portal.Controllers.Cart
         }
 
         // Adds an item to the cart with a specified quantity.
-        [HttpPost]
         public IActionResult AddToCart(int productItemId, int quantity)
         {
             var cartItems = GetCartItems();
