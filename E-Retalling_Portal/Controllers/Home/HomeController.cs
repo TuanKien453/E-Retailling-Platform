@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Newtonsoft.Json.Linq;
 using System.Diagnostics;
+using System.Drawing.Printing;
 using System.Linq;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -24,12 +25,11 @@ namespace E_Retalling_Portal.Controllers.Home
         {
             return View("Views/Shared/ErrorPage/Error500.cshtml");
         }
-        public IActionResult Index(string searchQuery, int? categoryId, double? minPrice, double? maxPrice)
+        public IActionResult Index(string searchQuery, int? categoryId, double? minPrice, double? maxPrice, int pageNumber = 1, int pageSize = 8)
         {
             using (var context = new Context())
             {
                 var imageList = context.Images.ToList();
-
                 var productList = context.Products.GetProduct().ToList();
                 var categoryList = context.Categories.GetCategories().ToList();             
                 var subcategoryList = context.Categories.GetSubCategories().ToList();       
@@ -69,23 +69,57 @@ namespace E_Retalling_Portal.Controllers.Home
                 }
 
                 //Get min price of productItems
-                foreach (var product in productList)
+                if (productList != null)
                 {
-                    if (product.productItems != null && product.productItems.Count > 0)
+                    foreach (var product in productList)
                     {
-                        var min = product.productItems.Min(item => item.price);
+                        if (product.isVariation == true && product.productItems.Count > 0)
+                        {
+                            var min = product.productItems.Min(item => item.price);
 
-                        product.price = min; 
+                            product.price = min;
+                        }
                     }
                 }
+                List<Product> products = GetProductsIsNotDelete(productList);
+                int totalProducts = products.Count();
+                var paginatedProducts = products.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
 
                 ViewBag.imageList = imageList;
                 ViewBag.categoryId = categoryId;
                 ViewBag.minPrice = minPrice;
                 ViewBag.maxPrice = maxPrice;
-                ViewBag.productList = productList;
+                ViewBag.productList = paginatedProducts;
+                ViewBag.totalPages = (int)Math.Ceiling((double)totalProducts / pageSize);
+                ViewBag.currentPage = pageNumber;
+
+
                 return View();
             }
+        }
+
+        private List<Product> GetProductsIsNotDelete(List<Product>? productList)
+        {
+            List<Product> products = new List<Product>();
+            foreach (var product in productList)
+            {
+                if (product.isVariation == true)
+                {
+                    foreach (var productItem in product.productItems)
+                    {
+                        if (productItem.deleteAt == null)
+                        {
+                            products.Add(product);
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    products.Add(product);
+                }
+            }
+            return products;
         }
 
         private List<BreadcrumbItem> GetBreadcrumListFromCategoryList(List<Category> categoryList, int? categoryId, List<BreadcrumbItem> breadcrumbList, Context context)

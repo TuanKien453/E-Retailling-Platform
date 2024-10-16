@@ -93,6 +93,7 @@
                 <div class="row">
                     @foreach (var product in ViewBag.productList)
                     {
+                       
                         <div class="col-md-3 col-sm-6">
                             <div class="product-grid">
                                 <div class="product-image">
@@ -111,10 +112,6 @@
 
 
                                     </a>
-                                    <ul class="product-links">
-                                        <li><a href="#"><i class="fa fa-heart"></i></a></li>
-                                        <li><a href="#"><i class="fa fa-shopping-cart"></i></a></li>
-                                    </ul>
                                     <a href="@Url.Action("Index", "ViewProductDetail", new { area = "Home", productId = product.id })" class="product-view"><i class="fa fa-search"></i></a>
                                 </div>
                                 <div class="product-content">
@@ -131,8 +128,60 @@
                                 </div>
                             </div>
                         </div>
+                        
                     }
                 </div>
+                <hr />
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination">
+                        @if (ViewBag.currentPage > 1)
+                        {
+                            <li class="page-item">
+                                <a class="page-link" href="?pageNumber=@(ViewBag.currentPage - 1)" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                        }
+
+                        @for (int i = 1; i <= ViewBag.totalPages; i++)
+                        {
+                            if (i == ViewBag.currentPage)
+                            {
+                                <li class="page-item active"><a class="page-link" href="?pageNumber=@i">@i</a></li>
+                            }
+                            else
+                            {
+                                <li class="page-item"><a class="page-link" href="?pageNumber=@i">@i</a></li>
+                            }
+                        }
+
+                        @if (ViewBag.currentPage < ViewBag.totalPages)
+                        {
+                            <li class="page-item">
+                                <a class="page-link" href="?pageNumber=@(ViewBag.currentPage + 1)" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </nav>
+
             </div>
         </div>
     </div>
