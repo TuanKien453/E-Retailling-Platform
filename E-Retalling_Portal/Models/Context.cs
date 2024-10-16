@@ -188,7 +188,7 @@ namespace E_Retalling_Portal.Models
         private static void SeedingShop(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Shop>().HasData(
-                new Shop { id = 1, accountId = 1, address = "address", name = "shopname", createdAt = "2000-05-04", shopDescription = "sd", statusId = 1 }
+                new Shop { id = 1, accountId = 1, address = "address", name = "shopname", createdAt = "2000-05-04", shopDescription = "sd", statusId = 1}
              );
         }
         private static void SeedingStatus(ModelBuilder modelBuilder)
@@ -234,6 +234,18 @@ namespace E_Retalling_Portal.Models
                     lastName = "last",
                     phoneNumber = "0123459145",
                     gender = "Female"
+                },
+                new User
+                {
+                    id = 3,
+                    address = "LangHa",
+                    birthday = "2004-01-04",
+                    displayName = "phien",
+                    email = "hoangphien47@gmail.com",
+                    firstName = "duc",
+                    lastName = "phien",
+                    phoneNumber = "0968059984",
+                    gender = "Male"
                 }
 
             );
@@ -244,7 +256,8 @@ namespace E_Retalling_Portal.Models
             modelBuilder.Entity<Account>().HasData(
                 new Account { id = 1, username = "admin", password = "123", roleId = 2, externalId = null, externalType = null, userId = 1 },
                 new Account { id = 2, username = "anh", password = "123", roleId = 1, externalId = null, externalType = null, userId = 2 },
-                new Account { id = 3, username = "seller", password = "123", roleId = 2, externalId = null, externalType = null, userId = 2 }
+                new Account { id = 3, username = "seller", password = "123", roleId = 2, externalId = null, externalType = null, userId = 2 },
+                new Account { id = 4, username = "phien47", password = "123", roleId = 2, externalId = null, externalType = null, userId = 3 }
             );
         }
     }

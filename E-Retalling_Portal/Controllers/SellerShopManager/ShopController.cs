@@ -13,6 +13,7 @@ using System.Net;
 namespace E_Retalling_Portal.Controllers.SellerShopManager
 {
     //[TypeFilter(typeof(ShopOwnerRoleFilter))]
+    //[TypeFilter(typeof(ShowOwnerHasAccountFilter))]
     public class ShopController : Controller
     {
         public IActionResult Index()

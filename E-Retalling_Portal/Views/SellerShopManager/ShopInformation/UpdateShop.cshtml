@@ -2,113 +2,177 @@
     ViewData["Title"] = "UpdateShop";
     Layout = "~/Views/Shared/ShopManagerSideBarLayout.cshtml";
 }
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shop Details</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        @section Styles {
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
-        }
-
-        .container {
-            max-width: 800px;
-            margin: 50px auto;
-            background: #fff;
+        #viewshop {
+            background-color: #f8f9fa;
             padding: 20px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            border-radius: 8px;
         }
 
-        h1 {
-            text-align: center;
-            color: #333;
-        }
-
-        .shop-details {
-            margin-top: 20px;
-        }
-
-            .shop-details label {
-                display: block;
-                margin: 10px 0 5px;
-                color: #555;
+            #viewshop .content {
+                background: #ffffff;
+                border-radius: 8px;
+                padding: 20px;
             }
 
-            .shop-details input {
-                width: 100%;
-                padding: 10px;
-                font-size: 1em;
-                margin-bottom: 10px;
-                border: 1px solid #ddd;
-                border-radius: 5px;
-                background-color: #f9f9f9;
+            #viewshop .container {
+                max-width: 1000px; /* Increase the maximum width */
+                margin: auto;
             }
 
-            .shop-details textarea {
-                resize: vertical; /* Allows the textarea to be resized vertically */
-                min-height: 100px; /* Sets a minimum height */
-                min-width: 750px;
+            #viewshop h3 {
+                color: #344675; /* Deep blue color */
+                font-weight: 700;
+                text-align: center;
+                margin-bottom: 20px;
             }
 
-        .buttons {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 20px;
-        }
+            #viewshop .form-label {
+                font-size: 0.875rem;
+                color: #6c757d; /* Gray color */
+                font-weight: 600;
+                margin-bottom: 5px;
+                display: inline-block;
+            }
 
-        .back-button, .update-button {
-            padding: 10px 15px;
-            background: #007BFF;
-            color: #fff;
-            text-decoration: none;
-            border-radius: 5px;
-            text-align: center;
-        }
+            #viewshop .form-control {
+                border: none;
+                border-bottom: 2px solid #ced4da;
+                border-radius: 0;
+                box-shadow: none;
+                padding-left: 0;
+                transition: border-color 0.3s ease;
+                background-color: transparent;
+                color: #333;
+                width: 100%; /* Ensure inputs fill their container */
+            }
 
-        .update-button {
-            background: #28a745;
-        }
-
-        .back-button:hover {
-            background: #0056b3;
-        }
-
-        .update-button:hover {
-            background: #218838;
-        }
-
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>Shop Details</h1>
-        <div class="shop-details">
-            <form asp-action="UpdateShopProcess" method="post">
-                <label for="name">Shop Name</label>
-                <input type="text" id="name" name="name" maxlength="100" required placeholder="Enter shop name" value="@ViewBag.Name">
-                @if (ViewBag.ErrorName != null)
-                {
-                    <p class="text-danger">@ViewBag.ErrorName</p>
+                #viewshop .form-control:focus {
+                    border-color: #d81b60; /* Pink-red color */
+                    box-shadow: none;
                 }
 
-                <label for="address">Address</label>
-                <input type="text" id="address" name="address" maxlength="100" required placeholder="Enter shop address" value="@ViewBag.Address">
+                #viewshop .form-control[readonly] {
+                    background-color: transparent;
+                    border-bottom: 2px solid #ced4da;
+                    color: #495057;
+                }
 
-                <label for="shopDescription">Shop Description</label>
-                <textarea type="text" id="shopDescription" name="shopDescription" maxlength="2000" required placeholder="Describe your shop" >@ViewBag.ShopDescription</textarea>
+            #viewshop .btn {
+                background: #343a40; /* Dark background for button */
+                color: #ffffff;
+                border-radius: 4px;
+                font-weight: 600;
+                padding: 10px 20px;
+                transition: background 0.3s ease;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+                text-transform: uppercase;
+                width: 100%;
+            }
 
-                <div class="buttons">
-                    <a class="back-button" href="@Url.Action("ViewShop", "Shop")">Cancel</a>
-                    <button type="submit" class="update-button">Update</button>
+                #viewshop .btn:hover {
+                    background: #23272b; /* Slightly darker on hover */
+                }
+
+            #viewshop .input-group {
+                margin-bottom: 20px;
+            }
+
+            #viewshop .input-group-dynamic.is-filled .form-control {
+                border-bottom: 2px solid #d81b60;
+            }
+
+            #viewshop .input-group-static.is-filled .form-control {
+                border-bottom: 2px solid #ced4da;
+            }
+
+            #viewshop .card-body {
+                padding: 0;
+            }
+
+            #viewshop .row {
+                display: flex;
+            }
+
+    </style>
+        }
+
+<section id="viewshop">
+    <div class="content m-4 pb-3">
+        <div class="container py-4">
+            <div class="row">
+                <div class="col-lg-7 mx-auto d-flex justify-content-center flex-column">
+                    <h3 class="text-center">Shop Detail</h3>
+                    <form asp-action="UpdateShopProcess" method="post">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="input-group input-group-dynamic mb-4 is-filled row">
+                                        <div>
+                                            <label for="name" class="form-label">Shop Name</label>
+                                            <input class="form-control" id="name" type="text" name="name" maxlength="100" required placeholder="Enter shop name" value="@ViewBag.Name" />
+                                                @if (ViewBag.ErrorName != null)
+                                                {
+                                                    <p class="text-danger " style="margin-bottom : 10px">@ViewBag.ErrorName</p>
+                                                }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-4">
+                                <div class="input-group input-group-dynamic is-filled">
+                                    <label class="form-label" for="address">Address</label>
+                                    <input class="form-control" type="text" id="address" name="address" maxlength="100" required placeholder="Enter shop address" value="@ViewBag.Address">
+                                </div>
+                            </div>
+                            <div class="input-group mb-4 input-group-static is-filled">
+                                <label for="shopDescription">Shop Description</label>
+                                <textarea class="form-control" rows="4" type="text" id="shopDescription" name="shopDescription" maxlength="2000" required placeholder="Describe your shop">@ViewBag.ShopDescription</textarea>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <button class="btn btn-primary" type="submit">Update</button>
+                                    
+                                </div>
+                                <div class="col-md-3">
+                                    <a href="@Url.Action("ViewShop", "Shop")" class="btn btn-danger">Cancel</a>
+                                    </div>
+                            </div>
+                        </div>
+                    </form>
                 </div>
-            </form>
+            </div>
         </div>
     </div>
-</body>
-</html>
+</section>
+
+        @section Scripts {
+    <!-- External JavaScript Files -->
+    <script src="@Url.Content("~/js/materialkitpro.js")"></script>
+
+    <!-- Page-Specific JavaScript -->
+    <script>
+        window.addEventListener('load', function () {
+            // Lấy tất cả các input có trong form
+            const inputs = document.querySelectorAll('.input-group input');
+
+            // Duyệt qua các input và kiểm tra xem có giá trị hay không
+            inputs.forEach(function (input) {
+                if (input.value.trim() !== '') {
+                    // Nếu có giá trị, thêm class 'is-filled' vào thẻ div cha của nó
+                    input.closest('.input-group').classList.add('is-filled');
+                }
+
+                // Lắng nghe sự kiện input để thêm class khi người dùng nhập
+                input.addEventListener('input', function () {
+                    if (input.value.trim() !== '') {
+                        input.closest('.input-group').classList.add('is-filled');
+                    } else {
+                        input.closest('.input-group').classList.remove('is-filled');
+                    }
+                });
+            });
+        });
+    </script>
+        }
