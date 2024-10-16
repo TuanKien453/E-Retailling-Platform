@@ -54,7 +54,7 @@ namespace E_Retalling_Portal.Models.Query
                 context.SaveChanges();
             }
         }
-        public static IQueryable<Product> GetAllProduct(this DbSet<Product> dbProduct)
+        public static IQueryable<Product> GetProductsNoVariation(this DbSet<Product> dbProduct)
         {
             return dbProduct.Include(p => p.coverImage).Where(p => p.deleteAt == null && p.isVariation == false);
         }
