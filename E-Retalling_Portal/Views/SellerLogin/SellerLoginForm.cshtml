@@ -89,12 +89,12 @@
 
 									<div class="input-group input-group-outline mb-4 @(string.IsNullOrEmpty(usernameCookie)?"": "is-filled")" style="position: relative;">
 										<label class="form-label">Username</label>
-										<input type="text" id="username" name="username" value="@(string.IsNullOrEmpty(usernameCookie) ? "" : usernameCookie)" class="form-control">
+										<input type="text" id="username" name="username" value="@(string.IsNullOrEmpty(usernameCookie) ? "" : usernameCookie)" maxlength="100" required class="form-control">
 									</div>
 
 									<div class="input-group input-group-outline mb-4 @(string.IsNullOrEmpty(passwordCookie)?"": "is-filled")" style="position: relative;">
 										<label class="form-label">Password</label>
-										<input type="password" id="password" name="password" value="@(string.IsNullOrEmpty(passwordCookie) ? "" : passwordCookie)" class="form-control">
+										<input type="password" id="password" name="password" value="@(string.IsNullOrEmpty(passwordCookie) ? "" : passwordCookie)" maxlength="100" required class="form-control">
 										<button type="button" id="togglePassword" class="btn btn-outline-secondary" style="position: absolute; right: 5px; top: 50%; transform: translateY(-50%);">
 											<i class="bi bi-eye" id="toggleIcon"></i>
 										</button>
