@@ -1,9 +1,10 @@
-﻿@model List<CartItemModel>
+﻿@model X.PagedList.IPagedList<CartItemModel>
 
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Shopping Cart</title>
+<link rel="stylesheet" href="~/css/pagination.css" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/MaterialDesign-Webfont/5.3.45/css/materialdesignicons.css" integrity="sha256-NAxhqDvtY0l4xn+YVa6WjAcmd94NNfttjNsDmNatFVc=" crossorigin="anonymous" />
 <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 
@@ -189,7 +190,15 @@
 					</div>
 				}
 			}
+				@Html.PagedListPager(Model, page => Url.Action("Index", new { page }), new PagedListRenderOptions
+                  {
+	                 DisplayLinkToFirstPage = PagedListDisplayMode.IfNeeded,
+	                 DisplayLinkToLastPage = PagedListDisplayMode.IfNeeded,
+	                 MaximumPageNumbersToDisplay = 10,
+                	 DisplayLinkToPreviousPage = PagedListDisplayMode.Always , 
+	                 DisplayLinkToNextPage = PagedListDisplayMode.Always,
 
+                  })
 
 			<div class="row my-4">
 				<div class="col-sm-6">

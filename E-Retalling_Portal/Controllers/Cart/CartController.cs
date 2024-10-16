@@ -4,12 +4,14 @@ using Microsoft.EntityFrameworkCore;
 using E_Retalling_Portal.Models.Enums;
 using Microsoft.AspNetCore.Mvc.Filters;
 using E_Retalling_Portal.Models.Query;
+using X.PagedList.Mvc.Core;
+using X.PagedList.Extensions;
 
 namespace E_Retalling_Portal.Controllers.Cart
 {
 	public class CartController : Controller
 	{
-		public IActionResult Index()
+		public async Task<IActionResult> Index(int? page)
 		{
 			using (var context = new Context())
 			{
@@ -26,8 +28,8 @@ namespace E_Retalling_Portal.Controllers.Cart
 				}
 
 				// Retrieve all products and product items from the database.
-				var productItems = context.ProductItems.GetAllProductItem().ToList();
-				var products = context.Products.GetAllProduct().ToList();
+				var productItems = await context.ProductItems.GetAllProductItem().ToListAsync();
+				var products =  await context.Products.GetAllProduct().ToListAsync();
 
 				// Map cart items to CartItemModel for the view.
 				var cartDetails = cartItems.Select(ci => new CartItemModel
@@ -37,7 +39,12 @@ namespace E_Retalling_Portal.Controllers.Cart
 					productItem = ci.Key.EndsWith("PI") ? productItems.FirstOrDefault(pi => pi.id == int.Parse(ci.Key.TrimEnd("PI".ToCharArray()))) : null
 				}).ToList();
 
-				return View(cartDetails);
+				//paging
+				var pageNumber = page ?? 1;
+				var pageSize = 1;
+				var pagedCartItem = cartDetails.ToPagedList(pageNumber, pageSize);
+
+				return View(pagedCartItem);
 			}
 		}
 

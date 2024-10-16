@@ -1,5 +1,6 @@
 ﻿.pagination-container {
     text-align: center;
+    margin-top: 10px;
 }
 
 .pagination {
@@ -20,7 +21,7 @@
 }
 
 .pagination li.active {
-    background-color: #4CAF50;
+    background-color: deepskyblue;
     padding: 8px 16px;
     color: white;
 }
