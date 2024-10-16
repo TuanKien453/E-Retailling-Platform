@@ -1,4 +1,5 @@
 ﻿using E_Retalling_Portal.Models;
+using E_Retalling_Portal.Models.Query;
 using E_Retalling_Portal.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,18 +11,13 @@ namespace E_Retalling_Portal.Controllers.Manager
 {
     public class CategoryController : Controller
     {
-        private readonly RolePermissionService _rolePermissionService;
 
-        public CategoryController(RolePermissionService rolePermissionService)
-        {
-            _rolePermissionService = rolePermissionService;
-        }
-        public async Task<IActionResult> Index(int? page)
+        public IActionResult Index(int? page)
         {
             List<Category> categories;
             using (var context = new Context())
             {
-                categories = await context.Categories.ToListAsync();
+                categories = context.Categories.GetCategories().ToList();
             }
             List<Category> builedCategoies = BuildCategoryTree(categories);
 
@@ -61,6 +57,17 @@ namespace E_Retalling_Portal.Controllers.Manager
             using (var context = new Context())
             {
                 context.Categories.Update(cate);
+                context.SaveChanges();
+            }
+
+            return RedirectToAction("Index");
+        }
+
+        public IActionResult DeleteCategory(int id)
+        {
+            using (var context = new Context())
+            {
+                context.Categories.DeleteCategoryWithChildren(id,context);
                 context.SaveChanges();
             }
 

@@ -36,6 +36,7 @@ namespace E_Retalling_Portal.Controllers.ShopManager
 
 
                 ViewBag.images = context.Images.GetImagesByProductId(productId).ToList();
+                ViewBag.productId = productId;
                 ViewBag.productItems = context.ProductItems.GetProductItem(productId).ToList();
             }
             return View("/Views/SellerShopManager/product/EditVariation.cshtml");
@@ -72,7 +73,7 @@ namespace E_Retalling_Portal.Controllers.ShopManager
         public IActionResult AddProductProcess(Product product, List<IFormFile> img)
         {
             product.createAt = DateTime.Now.ToString();
-            if (!ModelState.IsValid&&img.Count==0)
+            if (!ModelState.IsValid && img.Count == 0)
             {
                 ModelState.ReadErrors();
                 return View("Views/Shared/ErrorPage/Error500.cshtml");
@@ -222,10 +223,11 @@ namespace E_Retalling_Portal.Controllers.ShopManager
                         }
                     }
                 }
-                catch (Exception ex) {
+                catch (Exception ex)
+                {
                     return View("Views/Shared/ErrorPage/Error500.cshtml");
                 }
-                    
+
 
                 //new image
                 SaveImage(img, context, p, false);
@@ -241,6 +243,29 @@ namespace E_Retalling_Portal.Controllers.ShopManager
 
 
 
+            return RedirectToAction("ViewProducts");
+        }
+        public IActionResult DeleteProductVariation(int productId, int productItemId)
+        {
+            using (var context = new Context())
+            {
+                context.ProductItems.DeleteProductItemById(productItemId,context);
+            }
+            return RedirectToAction("EditVariation", new { productId = productId });
+        }
+        public IActionResult DeleteProduct(int productId)
+        {
+            using (var context = new Context())
+            {
+                Product product = context.Products.GetProductById(productId).FirstOrDefault();
+                var productItems = context.ProductItems.GetProductItem(productId).ToList();
+                if (productItems.Count > 0) {
+                    foreach (var item in productItems) { 
+                        context.ProductItems.DeleteProductItemById(item.id,context);
+                    }
+                }
+                context.Products.DeleteProductById(productId,context);
+            }
             return RedirectToAction("ViewProducts");
         }
         private static void SaveImage(List<IFormFile> img, Context context, Product addedProduct, Boolean setCover)
