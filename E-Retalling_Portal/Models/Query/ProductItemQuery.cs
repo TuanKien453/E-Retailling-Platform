@@ -19,6 +19,15 @@ namespace E_Retalling_Portal.Models.Query
 			return dbProductItem.Include(p => p.image).Include(p => p.product).Where(pi => pi.deleteAt == null);
 		}
 
-
-	}
+        public static void DeleteProductItemById(this DbSet<ProductItem> dbProductItem, int productItemId, DbContext context)
+        {
+            var pi = dbProductItem.GetProductItemByProductItemId(productItemId).FirstOrDefault();
+            if (pi != null)
+            {
+                pi.deleteAt = DateTime.Now.ToString();
+                context.Entry(pi).State = EntityState.Modified;
+                context.SaveChanges();
+            }
+        }
+    }
 }

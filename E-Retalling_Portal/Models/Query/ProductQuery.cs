@@ -44,6 +44,15 @@ namespace E_Retalling_Portal.Models.Query
             }
             return dbProduct;
         }
-
+        public static void DeleteProductById(this DbSet<Product> dbProduct, int productId, DbContext context)
+        {
+            var product = dbProduct.GetProductById(productId).FirstOrDefault();
+            if (product != null)
+            {
+                product.deleteAt = DateTime.Now.ToString();
+                context.Entry(product).State = EntityState.Modified;
+                context.SaveChanges();
+            }
+        }
     }
 }
