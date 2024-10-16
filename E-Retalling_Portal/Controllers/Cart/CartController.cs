@@ -21,12 +21,15 @@ namespace E_Retalling_Portal.Controllers.Cart
 				// If there are no items in the cart, add some sample items for demonstration.
 				if (!cartItems.Any())
 				{
+					AddToCart(2, 2, true); // Adding a Product with ID 1
+					AddToCart(2, 3, false); // Adding a ProductItem with ID 2
+					AddToCart(2, 3, true);
 					cartItems = GetCartItems();
 				}
 
 				// Retrieve all products and product items from the database.
 				var productItems = await context.ProductItems.GetAllProductItem().ToListAsync();
-				var products =  await context.Products.GetProductsNoVariation().ToListAsync();
+				var products = await context.Products.GetProductsNoVariation().ToListAsync();
 
 				// Map cart items to CartItemModel for the view.
 				var cartDetails = cartItems.Select(ci => new CartItemModel
