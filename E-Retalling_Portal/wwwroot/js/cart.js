@@ -1,20 +1,22 @@
 ﻿let subtotal = 0;
 
-function updateTotal(input, price, totalElementId, productItemId, quantityInStock) {
+function updateTotal(input, price, totalElementId, itemId, quantityInStock, isProductJs) {
     let quantity = parseInt(input.value);
     let productPrice = parseFloat(price);
     let quantityInStockNow = parseInt(quantityInStock);
+    let isProductUpdate = isProductJs;
+    let itemIdUpdate = parseInt(itemId);
 
     let quantityModal = new bootstrap.Modal(document.getElementById('quantityModal'));
     let modalMessage = document.getElementById('quantityModalMessage');
 
+    // Validate quantity input
     if (isNaN(quantity) || quantity <= 0) {
         modalMessage.innerText = "Please input a positive integer number.";
         input.value = 1;
         quantity = 1;
         quantityModal.show();
-    }
-    else if (quantity > quantityInStockNow) {
+    } else if (quantity > quantityInStockNow) {
         modalMessage.innerText = "This product only has " + quantityInStockNow + " available in stock.";
         input.value = 1;
         quantity = 1;
@@ -24,12 +26,14 @@ function updateTotal(input, price, totalElementId, productItemId, quantityInStoc
     let total = quantity * productPrice;
     document.getElementById(totalElementId).innerText = "$" + total.toFixed(2);
 
+    // Send AJAX request to update cart
     $.ajax({
         type: 'POST',
         url: '/Cart/UpdateFromCart',
         data: {
-            productItemId: productItemId,
-            quantity: quantity
+            itemId: itemIdUpdate,
+            quantity: quantity,
+            isProduct: isProductUpdate
         },
     });
 
@@ -42,44 +46,36 @@ document.addEventListener('DOMContentLoaded', function () {
     const quantityInputs = document.querySelectorAll('input[type="number"]');
     quantityInputs.forEach(input => {
         input.addEventListener('blur', function () {
-            updateTotal(this, this.getAttribute('data-price'), this.getAttribute('data-total-id'), this.getAttribute('data-product-id'), this.getAttribute('data-quantityInStock'));
+            updateTotal(this, this.getAttribute('data-price'), this.getAttribute('data-total-id'), this.getAttribute('data-product-id'), this.getAttribute('data-quantityInStock'), this.getAttribute('data-isProduct'));
         });
     });
 });
 
 function updateSubtotal() {
-    subtotal = 0;
+    let subtotal = 0;
 
+    // Select all total elements for products and product items
     const totalElements = document.querySelectorAll('h5[id^="total-"]');
-    totalElements.forEach((element) => {
-        const productId = element.id.split('-')[1];
-        const checkbox = document.getElementById(`check-${productId}`);
 
-        if (checkbox && checkbox.checked) {
+    totalElements.forEach((element) => {
+        const itemId = element.id.split("-")[2];
+        const item = element.id.split("-")[1];
+        const checkbox = document.getElementById('check-' + item + '-' + itemId);
+        if (checkbox.checked) {
             const totalText = element.innerText.replace('$', '');
             subtotal += parseFloat(totalText);
         }
     });
 
     document.getElementById('subtotal').innerText = "$" + subtotal.toFixed(2);
-
-    calculateTotal();
-}
-
-function calculateTotal() {
-    const subtotalText = document.getElementById('subtotal').innerText.replace('$', '');
-    const subtotalValue = parseFloat(subtotalText);
-
-    let total = subtotalValue;
-    if (total <= 0) total = 0;
-    document.getElementById('total').innerText = "$" + total.toFixed(2);
 }
 
 
-let productIdToDelete = null;
+let itemIdToDelete = null;
 
-function showDeleteModal(productItemId, productName) {
-    productIdToDelete = parseInt(productItemId);
+function showDeleteModal(itemId, productName, isProduct) {
+    itemIdToDelete = parseInt(itemId);
+    isProductToDelete = isProduct;
     document.getElementById('modalProductName').innerText = productName;
 
     // Create and trigger button via JavaScript
@@ -95,16 +91,16 @@ function showDeleteModal(productItemId, productName) {
 }
 
 document.getElementById('confirmDeleteButton').addEventListener('click', function () {
-    if (productIdToDelete) {
-        deleteFromCart(productIdToDelete);
+    if (itemIdToDelete) {
+        deleteFromCart(itemIdToDelete, isProductToDelete);
     }
 });
 
-function deleteFromCart(productItemId) {
+function deleteFromCart(itemId, isProduct) {
     $.ajax({
         type: 'POST',
         url: '/Cart/DeleteFromCart',
-        data: { productItemId: productItemId },
+        data: { itemId: itemId, isProduct: isProduct },
         success: function (response) {
             window.location.reload();
         },
