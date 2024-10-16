@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using X.PagedList;
+using X.PagedList.Extensions;
 
 namespace E_Retalling_Portal.Controllers.Manager
 {
