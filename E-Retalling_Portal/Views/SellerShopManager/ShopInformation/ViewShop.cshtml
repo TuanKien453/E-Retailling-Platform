@@ -1,0 +1,164 @@
+﻿@{
+    ViewData["Title"] = "ViewShop";
+    Layout = "~/Views/Shared/ShopManagerSideBarLayout.cshtml";
+}
+
+@section Styles {
+    <style>
+        #viewshop {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+            #viewshop .content {
+                background: #ffffff;
+                border-radius: 8px;
+                padding: 20px;
+            }
+
+            #viewshop .container {
+                max-width: 1000px; /* Increase the maximum width */
+                margin: auto;
+            }
+
+            #viewshop h3 {
+                color: #344675; /* Deep blue color */
+                font-weight: 700;
+                text-align: center;
+                margin-bottom: 20px;
+            }
+
+            #viewshop .form-label {
+                font-size: 0.875rem;
+                color: #6c757d; /* Gray color */
+                font-weight: 600;
+                margin-bottom: 5px;
+                display: inline-block;
+            }
+
+            #viewshop .form-control {
+                border: none;
+                border-bottom: 2px solid #ced4da;
+                border-radius: 0;
+                box-shadow: none;
+                padding-left: 0;
+                transition: border-color 0.3s ease;
+                background-color: transparent;
+                color: #333;
+                width: 100%; /* Ensure inputs fill their container */
+            }
+
+                #viewshop .form-control:focus {
+                    border-color: #d81b60; /* Pink-red color */
+                    box-shadow: none;
+                }
+
+                #viewshop .form-control[readonly] {
+                    background-color: transparent;
+                    border-bottom: 2px solid #ced4da;
+                    color: #495057;
+                }
+
+            #viewshop .btn {
+                background: #343a40; /* Dark background for button */
+                color: #ffffff;
+                border-radius: 4px;
+                font-weight: 600;
+                padding: 10px 20px;
+                transition: background 0.3s ease;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+                text-transform: uppercase;
+                width: 100%;
+            }
+
+                #viewshop .btn:hover {
+                    background: #23272b; /* Slightly darker on hover */
+                }
+
+            #viewshop .input-group {
+                margin-bottom: 20px;
+            }
+
+            #viewshop .input-group-dynamic.is-filled .form-control {
+                border-bottom: 2px solid #d81b60;
+            }
+
+            #viewshop .input-group-static.is-filled .form-control {
+                border-bottom: 2px solid #ced4da;
+            }
+
+            #viewshop .card-body {
+                padding: 0;
+            }
+
+            #viewshop .row {
+                display: flex;
+            }
+
+    </style>
+}
+
+<section id="viewshop">
+    <div class="content m-4 pb-3">
+        <div class="container py-4">
+            <div class="row">
+                <div class="col-lg-7 mx-auto d-flex justify-content-center flex-column">
+                    <h3 class="text-center">Shop Detail</h3>
+                    <form asp-action="ViewShopProcess">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="input-group input-group-dynamic mb-4 is-filled row">
+                                        <div>
+                                            <label for="name" class="form-label">Shop Name</label>
+                                            <input class="form-control" id="name" type="text" readonly />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="input-group input-group-dynamic is-filled">
+                                        <label for="createdAt" class="form-label">Created At</label>
+                                        <input class="form-control" type="text" id="createdAt" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-4">
+                                <div class="input-group input-group-dynamic is-filled">
+                                    <label class="form-label" for="address">Address</label>
+                                    <input class="form-control" type="text" id="address" readonly>
+                                </div>
+                            </div>
+                            <div class="input-group mb-4 input-group-static is-filled">
+                                <label for="shopDescription">Shop Description</label>
+                                <textarea class="form-control" rows="4" type="text" id="shopDescription" readonly></textarea>
+                            </div>
+                    </form>
+                            <form asp-action="UpdateShop" asp-controller="Shop">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <button type="submit" class="btn bg-gradient-dark w-100">Update</button>
+                                </div>
+                            </div>
+                    </form>
+                        </div>      
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <!-- External JavaScript Files -->
+    <script src="@Url.Content("~/js/materialkitpro.js")"></script>
+
+    <!-- Page-Specific JavaScript -->
+    <script>      
+                const shopData = JSON.parse('@Html.Raw(Json.Serialize(ViewBag.Shop))');
+
+                document.getElementById('name').value = shopData.name;
+                document.getElementById('createdAt').value = shopData.createdAt;
+                document.getElementById('shopDescription').value = shopData.shopDescription;
+                document.getElementById('address').value = shopData.address;              
+    </script>
+}
