@@ -44,8 +44,23 @@ namespace E_Retalling_Portal.Controllers.Login
 
 
 		[HttpPost]
-		public IActionResult Login(Account account, Boolean rememberMe)
+		public IActionResult Login(Account account, bool rememberMe)
 		{
+			const int maxFailedAttempts = 5;
+			const int lockoutDurationMinutes = 10;
+
+			// Get the number of failed attempts and lockout time from the session
+			int? failedAttempts = HttpContext.Session.GetInt32(SessionKeys.FailedAttempts.ToString());
+			DateTime? lockoutEndTime = HttpContext.Session.GetString(SessionKeys.LockoutEndTime.ToString()) != null ?
+				DateTime.Parse(HttpContext.Session.GetString(SessionKeys.LockoutEndTime.ToString())) : (DateTime?)null;
+
+			// If lockoutEndTime exists and has not passed, show a lockout message
+			if (lockoutEndTime.HasValue && DateTime.Now < lockoutEndTime.Value)
+			{
+				ViewBag.ErrorMessage = "Account is locked. Please try again after " + (lockoutEndTime.Value - DateTime.Now).Minutes + " minutes.";
+				return View("LoginForm");
+			}
+
 			using (var context = new Context())
 			{
 				if (HttpContext.Session.GetInt32(SessionKeys.AccountId.ToString()) == null)
@@ -55,8 +70,15 @@ namespace E_Retalling_Portal.Controllers.Login
 
 					if (acc != null)
 					{
+						// Reset failed attempts and lockout if login is successful
+						HttpContext.Session.Remove(SessionKeys.FailedAttempts.ToString());
+						HttpContext.Session.Remove(SessionKeys.LockoutEndTime.ToString());
+
+						// Set session for logged-in user
 						HttpContext.Session.SetInt32(SessionKeys.AccountId.ToString(), acc.id);
 						HttpContext.Session.SetString(SessionKeys.DisplayName.ToString(), context.Users.GetUserById(acc.userId).FirstOrDefault().displayName);
+
+						// If rememberMe is false, store username and password in cookies
 						if (!rememberMe)
 						{
 							Response.Cookies.Append("Username_Customer", acc.username, new CookieOptions
@@ -65,25 +87,44 @@ namespace E_Retalling_Portal.Controllers.Login
 								HttpOnly = true,
 								Secure = true,
 								SameSite = SameSiteMode.Strict
-
 							});
-							String password = Base64.EncodeToBase64(acc.password);
+
+							string password = Base64.EncodeToBase64(acc.password);
 							Response.Cookies.Append("Password_Customer", password, new CookieOptions
 							{
 								Expires = DateTime.Now.AddDays(30),
 								HttpOnly = true,
 								Secure = true,
 								SameSite = SameSiteMode.Strict
-
 							});
 						}
+
 						return RedirectToAction("Index", "Home");
 					}
-					else { ViewBag.ErrorMessage = "Invalid username or password"; }
+					else
+					{
+						// Increment failed attempts count
+						failedAttempts = (failedAttempts ?? 0) + 1;
+						HttpContext.Session.SetInt32(SessionKeys.FailedAttempts.ToString(), failedAttempts.Value);
+
+						// If failed attempts exceed max, set lockout time
+						if (failedAttempts >= maxFailedAttempts)
+						{
+							DateTime lockoutEnd = DateTime.Now.AddMinutes(lockoutDurationMinutes);
+							HttpContext.Session.SetString(SessionKeys.LockoutEndTime.ToString(), lockoutEnd.ToString());
+							ViewBag.ErrorMessage = "Too many failed login attempts. Please try again in 10 minutes.";
+						}
+						else
+						{
+							ViewBag.ErrorMessage = "Invalid username or password. " + (maxFailedAttempts - failedAttempts.Value) + " attempts left.";
+						}
+					}
 				}
 			}
+
 			return View("LoginForm");
 		}
+
 
 		public IActionResult Logout()
 		{
