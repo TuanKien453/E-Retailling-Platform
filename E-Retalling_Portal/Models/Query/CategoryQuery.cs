@@ -28,5 +28,32 @@ namespace E_Retalling_Portal.Models.Query
         {
             return dbCate.Where(c => c.id == categoryId && c.deleteAt == null);
         }
+
+        public static void DeleteCategoryWithChildren(this DbSet<Category> dbCate, int parentCategoryId, DbContext context)
+        {
+            var parentCategory = dbCate.FirstOrDefault(cat => cat.id == parentCategoryId);
+            if (parentCategory != null)
+            {
+                // Perform recursive delete for all child categories
+                DeleteChildCategories(dbCate, parentCategory.id, context);
+
+                parentCategory.deleteAt = DateTime.Now.ToString();
+                context.Entry(parentCategory).State = EntityState.Modified;
+
+                context.SaveChanges();
+            }
+        }
+
+        private static void DeleteChildCategories(DbSet<Category> dbCate, int parentCategoryId, DbContext context)
+        {
+            var childCategories = dbCate.Where(cat => cat.parentCategoryId == parentCategoryId).ToList();
+            foreach (var childCategory in childCategories)
+            {
+                DeleteChildCategories(dbCate, childCategory.id, context);
+
+                childCategory.deleteAt = DateTime.Now.ToString();
+                context.Entry(childCategory).State = EntityState.Modified;
+            }
+        }
     }
 }

@@ -20,19 +20,19 @@
                             <div class="input-group input-group-outline mb-3">
                                 <label class="form-label" for="displayName">Display Name</label>
                                 <input type="text" class="form-control"
-                                       id="displayName" name="displayName" required value="@ViewBag.DisplayName" />
+                                       id="displayName" name="displayName" required maxlength="100" value="@ViewBag.DisplayName" />
                             </div>
                             <!-- First Name Field -->
                             <div class="input-group input-group-outline mb-3">
                                 <label class="form-label" for="firstName">First Name</label>
                                 <input type="text" class="form-control"
-                                       id="firstName" name="firstName" required value="@ViewBag.FirstName" />
+                                       id="firstName" name="firstName" required maxlength="100" value="@ViewBag.FirstName" />
                             </div>
                             <!-- Last Name Field -->
                             <div class="input-group input-group-outline mb-3">
                                 <label class="form-label" for="lastName">Last Name</label>
                                 <input type="text" class="form-control"
-                                       id="lastName" name="lastName" required value="@ViewBag.LastName" />
+                                       id="lastName" name="lastName" required maxlength="100" value="@ViewBag.LastName" />
                             </div>
                             <!-- Birthday Field -->
                             <div class="input-group input-group-outline mb-3">
@@ -44,7 +44,7 @@
                             <div class="input-group input-group-outline mb-3">
                                 <label for="address" class="form-label">Address</label>
                                 <input type="text" class="form-control"
-                                       id="address" name="address" required value="@ViewBag.Address" />
+                                       id="address" name="address" required maxlength="100" value="@ViewBag.Address" />
                             </div>
                             <!-- Gender Radio -->
                             <div class="input-group input-group-outline mb-3">
@@ -63,7 +63,7 @@
                             <!-- Username Field -->
                             <div class="input-group input-group-outline mb-3">
                                 <label for="username" class="form-label">Username</label>
-                                <input style="width:100%;" type="text" id="username" name="username" class="form-control" required value="@ViewBag.Username" />
+                                <input style="width:100%;" type="text" id="username" name="username" class="form-control" required maxlength="100" value="@ViewBag.Username" />
                                 @if (ViewBag.ErrorUsername != null)
                                 {
                                     <p class="text-danger">@ViewBag.ErrorUsername</p>
@@ -73,13 +73,13 @@
                             <!-- Password Field -->
                             <div class="input-group input-group-outline mb-3">
                                 <label for="password" class="form-label">Password</label>
-                                <input type="password" id="password" name="password" class="form-control " required />
+                                <input type="password" id="password" name="password" class="form-control " maxlength="100" required />
                             </div>
 
                             <!-- Confirm Password Field -->
                             <div class="input-group input-group-outline mb-3">
                                 <label for="passwordConfirm" class="form-label">PasswordConfirm</label>
-                                <input style="width:100%;" type="password" id="passwordConfirm" name="passwordConfirm" class="form-control @(ViewBag.ErrorPasswordConfirm != null ? "is-invalid" : "")" required />
+                                <input style="width:100%;" type="password" id="passwordConfirm" name="passwordConfirm" class="form-control @(ViewBag.ErrorPasswordConfirm != null ? "is-invalid" : "")" maxlength="100" required />
                                 @if (ViewBag.ErrorPasswordConfirm != null)
                                 {
                                     <p class="text-danger">@ViewBag.ErrorPasswordConfirm</p>

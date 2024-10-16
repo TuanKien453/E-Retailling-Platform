@@ -28,6 +28,9 @@
     .image-radio:checked + .image-radio-label {
         border: 2px solid blue;
     }
+    label{
+        margin-left:5px;
+    }
 </style>
 <div class="content m-4 pb-3">
 
@@ -57,7 +60,7 @@
                                     Edit
                                 </a>
                                 |
-                                <a href="#" class="text-danger font-weight-bold text-xs">
+                                <a href="#" class="text-danger font-weight-bold text-xs" data-bs-toggle="modal" data-bs-target="#deleteModal" onclick="sendDataToModal(@item.id)">
                                     Delete
                                 </a>
                             </td>
@@ -67,10 +70,36 @@
             </table>
         </div>
     </div>
-    <button type="button" class="btn btn-primary ms-5" data-bs-toggle="modal" data-bs-target="#addModal">
+    <a href="@Url.Action("Index","Product")" class="btn btn-dark ms-4 btn-pill text-uppercase">
+        Back
+    </a>
+    <button type="button" class="btn btn-secondary text-uppercase btn-pill  ms-2" data-bs-toggle="modal" data-bs-target="#addModal">
         Create More
     </button>
 </div>
+<!-- Delete Modal-->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModal">Delete</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-danger text-uppercase font-weight-bold">
+                Confirm delete
+            </div>
+            <form action="DeleteProductVariation">
+                <input type="hidden" name="productItemId" value="" id="delete-productItem-id" />
+                <input type="hidden" name="productId" value="@ViewBag.productId"/>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <!---------------------edit modal---------------------------------->
 <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -163,6 +192,11 @@
 </div>
 
 <script>
+    function sendDataToModal(id) {
+        $('#delete-productItem-id').val(id);
+    }
+
+
     function edit(element) {
         var id = $(element).data('id');
         var variation = $(element).data('variation');
