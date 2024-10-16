@@ -6,7 +6,7 @@ using E_Retalling_Portal.Models.Query;
 
 namespace E_Retalling_Portal.Controllers.Filter
 {
-    public class ShowOwnerHasAccountFilter : IActionFilter
+    public class HaveShopFilter : IActionFilter
     {
         public void OnActionExecuted(ActionExecutedContext context)
         {
@@ -33,7 +33,7 @@ namespace E_Retalling_Portal.Controllers.Filter
 
         public void OnActionExecuting(ActionExecutingContext context)
         {
-            throw new NotImplementedException();
+            
         }
     }
 }

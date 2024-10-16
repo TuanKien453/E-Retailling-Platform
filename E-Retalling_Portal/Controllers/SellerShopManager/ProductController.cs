@@ -11,6 +11,7 @@ using System.ComponentModel.DataAnnotations;
 namespace E_Retalling_Portal.Controllers.ShopManager
 {
     [TypeFilter(typeof(ShopOwnerRoleFilter))]
+    [TypeFilter(typeof(HaveShopFilter))]
     public class ProductController : Controller
     {
         public IActionResult Index()
