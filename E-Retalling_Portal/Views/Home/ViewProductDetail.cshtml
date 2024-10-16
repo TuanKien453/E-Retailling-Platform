@@ -1,6 +1,5 @@
 ﻿@{
     ViewData["Title"] = "View Product";
-    var displayedImages = new HashSet<string>();
 }
 
 
@@ -25,19 +24,13 @@
 
                 <!-- Danh sách các ảnh nhỏ -->
                 <div class="d-flex justify-content-center mb-3">
-                    @foreach (var productItem in ViewBag.productItemList)
-                    {
-                        var imageName = productItem.image.imageName;
-
-                        if (!displayedImages.Contains(imageName))
-                        {
-                            displayedImages.Add(imageName);
-                            <a onmouseover="updateMainImage('/productImages/@imageName')"
+                    @foreach (var image in ViewBag.productImageList)
+                    {     
+                            <a onmouseover="updateMainImage('/productImages/@image.imageName')"
                                onmouseout="resetMainImage('/productImages/@ViewBag.product.coverImage.imageName')"
-                               data-fslightbox="mygalley" class="border mx-1 rounded-2" target="_blank" data-type="image" href="~/productImages/@imageName">
-                                <img width="60" height="60" class="rounded-2" src="~/productImages/@imageName" />
+                           data-fslightbox="mygalley" class="border mx-1 rounded-2" target="_blank" data-type="image" href="~/productImages/@image.imageName">
+                            <img width="60" height="60" class="rounded-2" src="~/productImages/@image.imageName" />
                             </a>
-                        }
                     }
                 </div>
             </aside>
@@ -58,14 +51,22 @@
                             <i class="fas fa-star-half-alt"></i>
                             <span class="ms-1">
                                 4.5
-                            </span>
                         </div>
                         <span class="text-muted"><i class="fas fa-shopping-basket fa-sm mx-1"></i>@ViewBag.product.quantity</span>
                         <span class="text-success ms-2">In stock</span>
                     </div>
 
                     <div class="mb-3">
-                        <span class="h5" id="productPrice">$@ViewBag.minPrice-@ViewBag.maxPrice</span>
+                        <span class="h5" id="productPrice">
+                            $@if (ViewBag.product.isVariation == true)
+                            {
+                                @($"{ViewBag.minPrice} - {ViewBag.maxPrice}")
+                            }
+                            else
+                            {
+                                @($"{ViewBag.product.price}")
+                            }
+                        </span>
                     </div>
 
                     <p>
@@ -149,6 +150,7 @@
     let maxQuantity = 1;
     let selectedButton = null;
     let selectedProductId = null;
+    var isVariation = @((ViewBag.product.isVariation == true) ? "true" : "false");
     function toggleSelection(button, quantity, imagePath, productId, productPrice) {
 
         if (selectedButton === button) {
@@ -160,8 +162,12 @@
             selectedProductId = null;
 
             resetMainImage('/productImages/@ViewBag.product.coverImage.imageName');
-            document.getElementById('productPrice').innerText = '$@ViewBag.product.price';
 
+            if (isVariation === false) {
+                document.getElementById('productPrice').innerText = '$' + '@ViewBag.product.price'; 
+            } else {
+                document.getElementById('productPrice').innerText = '$' + '@ViewBag.minPrice' + '-' + '@ViewBag.maxPrice'; 
+            }
         } else {
             let allButtons = document.querySelectorAll('.custom-button');
             allButtons.forEach(btn => btn.classList.remove('selected'));
@@ -218,16 +224,7 @@
         }
     }
     function addToCart(productItemId, quantity) {
-        var accountId = '@(ViewBag.accountId ?? "null")';
-
-        if (selectedProductId == null) {
-            const errorMessage = document.getElementById('errorMessage');
-            errorMessage.style.display = 'block';
-            setTimeout(() => {
-                errorMessage.style.display = 'none';
-            }, 3000);
-            return;
-        } else {
+        if (isVariation === false || selectedProductId != null) {
             const xhr = new XMLHttpRequest();
             xhr.open('GET', '/Cart/AddToCart?productItemId=${productItemId}&quantity=${quantity}', true);
             xhr.onreadystatechange = function () {
@@ -247,6 +244,13 @@
             };
 
             xhr.send();
+        }else{
+                const errorMessage = document.getElementById('errorMessage');
+                errorMessage.style.display = 'block';
+                setTimeout(() => {
+                    errorMessage.style.display = 'none';
+                }, 3000);
+                return;
         }
 
     }
