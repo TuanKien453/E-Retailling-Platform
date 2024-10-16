@@ -1,0 +1,48 @@
+﻿@{
+	Layout = "~/Views/Shared/ManagerSideBarLayout.cshtml";
+
+}
+<link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.css" />
+<div class="content m-4 pb-3">
+
+    <div class="row p-4">
+        <div class="col-12">
+            <table id="myTable" class="display">
+                <thead>
+                    <tr>
+                        <th>ShopId</th>
+                        <th>accountId </th>
+                        <th>name</th>
+                        <th>createdAt</th>
+                        <th>shopDescription</th>
+                        <th>statusId</th>
+                        <th>address</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in ViewBag.Shops)
+                    {
+                        <tr>
+                            <td>@item.id</td>
+                            <td>@item.accountId</td>
+                            <td>@item.name</td>
+                            <td>@item.createdAt</td>
+                            <td>@item.shopDescription</td>
+                            <td>@item.statusId</td>
+                            <td>@item.address</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.css" />
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/2.1.8/js/dataTables.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#myTable').DataTable();
+    });
+</script>
