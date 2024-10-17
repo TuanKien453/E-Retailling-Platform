@@ -27,8 +27,9 @@ namespace E_Retalling_Portal.Controllers.Filter
 
             if (!haveAccess)
             {
-                context.Result = new RedirectResult("~/SellerShopManager/ShopInformation/NoShop");
-            }
+
+				context.Result = new RedirectToActionResult("NoShop","CreateShop",null);
+			}
         }
 
         public void OnActionExecuting(ActionExecutingContext context)

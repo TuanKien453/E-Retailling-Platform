@@ -21,60 +21,12 @@ namespace E_Retalling_Portal.Controllers.SellerShopManager
             using (var context = new Context())
             {
                 int? accId = HttpContext.Session.GetInt32(SessionKeys.AccountId.ToString());
-                if (context.Shops.GetShopbyAccId(accId.Value).FirstOrDefault() == null)
-                {
-                    return RedirectToAction("CreateShop");
-                } else return RedirectToAction("Index", "ShopDashBoard");
+                return RedirectToAction("Index", "ShopDashBoard");
             }             
         }
 
-        public IActionResult CreateShop()
-        {
-            int ?accId = HttpContext.Session.GetInt32(SessionKeys.AccountId.ToString());
-            if (accId != null)
-            {
-                using (var context = new Context())
-                {
-                    Shop ?shop = context.Shops.GetShopbyAccId(accId.Value).FirstOrDefault();
-                    if (shop == null)
-                    {
-                        return View("Views/SellerShopManager/ShopInformation/CreateShop.cshtml");
-                    } else return RedirectToAction("Index", "ShopDashBoard");
 
-                }
-            } else return View("Views/Shared/ErrorPage/Error500.cshtml");
-            
-        }
-
-        [HttpPost]
-        public IActionResult CreateShopProcess(Shop shop)
-        {
-            if (ModelState.IsValid)
-            {
-                int? accId = HttpContext.Session.GetInt32(SessionKeys.AccountId.ToString());
-                using (var context = new Context())
-                {
-                    if (context.Shops.GetShopByName(shop.name).FirstOrDefault() == null)
-                    {
-                        shop.accountId = accId.Value;
-                        shop.statusId = 1;
-                        context.Shops.Add(shop);
-                        context.SaveChanges();
-                        return RedirectToAction("Index", "ShopDashBoard");
-                    } else
-                    {
-                        ViewBag.ErrorName = "This name has been used";
-                        ViewBag.Shop = shop;
-                        return View("Views/SellerShopManager/ShopInformation/CreateShop.cshtml");
-                    }
-                    
-                }
-
-            }
-            else return View("Views/Shared/ErrorPage/Error500.cshtml");
-        }
-
-         public ActionResult ViewShop()
+         public IActionResult ViewShop()
          {
             using (var context = new Context())
             {
@@ -86,7 +38,7 @@ namespace E_Retalling_Portal.Controllers.SellerShopManager
                       
          }
 
-        public ActionResult UpdateShop()
+        public IActionResult UpdateShop()
         {
             using (var context = new Context())
             {
@@ -101,7 +53,7 @@ namespace E_Retalling_Portal.Controllers.SellerShopManager
         }
 
         [HttpPost]
-        public ActionResult UpdateShopProcess([MaxLength(100)] String name, [MaxLength(100)] String address, [MaxLength(2000)] String shopDescription)
+        public IActionResult UpdateShopProcess([MaxLength(100)] String name, [MaxLength(100)] String address, [MaxLength(2000)] String shopDescription)
         {
             if (ModelState.IsValid)
             {
@@ -130,5 +82,5 @@ namespace E_Retalling_Portal.Controllers.SellerShopManager
                 }
             } else return View("Views/Shared/ErrorPage/Error500.cshtml");
         }
-    }
+	}
 }

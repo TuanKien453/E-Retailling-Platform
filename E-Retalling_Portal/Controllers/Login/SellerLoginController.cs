@@ -30,7 +30,7 @@ namespace E_Retalling_Portal.Controllers.Login
 						return View("LoginForm");
 					}
 				}
-				return RedirectToAction("Index", "ShopDashBoard");
+				return RedirectToAction("Index", "CreateShop");
 			}
 
 			return View("SellerLoginForm");
@@ -71,7 +71,7 @@ namespace E_Retalling_Portal.Controllers.Login
 
 							});
 						}
-						return RedirectToAction("Index", "Shop");
+						return RedirectToAction("Index", "CreateShop");
 					}
 					else { ViewBag.ErrorMessage = "Invalid username or password"; }
 				}
