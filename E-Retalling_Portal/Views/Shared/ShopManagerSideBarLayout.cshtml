@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="~/css/sideBar.css" />
     <link rel="stylesheet" href="~/css/pagination.css" />
     <script src="https://kit.fontawesome.com/710667f71a.js" crossorigin="anonymous"></script>
+    @RenderSection("Styles", required: false)
 </head>
 <body>
 
@@ -20,7 +21,7 @@
                     <h3 class="fs-5 fw-semibold sidebar-title p-3">Account</h3>
                     <ul class="list-unstyled ps-0">
                         <li class="mb-1 single-item activeable active">
-                            <button class="btn btn-toggle align-items-center rounded collapsed no-shadow text-white  ">
+                            <button class="btn btn-toggle align-items-center rounded collapsed no-shadow text-white">
                                 <i class="fa-solid fa-table-columns">&nbsp;</i>
                                 <a href="@Url.Action("Index","ShopDashBoard")">DashBoard</a>
                             </button>
@@ -28,13 +29,28 @@
 
                         <li class="mb-1">
                             <div class="sidebar-parent">
-                                <button class="btn btn-toggle align-items-center rounded collapsed no-shadow text-white" data-bs-toggle="collapse" data-bs-target="#home-collapse" aria-expanded="false">
+                                <button class="btn btn-toggle align-items-center rounded collapsed no-shadow text-white" data-bs-toggle="collapse" data-bs-target="#shop-collapse" aria-expanded="false">
+                                    <i class="fa-solid fa-table-columns">&nbsp;</i>
+                                    Shop
+                                    <i class="fa-solid fa-chevron-down dropdown-icon"></i>
+                                </button>
+                            </div>
+                            <div class="collapse" id="shop-collapse">
+                                <ul class="btn-toggle-nav list-unstyled fw-normal pb-2 small">
+                                    <li class="activeable"><a href="@Url.Action("ViewShop","Shop")" class="">Shop Infomation</a></li>
+                                </ul>
+                            </div>
+                        </li>
+
+                        <li class="mb-1">
+                            <div class="sidebar-parent">
+                                <button class="btn btn-toggle align-items-center rounded collapsed no-shadow text-white" data-bs-toggle="collapse" data-bs-target="#product-collapse" aria-expanded="false">
                                     <i class="fa-solid fa-table-columns">&nbsp;</i>
                                     Product
                                     <i class="fa-solid fa-chevron-down dropdown-icon"></i>
                                 </button>
                             </div>
-                            <div class="collapse" id="home-collapse" style="">
+                            <div class="collapse" id="product-collapse">
                                 <ul class="btn-toggle-nav list-unstyled fw-normal pb-2 small">
                                     <li class="activeable"><a href="@Url.Action("ViewProducts","Product")" class="">View all</a></li>
                                     <li class="activeable"><a href="@Url.Action("AddProduct","Product")" class="">Add Product</a></li>
@@ -42,24 +58,19 @@
                                 </ul>
                             </div>
                         </li>
-
-                      
                     </ul>
                 </div>
             </div>
             <div class="col-10 left-col">
-
-
                 @RenderBody()
-
             </div>
         </div>
     </div>
 
-
     <script src="~/js/SidebarControl.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
-
+    @RenderSection("Scripts", required: false)
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+

@@ -22,8 +22,8 @@ namespace E_Retalling_Portal.Models.Query
         }
 
 
-        public static IQueryable<Product> GetProdutsByPrice(this DbSet<Product> dbProduct, double? minPrice, double? maxPrice)
-        {
+		public static IQueryable<Product> GetProdutsByPrice(this DbSet<Product> dbProduct, double? minPrice, double? maxPrice)
+		{
 
             if (minPrice >= 2 && maxPrice < 1000)
             {
@@ -36,6 +36,19 @@ namespace E_Retalling_Portal.Models.Query
             }
             return dbProduct;
         }
-
+        public static void DeleteProductById(this DbSet<Product> dbProduct, int productId, DbContext context)
+        {
+            var product = dbProduct.GetProductById(productId).FirstOrDefault();
+            if (product != null)
+            {
+                product.deleteAt = DateTime.Now.ToString();
+                context.Entry(product).State = EntityState.Modified;
+                context.SaveChanges();
+            }
+        }
+        public static IQueryable<Product> GetProductsNoVariation(this DbSet<Product> dbProduct)
+        {
+            return dbProduct.Include(p => p.coverImage).Where(p => p.deleteAt == null && p.isVariation == false);
+        }
     }
 }

@@ -18,7 +18,7 @@
                             <!-- Username Field -->
                             <div class="input-group input-group-outline mb-3">
                                 <label for="username" class="form-label">Username</label>
-                                <input style="width:100%;" type="text" id="username" name="username" class="form-control" required value="@ViewBag.Username" />
+                                <input style="width:100%;" type="text" id="username" name="username" class="form-control" required maxlength="100" value="@ViewBag.Username" />
                                 @if (ViewBag.ErrorUsername != null)
                                 {
                                     <p class="text-danger">@ViewBag.ErrorUsername</p>
@@ -28,13 +28,13 @@
                             <!-- Password Field -->
                             <div class="input-group input-group-outline mb-3">
                                 <label for="password" class="form-label">Password</label>
-                                <input type="password" id="password" name="password" class="form-control " required />
+                                <input type="password" id="password" name="password" maxlength="100" class="form-control " required />
                             </div>
 
                             <!-- Confirm Password Field -->
                             <div class="input-group input-group-outline mb-3">
                                 <label for="passwordConfirm" class="form-label">PasswordConfirm</label>
-                                <input style="width:100%;" type="password" id="passwordConfirm" name="passwordConfirm" class="form-control @(ViewBag.ErrorPasswordConfirm != null ? "is-invalid" : "")" required />
+                                <input style="width:100%;" type="password" id="passwordConfirm" name="passwordConfirm" class="form-control @(ViewBag.ErrorPasswordConfirm != null ? "is-invalid" : "")" required maxlength="100" />
                                 @if (ViewBag.ErrorPasswordConfirm != null)
                                 {
                                     <p class="text-danger">@ViewBag.ErrorPasswordConfirm</p>

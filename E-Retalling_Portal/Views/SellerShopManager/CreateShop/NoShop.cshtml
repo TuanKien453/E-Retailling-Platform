@@ -1,0 +1,19 @@
+﻿@{
+    ViewData["Title"] = "NoShop";
+    Layout = null;
+}
+<link rel="stylesheet" href="/kit/css/material-kit.min.css" />
+<div class="page-header align-items-start min-vh-100" style="background-image: url('https://www.executivegrapevine.com/uploads/articles/story-walmart-worker-claims-no-quit-policy.jpg');" loading="lazy">
+    <span class="mask bg-gradient-dark opacity-6"></span>
+    <div class="container my-auto">
+        <div class="row">
+            <div class="col-lg-12 m-auto text-center">
+                <h2 class="text-white">Sorry you can't enter our website without a shop</h2>
+                <p class="lead text-white">Please Sign up a shop to continue.</p>
+                <form asp-controller="CreateShop" asp-action="CreateShop">
+                        <button type="submit" class="btn bg-gradient-warning mt-4">Shop Sign In</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

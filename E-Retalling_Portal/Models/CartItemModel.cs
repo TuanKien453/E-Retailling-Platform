@@ -3,6 +3,8 @@
 	public class CartItemModel
 	{
 		public int quantity { get; set; }
-		public ProductItem productItem { get; set; }
+		public ProductItem? productItem { get; set; }
+
+		public Product? product { get; set; }
 	}
 }

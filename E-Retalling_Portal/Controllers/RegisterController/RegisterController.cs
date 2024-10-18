@@ -108,7 +108,7 @@ namespace E_Retalling_Portal.Controllers.AccountController
                         {
                             ViewBag.ErrorPhone = "This Phone Number has already been register";
                         }
-                        return View("CustomerEmailRegister");
+                        return View("ShopOwnerEmailRegister");
 
                     }
                     else
@@ -121,7 +121,7 @@ namespace E_Retalling_Portal.Controllers.AccountController
                             {
                                 ViewBag.ErrorEmail = "This Email has already been register";
                             }
-                            return View("CustomerEmailRegister");
+                            return View("ShopOwnerEmailRegister");
                         }
                     }
                     User? testUser = context.Users.GetValidUserData(email, phoneNumber).FirstOrDefault();

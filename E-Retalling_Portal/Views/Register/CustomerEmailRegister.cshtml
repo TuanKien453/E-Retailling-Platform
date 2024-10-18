@@ -37,7 +37,7 @@
                                 <div class="input-group input-group-outline mb-3">
                                     <label for="email" class="form-label">Email</label>
                                     <input style="width:100%;" type="email" class="form-control"
-                                           id="email" name="email" required value="@ViewBag.Email" />
+                                           id="email" name="email" required maxlength="100" value="@ViewBag.Email" />
                                     @if (ViewBag.ErrorEmail != null)
                                     {
                                         <p class="text-danger">@ViewBag.ErrorEmail</p>
@@ -46,7 +46,7 @@
                                 <div class="input-group input-group-outline mb-3">
                                     <label for="phoneNumber" class="form-label">Phone Number</label>
                                     <input style="width:100%;" type="text" class="form-control"
-                                           id="phoneNumber" name="phoneNumber" required value="@ViewBag.Phone"/>
+                                           id="phoneNumber" name="phoneNumber" maxlength="20" required value="@ViewBag.Phone" />
                                     @if (ViewBag.ErrorPhone != null)
                                     {
                                         <p class="text-danger">@ViewBag.ErrorPhone</p>
