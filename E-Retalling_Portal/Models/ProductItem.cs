@@ -17,6 +17,8 @@ namespace E_Retalling_Portal.Models
         public Product? product { get; set; }
         public Image? image { get; set; }
         public List<OrderItem>? orderItems { get; set; }
+        public List<ProductDiscount>? productDiscounts { get; set; }
+
 
 
     }
