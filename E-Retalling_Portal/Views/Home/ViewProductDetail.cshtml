@@ -226,7 +226,7 @@
     function addToCart(productItemId, quantity) {
         if (isVariation === false || selectedProductId != null) {
             const xhr = new XMLHttpRequest();
-            xhr.open('GET', '/Cart/AddToCart?productItemId=${productItemId}&quantity=${quantity}', true);
+            xhr.open('GET', `/Cart/Index?productItemId=${productItemId}&quantity=${quantity}`, true);
             xhr.onreadystatechange = function () {
                 if (xhr.readyState == 4 && xhr.status == 200) {
                     const popupMessage = document.getElementById('popupMessage');
