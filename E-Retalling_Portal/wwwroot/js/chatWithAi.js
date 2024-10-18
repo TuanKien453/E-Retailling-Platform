@@ -34,14 +34,18 @@ async function sendMessage() {
         });
 
         const responseData = await response.text(); 
-
+        console.log(responseData);
         const assistantItem = document.createElement("div");
         assistantItem.classList.add("item", "right");
-        assistantItem.innerHTML = `
-            <div class="msg">
-                <p>${responseData}</p>
-            </div>
-        `;
+
+        const msgContainer = document.createElement("div");
+        msgContainer.classList.add("msg");
+
+        const paragraph = document.createElement("p");
+        paragraph.innerHTML = responseData.replace(/\n/g, "<br>");
+
+        msgContainer.appendChild(paragraph);
+        assistantItem.appendChild(msgContainer);
         chatBoxContent.appendChild(assistantItem);
 
         chatBoxContent.scrollTop = chatBoxContent.scrollHeight;

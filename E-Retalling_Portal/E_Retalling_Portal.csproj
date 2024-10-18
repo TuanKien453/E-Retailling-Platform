@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+	  <PackageReference Include="DotnetGeminiSDK" Version="1.0.14" />
 	  <PackageReference Include="GroqSharp" Version="1.1.2" />
 	  <PackageReference Include="Microsoft.AspNetCore.Authentication.Facebook" Version="8.0.8" />
 	  <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="8.0.8" />

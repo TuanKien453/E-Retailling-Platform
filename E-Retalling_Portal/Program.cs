@@ -1,3 +1,5 @@
+using DotnetGeminiSDK.Client;
+using DotnetGeminiSDK.Config;
 using E_Retalling_Portal.Models;
 using E_Retalling_Portal.Services;
 using Microsoft.AspNetCore.Authentication;
@@ -55,6 +57,14 @@ builder.Services.AddSingleton<GroqAiService>(sp =>
 {
     var apiKey = builder.Configuration.GetValue<string>("GropClound:ApiKey");
     return new GroqAiService(apiKey);
+});
+
+builder.Services.AddSingleton<GeminiClient>(sp =>
+{
+    var apiKey = builder.Configuration.GetValue<string>("AIStudio:ApiKey");
+    return new GeminiClient(new GoogleGeminiConfig { ApiKey=apiKey,TextBaseUrl= "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash"
+    ,EmbeddingBaseUrl= "https://generativelanguage.googleapis.com/v1beta/models/embedding-001"
+    });
 });
 
 var app = builder.Build();
