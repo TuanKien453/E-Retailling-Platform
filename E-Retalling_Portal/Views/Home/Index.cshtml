@@ -1,7 +1,35 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
+<div class="container mt-4">
+    <div class="row">
+        <h3>You May Like</h3>
+        @foreach (var product in ViewBag.recommendedProduct)
+        {
+            <div class="col-md-2 col-sm-6">
+                <div class="product-grid">
+                    <div class="product-image">
+                        <a href="@Url.Action("Index", "ViewProductDetail", new { area = "Home", productId = product.id })" class="image">
+                            <img class="img-1" src="~/productImages/@product.coverImage.imageName">
+                            @if (product.images.Count>1)
+                            {
+                                <img class="img-2" src="~/productImages/@product.images[1].imageName">
+                            }
+                        </a>
+                        <a href="@Url.Action("Index", "ViewProductDetail", new { area = "Home", productId = product.id })" class="product-view"><i class="fa fa-search"></i></a>
+                    </div>
+                    <div class="product-content">
+                        <h3 class="title"><a href="@Url.Action("Index", "ViewProductDetail", new { area = "Home", productId = product.id })">@product.name</a></h3>
+                        <div class="price">$@product.price</div>
+                    </div>
+                </div>
+            </div>
+        }
 
+
+
+    </div>
+</div>
 
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
@@ -21,7 +49,7 @@
 
 
 
-<section class="py-7">
+<section class="py-3">
     <div class="container">
 
         <div class="row">
@@ -81,7 +109,7 @@
                 <div class="row justify-content-end py-2">
                     <div class="col-lg-4">
                         <form method="get" action="@Url.Action("Index", "Home")">
-                            <div class="input-group input-group-dynamic mb-4" >
+                            <div class="input-group input-group-dynamic mb-4">
                                 <span class="input-group-text"><i class="fas fa-search me-2" aria-hidden="true"></i></span>
                                 <input class="form-control p-1" placeholder="Search" type="text" name="searchQuery" style="background-image:none; border:1px solid gray;">
                             </div>
@@ -93,7 +121,7 @@
                 <div class="row">
                     @foreach (var product in ViewBag.productList)
                     {
-                       
+
                         <div class="col-md-3 col-sm-6">
                             <div class="product-grid">
                                 <div class="product-image">
@@ -128,7 +156,7 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                     }
                 </div>
                 <hr />
