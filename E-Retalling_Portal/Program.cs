@@ -2,6 +2,7 @@ using DotnetGeminiSDK.Client;
 using DotnetGeminiSDK.Config;
 using E_Retalling_Portal.Models;
 using E_Retalling_Portal.Services;
+using E_Retalling_Portal.Services.ExtendService;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Facebook;
@@ -66,7 +67,7 @@ builder.Services.AddSingleton<GeminiClient>(sp =>
     ,EmbeddingBaseUrl= "https://generativelanguage.googleapis.com/v1beta/models/embedding-001"
     });
 });
-
+builder.Services.AddScoped<IVnPayService, VnPayService>();
 var app = builder.Build();
 
 
