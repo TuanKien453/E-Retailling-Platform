@@ -15,7 +15,7 @@ namespace E_Retalling_Portal.Controllers
         }
         public IActionResult CreatePaymentUrl( )
         {
-            var url = _vnPayService.CreatePaymentUrl(HttpContext, new Order { id = 1,userId=2 });
+            var url = _vnPayService.CreatePaymentUrl(HttpContext, "test");
 
             return Redirect(url);
         }
@@ -23,8 +23,10 @@ namespace E_Retalling_Portal.Controllers
         public IActionResult PaymentCallback()
         {
             var response = _vnPayService.PaymentExecute(Request.Query);
-            var order = JsonSerializer.Deserialize<Order>(response.OrderDescription);
-            Console.WriteLine(order.id);
+            //payment success
+            if (response.Success == true && response.VnPayResponseCode.Equals("00")) {
+                return Json(response);
+            }
             return Json(response);
         }
     }

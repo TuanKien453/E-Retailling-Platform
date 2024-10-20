@@ -4,7 +4,7 @@ namespace E_Retalling_Portal.Services.ExtendService
 {
     public interface IVnPayService
     {
-        string CreatePaymentUrl(HttpContext context, Order order);
+        string CreatePaymentUrl(HttpContext context, String orderInfo);
         PaymentResponseModel PaymentExecute(IQueryCollection collections);
     }
 }
