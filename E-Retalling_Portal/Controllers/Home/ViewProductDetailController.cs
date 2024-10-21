@@ -2,12 +2,14 @@
 using E_Retalling_Portal.Models;
 using E_Retalling_Portal.Models.Query;
 using E_Retalling_Portal.Models.Enums;
+using E_Retalling_Portal.Util;
 namespace E_Retalling_Portal.Controllers.Home
 {
     public class ViewProductDetailController : Controller
     {
         public IActionResult Index(int? productId)
         {
+            CookiesUtils.SaveProductToCookie(productId.Value,Request,Response);
             using (var context = new Context())
             {
                 var product = context.Products.GetProductById(productId.Value).FirstOrDefault();

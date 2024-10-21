@@ -124,7 +124,24 @@ namespace E_Retalling_Portal.Models
                 .WithOne(p => p.coverImage)
                 .HasForeignKey<Image>(i => i.productCoveredId);
 
-            SeedingCategory(modelBuilder);
+            modelBuilder.Entity<Discount>()
+                .HasOne(s => s.shop)
+                .WithMany(s => s.discounts)
+                .HasForeignKey(d => d.shopId);
+
+            modelBuilder.Entity<ProductDiscount>()
+                .HasOne(p_i => p_i.productItem)
+                .WithMany(p_i => p_i.productDiscounts)
+                .HasForeignKey(pd => pd.productItemId)
+                 .OnDelete(DeleteBehavior.Restrict);
+
+			modelBuilder.Entity<ProductDiscount>()
+                .HasOne(p => p.product)
+                .WithMany(p => p.productDiscounts)
+                .HasForeignKey(pd => pd.productId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+			SeedingCategory(modelBuilder);
             SeedingRole(modelBuilder);
             SeedingUser(modelBuilder);
             SeedingAccount(modelBuilder);

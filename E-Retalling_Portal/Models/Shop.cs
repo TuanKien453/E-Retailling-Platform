@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Configuration;
+using System.Diagnostics.Contracts;
 
 namespace E_Retalling_Portal.Models
 {
@@ -20,6 +21,7 @@ namespace E_Retalling_Portal.Models
         public Status? status { get; set; }
         public Account? account { get; set; }
         public List<Product>? products { get; set; }
+        public List<Discount>? discounts { get; set; }
         
 
     }

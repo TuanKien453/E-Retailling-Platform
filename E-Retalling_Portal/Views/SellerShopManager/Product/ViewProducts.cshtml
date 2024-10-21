@@ -51,11 +51,11 @@
                             <td>
                                 @if (item.isVariation == true)
                                 {
-                                    <a href="EditVariation?productId=@item.id" class="text-primary font-weight-bold text-xs btn ">
+                                    <a href="EditVariation?productId=@item.id" class="text-primary font-weight-bold text-xs">
                                         Variation
                                     </a>@:|
                                 }
-                                <a href="UpdateProduct?productId=@item.id" class="text-primary font-weight-bold text-xs btn">
+                                <a href="UpdateProduct?productId=@item.id" class="text-primary font-weight-bold text-xs">
                                     Edit
                                 </a>|
                                 <a href="#" class="text-danger font-weight-bold text-xs" data-bs-toggle="modal" data-bs-target="#deleteModal" onclick="sendDataToModal(@item.id)">

@@ -17,6 +17,7 @@
     z-index: 9999;
     background-color: aliceblue;
     display: none;
+    word-break: break-word;
 }
 
     .chat-box-wrapper .title {

@@ -1,7 +1,9 @@
-﻿using E_Retalling_Portal.Controllers.Filter;
+﻿using DotnetGeminiSDK.Client;
+using E_Retalling_Portal.Controllers.Filter;
 using E_Retalling_Portal.Models;
 using E_Retalling_Portal.Models.Enums;
 using E_Retalling_Portal.Models.Query;
+using E_Retalling_Portal.Services;
 using E_Retalling_Portal.Services.ExtendService;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -14,6 +16,11 @@ namespace E_Retalling_Portal.Controllers.ShopManager
     [TypeFilter(typeof(HaveShopFilter))]
     public class ProductController : Controller
     {
+        private readonly GeminiClient _geminiClient;
+        public ProductController(GeminiClient geminiClient)
+        {
+            _geminiClient = geminiClient;
+        }
         public IActionResult Index()
         {
 
@@ -70,8 +77,11 @@ namespace E_Retalling_Portal.Controllers.ShopManager
             return View("/Views/SellerShopManager/product/AddProduct.cshtml");
         }
         [HttpPost]
-        public IActionResult AddProductProcess(Product product, List<IFormFile> img)
+        public async Task<IActionResult> AddProductProcess(Product product, List<IFormFile> img)
         {
+
+
+
             product.createAt = DateTime.Now.ToString();
             if (!ModelState.IsValid && img.Count == 0)
             {
@@ -84,12 +94,36 @@ namespace E_Retalling_Portal.Controllers.ShopManager
             {
                 using (var context = new Context())
                 {
+                    var cate = context.Categories.GetSubCategoriesByCategoryId(product.categoryId).FirstOrDefault();
+                    String productContext = $@"
+                        Product Name: {product.name}
+                        Description: {product.desc}
+                        Category: {cate.name}
+                    ";
+                    var task = Task.Run(() => _geminiClient.EmbeddedContentsPrompt(productContext));
+
+
                     var shop = context.Shops.GetShopbyAccId(accId.Value).FirstOrDefault();
                     product.shopId = shop.id;
                     product.status = 1;
                     context.Products.Add(product);
                     context.SaveChanges();
                     SaveImage(img, context, product, true);
+
+                    var response = await task;
+                    if (response?.Embedding != null && response.Embedding.Values != null)
+                    {
+                        //IEnumerable<object?> to float[]
+                        var embeddingValues = response.Embedding.Values
+                            .Where(v => v != null)
+                            .Select(v => Convert.ToSingle(v))
+                            .ToArray();
+
+                        product.vectorEmbadding = embeddingValues;
+                    }
+                    context.Products.Update(product);
+                    context.SaveChanges();
+
                     //redicted to input more information
                     if (product.isVariation)
                     {
@@ -154,7 +188,7 @@ namespace E_Retalling_Portal.Controllers.ShopManager
             }
             return View("/Views/SellerShopManager/product/UpdateProduct.cshtml");
         }
-        public IActionResult UpdateProductProcess(Product p, List<IFormFile> img)
+        public async Task<IActionResult> UpdateProductProcess(Product p, List<IFormFile> img)
         {
             Console.WriteLine("newImgCount:" + img.Count);
             if (!ModelState.IsValid)
@@ -166,6 +200,14 @@ namespace E_Retalling_Portal.Controllers.ShopManager
 
             using (var context = new Context())
             {
+                var cate = context.Categories.GetSubCategoriesByCategoryId(p.categoryId).FirstOrDefault();
+                String productContext = $@"
+                        Product Name: {p.name}
+                        Description: {p.desc}
+                        Category: {cate.name}
+                    ";
+                var task = Task.Run(() => _geminiClient.EmbeddedContentsPrompt(productContext));
+
                 List<Image> imgs = context.Images.GetImagesByProductId(p.id).ToList();
 
                 if (imgs.Count + img.Count > 6)
@@ -238,6 +280,17 @@ namespace E_Retalling_Portal.Controllers.ShopManager
                 product.quantity = p.quantity;
                 product.categoryId = p.categoryId;
                 product.desc = p.desc;
+                var response = await task;
+                if (response?.Embedding != null && response.Embedding.Values != null)
+                {
+                    //IEnumerable<object?> to float[]
+                    var embeddingValues = response.Embedding.Values
+                        .Where(v => v != null)
+                        .Select(v => Convert.ToSingle(v))
+                        .ToArray();
+
+                    product.vectorEmbadding = embeddingValues;
+                }
                 context.SaveChanges();
             }
 
@@ -249,7 +302,7 @@ namespace E_Retalling_Portal.Controllers.ShopManager
         {
             using (var context = new Context())
             {
-                context.ProductItems.DeleteProductItemById(productItemId,context);
+                context.ProductItems.DeleteProductItemById(productItemId, context);
             }
             return RedirectToAction("EditVariation", new { productId = productId });
         }
@@ -259,12 +312,14 @@ namespace E_Retalling_Portal.Controllers.ShopManager
             {
                 Product product = context.Products.GetProductById(productId).FirstOrDefault();
                 var productItems = context.ProductItems.GetProductItem(productId).ToList();
-                if (productItems.Count > 0) {
-                    foreach (var item in productItems) { 
-                        context.ProductItems.DeleteProductItemById(item.id,context);
+                if (productItems.Count > 0)
+                {
+                    foreach (var item in productItems)
+                    {
+                        context.ProductItems.DeleteProductItemById(item.id, context);
                     }
                 }
-                context.Products.DeleteProductById(productId,context);
+                context.Products.DeleteProductById(productId, context);
             }
             return RedirectToAction("ViewProducts");
         }

@@ -1,4 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json;
 
 namespace E_Retalling_Portal.Models
 {
@@ -20,10 +22,19 @@ namespace E_Retalling_Portal.Models
         public string? deleteAt { get; set; }
         [MaxLength(60)]
         public string? createAt { get; set; }
+        public string? vectorEmbaddingJson { get; set; }
+        [NotMapped]  
+        public float[]? vectorEmbadding
+        {
+            get => string.IsNullOrEmpty(vectorEmbaddingJson) ? null : JsonSerializer.Deserialize<float[]>(vectorEmbaddingJson);
+            set => vectorEmbaddingJson = JsonSerializer.Serialize(value);
+        }
         public Image? coverImage { get; set; }
         public Shop? shop { get; set; }
         public Category? category { get; set; }
         public List<Image>? images { get; set; }
         public List<ProductItem>? productItems { get; set; }
+        public List<ProductDiscount>? productDiscounts { get; set; }
+
     }
 }

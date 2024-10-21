@@ -1,6 +1,7 @@
 using E_Retalling_Portal.Models;
 using E_Retalling_Portal.Models.Enums;
 using E_Retalling_Portal.Models.Query;
+using E_Retalling_Portal.Util;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -31,8 +32,8 @@ namespace E_Retalling_Portal.Controllers.Home
             {
                 var imageList = context.Images.ToList();
                 var productList = context.Products.GetProduct().ToList();
-                var categoryList = context.Categories.GetCategories().ToList();             
-                var subcategoryList = context.Categories.GetSubCategories().ToList();       
+                var categoryList = context.Categories.GetCategories().ToList();
+                var subcategoryList = context.Categories.GetSubCategories().ToList();
                 List<BreadcrumbItem> breadcrumbList = new List<BreadcrumbItem>();
                 breadcrumbList = GetBreadcrumListFromCategoryList(categoryList, categoryId, breadcrumbList, context);
 
@@ -92,7 +93,7 @@ namespace E_Retalling_Portal.Controllers.Home
                 ViewBag.productList = paginatedProducts;
                 ViewBag.totalPages = (int)Math.Ceiling((double)totalProducts / pageSize);
                 ViewBag.currentPage = pageNumber;
-
+                ViewBag.recommendedProduct = GetRecommendProduct();
 
                 return View();
             }
@@ -171,8 +172,55 @@ namespace E_Retalling_Portal.Controllers.Home
             return productList.Where(p => subCategoryIds.Contains(p.categoryId)).ToList();
         }
 
+        private List<Product> GetRecommendProduct()
+        {
+            Dictionary<Product, double> recommendedProducts = new Dictionary<Product, double>();
+            List<Product> recentProduct = new List<Product>();
+            List<int> recentProductIds = Util.CookiesUtils.GetRecentlyViewedProductsFromCookie(Request, Response);
+            using (var context = new Context())
+            {
+                foreach (var id in recentProductIds)
+                {
+                    var recentProd = context.Products.GetProductById(id).FirstOrDefault();
+                    if (recentProd != null)
+                    {
+                        recentProduct.Add(recentProd);
+                    }
+                }
+                //cal point
+                var allProducts = GetProductsIsNotDelete(context.Products.GetProduct().ToList());
+                foreach (var product in allProducts)
+                {
+                    double point = 0;
+                    foreach (var recentProd in recentProduct)
+                    {
+                        point += CompareSemantics(product.id, recentProd.id);
+                    }
+                    //reduce point if already saw
+                    if(recentProductIds.Contains(product.id)){
+                        point -= 0.5;
+                    }
+                    recommendedProducts[product]=point;
+                }
+            }
 
-
+            return recommendedProducts
+                    .OrderByDescending(p => p.Value)
+                    .Take(6)
+                    .Select(p => p.Key)
+                    .ToList();;
+        }
+        private static double CompareSemantics(int productId1, int productId2)
+        {
+            var CosineSimilarity = 0.0;
+            using (var context = new Context())
+            {
+                var p1 = context.Products.GetProductById(productId1).FirstOrDefault();
+                var p2 = context.Products.GetProductById(productId2).FirstOrDefault();
+                CosineSimilarity = VectorUtils.CosineSimilarity(p1.vectorEmbadding, p2.vectorEmbadding);
+            }
+            return CosineSimilarity;
+        }
 
         public IActionResult Privacy()
         {
