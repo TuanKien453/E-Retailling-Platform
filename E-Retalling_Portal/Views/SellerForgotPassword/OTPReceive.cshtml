@@ -99,24 +99,24 @@
 		<h6>Please enter the one-time password <br> to verify your account</h6>
 		<div>
 
-				<span>A code has been sent to</span> <small>@maskEmail</small>
-			
+			<span>A code has been sent to</span> <small>@maskEmail</small>
+
 		</div>
 
 		<div id="countdown" class="mt-2 text-danger"></div>
 
-		<form id="otpForm" asp-controller="CustomerForgotPassword" asp-action="VerifyOTP" method="post">
+		<form id="otpForm" asp-controller="SellerForgotPassword" asp-action="VerifyOTP" method="post">
 			<div class="inputs mt-2">
 				<input type="text" name="enteredOtp" required maxlength="6" />
 			</div>
 			<div class="mt-4">
 				<button type="submit" class="btn validate">Validate</button>
-			</div><br/>
+			</div><br />
 			<div class="alert alert-danger">@ViewBag.OtpError</div>
 		</form>
-		
+
 		<div class="text-center my-3">
-			<form action="@Url.Action("SendOTP", "CustomerForgotPassword")" method="post" style="display: inline;">
+			<form action="@Url.Action("SendOTP", "SellerForgotPassword")" method="post" style="display: inline;">
 				<input type="hidden" name="emailTo" value="@email" />
 				<button type="submit" class="btn btn-primary btn-lg">
 					Resend OTP

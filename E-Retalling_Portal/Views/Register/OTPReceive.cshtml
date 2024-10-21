@@ -1,5 +1,4 @@
-﻿@using E_Retalling_Portal.Services
-@{
+﻿@{
 	Layout = null;
 
 	var expirationString = Context.Session.GetString(SessionKeys.OtpExpiration.ToString());
@@ -9,7 +8,6 @@
 	{
 		expirationTime = DateTime.Now.AddMinutes(1);
 	}
-	var maskEmail = OTPService.MaskEmail(email);
 }
 <style>
 	body {
@@ -98,25 +96,23 @@
 	<div class="card">
 		<h6>Please enter the one-time password <br> to verify your account</h6>
 		<div>
-
-				<span>A code has been sent to</span> <small>@maskEmail</small>
-			
+				<span>A code has been sent to</span> <small>@email</small>
 		</div>
 
 		<div id="countdown" class="mt-2 text-danger"></div>
 
-		<form id="otpForm" asp-controller="CustomerForgotPassword" asp-action="VerifyOTP" method="post">
-			<div class="inputs mt-2">
+		<form id="otpForm" asp-controller="Register" asp-action="VerifyOTP" method="post">
+			<div  class="inputs mt-2">
 				<input type="text" name="enteredOtp" required maxlength="6" />
 			</div>
 			<div class="mt-4">
-				<button type="submit" class="btn validate">Validate</button>
-			</div><br/>
-			<div class="alert alert-danger">@ViewBag.OtpError</div>
+				<button class="btn validate">Validate</button>
+			</div><br />
+			<div id="otp-error" class="alert alert-danger">@ViewBag.OtpError</div>
 		</form>
-		
+
 		<div class="text-center my-3">
-			<form action="@Url.Action("SendOTP", "CustomerForgotPassword")" method="post" style="display: inline;">
+			<form action="@Url.Action("SendOTP", "Register")" style="display: inline;">
 				<input type="hidden" name="emailTo" value="@email" />
 				<button type="submit" class="btn btn-primary btn-lg">
 					Resend OTP
@@ -125,6 +121,7 @@
 		</div>
 	</div>
 </div>
+
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script>
 	var expirationTime = new Date('@expirationTime.ToString("yyyy-MM-ddTHH:mm:ssZ")');
@@ -136,7 +133,7 @@
 		if (remainingTime <= 0) {
 			document.getElementById("countdown").textContent = "Your OTP has expired. Please request a new one!";
 			document.querySelectorAll('#otpForm input').forEach(input => {
-				input.disabled = true; 
+				input.disabled = true;
 			});
 			document.querySelector('#otpForm button').disabled = true;
 			return;

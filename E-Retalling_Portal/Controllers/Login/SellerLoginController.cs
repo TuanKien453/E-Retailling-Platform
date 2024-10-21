@@ -15,7 +15,7 @@ namespace E_Retalling_Portal.Controllers.Login
 			if (passwordCookie != null)
 			{
 				passwordCookie = Base64.DecodeFromBase64(passwordCookie);
-				ViewBag.PasswordCookie_Seller = passwordCookie;
+				ViewBag.PasswordCookie_Customer = passwordCookie;
 
 			}
 			int? accountId = HttpContext.Session.GetInt32(SessionKeys.AccountId.ToString());
@@ -23,23 +23,39 @@ namespace E_Retalling_Portal.Controllers.Login
 			{
 				using (var context = new Context())
 				{
-					//If login session is not seller, delete old session and go to seller login
 					if (context.Accounts.GetAccountByAccountId((int)accountId).FirstOrDefault().id != 2)
 					{
 						HttpContext.Session.Clear();
-						return View("LoginForm");
+						return View("SellerLoginForm");
 					}
 				}
-				return RedirectToAction("Index", "ShopDashBoard");
+				return RedirectToAction("Index", "Home");
 			}
-
 			return View("SellerLoginForm");
 		}
 
 
 		[HttpPost]
-		public IActionResult Login(Account account, Boolean rememberMe)
+		public IActionResult Login(Account account, bool rememberMe)
 		{
+			if (!ModelState.IsValid)
+			{
+				return View("Views/Shared/ErrorPage/Error500.cshtml");
+			}
+
+			const int maxFailedAttempts = 5;
+			const int lockoutDurationMinutes = 10;
+
+			int? failedAttempts = HttpContext.Session.GetInt32(SessionKeys.FailedAttempts.ToString());
+			DateTime? lockoutEndTime = HttpContext.Session.GetString(SessionKeys.LockoutEndTime.ToString()) != null ?
+				DateTime.Parse(HttpContext.Session.GetString(SessionKeys.LockoutEndTime.ToString())) : (DateTime?)null;
+
+			if (lockoutEndTime.HasValue && DateTime.Now < lockoutEndTime.Value)
+			{
+				ViewBag.ErrorMessage = "Account is locked. Please try again after " + (lockoutEndTime.Value - DateTime.Now).Minutes + " minutes.";
+				return View("SellerLoginForm");
+			}
+
 			using (var context = new Context())
 			{
 				if (HttpContext.Session.GetInt32(SessionKeys.AccountId.ToString()) == null)
@@ -49,9 +65,13 @@ namespace E_Retalling_Portal.Controllers.Login
 
 					if (acc != null)
 					{
+						HttpContext.Session.Remove(SessionKeys.FailedAttempts.ToString());
+						HttpContext.Session.Remove(SessionKeys.LockoutEndTime.ToString());
+
 						HttpContext.Session.SetInt32(SessionKeys.AccountId.ToString(), acc.id);
-                        HttpContext.Session.SetString(SessionKeys.DisplayName.ToString(), context.Users.GetUserById(acc.userId).FirstOrDefault().displayName);
-                        if (!rememberMe)
+						HttpContext.Session.SetString(SessionKeys.DisplayName.ToString(), context.Users.GetUserById(acc.userId).FirstOrDefault().displayName);
+
+						if (!rememberMe)
 						{
 							Response.Cookies.Append("Username_Seller", acc.username, new CookieOptions
 							{
@@ -59,23 +79,39 @@ namespace E_Retalling_Portal.Controllers.Login
 								HttpOnly = true,
 								Secure = true,
 								SameSite = SameSiteMode.Strict
-
 							});
-							String password = Base64.EncodeToBase64(acc.password);
+
+							string password = Base64.EncodeToBase64(acc.password);
 							Response.Cookies.Append("Password_Seller", password, new CookieOptions
 							{
 								Expires = DateTime.Now.AddDays(30),
 								HttpOnly = true,
 								Secure = true,
 								SameSite = SameSiteMode.Strict
-
 							});
 						}
-						return RedirectToAction("Index", "ShopDashBoard");
+
+						return RedirectToAction("Index", "Home");
 					}
-					else { ViewBag.ErrorMessage = "Invalid username or password"; }
+					else
+					{
+						failedAttempts = (failedAttempts ?? 0) + 1;
+						HttpContext.Session.SetInt32(SessionKeys.FailedAttempts.ToString(), failedAttempts.Value);
+
+						if (failedAttempts >= maxFailedAttempts)
+						{
+							DateTime lockoutEnd = DateTime.Now.AddMinutes(lockoutDurationMinutes);
+							HttpContext.Session.SetString(SessionKeys.LockoutEndTime.ToString(), lockoutEnd.ToString());
+							ViewBag.ErrorMessage = "Too many failed login attempts. Please try again in " + lockoutDurationMinutes + " minutes.";
+						}
+						else
+						{
+							ViewBag.ErrorMessage = "Invalid username or password. " + (maxFailedAttempts - failedAttempts.Value) + " attempts left.";
+						}
+					}
 				}
 			}
+
 			return View("SellerLoginForm");
 		}
 
