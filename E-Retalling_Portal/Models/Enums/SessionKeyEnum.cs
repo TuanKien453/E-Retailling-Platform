@@ -12,7 +12,8 @@
 		FailedAttempts,
 		LockoutEndTime,
 		Otp,
-		OtpExpiration
+		OtpExpiration,
+		UserToUpdate
 	}
 
 }

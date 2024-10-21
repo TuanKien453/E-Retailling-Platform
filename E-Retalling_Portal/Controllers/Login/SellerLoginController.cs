@@ -38,11 +38,6 @@ namespace E_Retalling_Portal.Controllers.Login
 		[HttpPost]
 		public IActionResult Login(Account account, bool rememberMe)
 		{
-			if (!ModelState.IsValid)
-			{
-				return View("Views/Shared/ErrorPage/Error500.cshtml");
-			}
-
 			const int maxFailedAttempts = 5;
 			const int lockoutDurationMinutes = 10;
 

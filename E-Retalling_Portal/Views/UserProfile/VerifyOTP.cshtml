@@ -1,0 +1,44 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@{
+    Layout = null;
+}
+<link href="~/kit/css/ghost.css" rel="stylesheet" />
+<div class="box">
+    <div class="box__ghost">
+        <div class="symbol"></div>
+        <div class="symbol"></div>
+        <div class="symbol"></div>
+        <div class="symbol"></div>
+        <div class="symbol"></div>
+        <div class="symbol"></div>
+
+        <div class="box__ghost-container">
+            <div class="box__ghost-eyes">
+                <div class="box__eye-left"></div>
+                <div class="box__eye-right"></div>
+            </div>
+            <div class="box__ghost-bottom">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+        </div>
+        <div class="box__ghost-shadow"></div>
+    </div>
+
+    <div class="box__description">
+        <div class="box__description-container">
+            <div class="box__description-title">Whoops!</div>
+            <div class="box__description-text">An error occurred while processing your request. Please go back to homepage</div>
+        </div>
+
+        <a href="@Url.Action("Index", "Home")" target="_blank" class="box__button">Go back to homepage</a>
+
+    </div>
+</div>
