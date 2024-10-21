@@ -25,12 +25,12 @@
                 <!-- Danh sách các ảnh nhỏ -->
                 <div class="d-flex justify-content-center mb-3">
                     @foreach (var image in ViewBag.productImageList)
-                    {     
-                            <a onmouseover="updateMainImage('/productImages/@image.imageName')"
-                               onmouseout="resetMainImage('/productImages/@ViewBag.product.coverImage.imageName')"
+                    {
+                        <a onmouseover="updateMainImage('/productImages/@image.imageName')"
+                           onmouseout="resetMainImage('/productImages/@ViewBag.product.coverImage.imageName')"
                            data-fslightbox="mygalley" class="border mx-1 rounded-2" target="_blank" data-type="image" href="~/productImages/@image.imageName">
                             <img width="60" height="60" class="rounded-2" src="~/productImages/@image.imageName" />
-                            </a>
+                        </a>
                     }
                 </div>
             </aside>
@@ -58,14 +58,23 @@
 
                     <div class="mb-3">
                         <span class="h5" id="productPrice">
-                            $@if (ViewBag.product.isVariation == true)
+                            @if (ViewBag.product.isVariation == true)
                             {
-                                @($"{ViewBag.minPrice} - {ViewBag.maxPrice}")
+                                if (ViewBag.minPrice == ViewBag.maxPrice)
+                                {
+                                    @($"${ViewBag.minPrice}")
+                                }
+                                else
+                                {
+                                    @($"${ViewBag.minPrice} - ${ViewBag.maxPrice}")
+                                }
                             }
                             else
                             {
-                                @($"{ViewBag.product.price}")
+                                @($"${ViewBag.product.price}")
                             }
+
+
                         </span>
                     </div>
 
@@ -150,6 +159,7 @@
     let maxQuantity = 1;
     let selectedButton = null;
     let selectedProductId = null;
+    let productId = @ViewBag.product.id;
     var isVariation = @((ViewBag.product.isVariation == true) ? "true" : "false");
     function toggleSelection(button, quantity, imagePath, productId, productPrice) {
 
@@ -164,10 +174,18 @@
             resetMainImage('/productImages/@ViewBag.product.coverImage.imageName');
 
             if (isVariation === false) {
-                document.getElementById('productPrice').innerText = '$' + '@ViewBag.product.price'; 
+                document.getElementById('productPrice').innerText = '$' + '@ViewBag.product.price';
             } else {
-                document.getElementById('productPrice').innerText = '$' + '@ViewBag.minPrice' + '-' + '@ViewBag.maxPrice'; 
+                const minPrice = '@ViewBag.minPrice';
+                const maxPrice = '@ViewBag.maxPrice';
+
+                if (minPrice === maxPrice) {
+                    document.getElementById('productPrice').innerText = '$' + minPrice;
+                } else {
+                    document.getElementById('productPrice').innerText = '$' + minPrice + ' - $' + maxPrice; 
+                }
             }
+
         } else {
             let allButtons = document.querySelectorAll('.custom-button');
             allButtons.forEach(btn => btn.classList.remove('selected'));
@@ -224,7 +242,7 @@
         }
     }
     function addToCart(productItemId, quantity) {
-        if (isVariation === false || selectedProductId != null) {
+        if (isVariation === true && selectedProductId != null) {
             const xhr = new XMLHttpRequest();
             xhr.open('GET', `/Cart/AddToCart?itemId=${productItemId}&quantity=${quantity}&isProduct=${false}`, true);
             xhr.onreadystatechange = function () {
@@ -242,18 +260,36 @@
                     }, 3500);
                 }
             };
-
             xhr.send();
-        }else{
-                const errorMessage = document.getElementById('errorMessage');
-                errorMessage.style.display = 'block';
-                setTimeout(() => {
-                    errorMessage.style.display = 'none';
-                }, 3000);
-                return;
-        }
+        } else if (isVariation === false && selectedProductId == null) {
+            const xhr = new XMLHttpRequest();
+            xhr.open('GET', `/Cart/AddToCart?itemId=${productId}&quantity=${quantity}&isProduct=${true}`, true);
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    const popupMessage = document.getElementById('popupMessage');
+                    popupMessage.style.display = 'block';
+                    popupMessage.style.opacity = '1';
 
+                    setTimeout(() => {
+                        popupMessage.style.opacity = '0';
+                    }, 3000);
+
+                    setTimeout(() => {
+                        popupMessage.style.display = 'none';
+                    }, 3500);
+                }
+            };
+            xhr.send();
+        } else {
+            const errorMessage = document.getElementById('errorMessage');
+            errorMessage.style.display = 'block';
+            setTimeout(() => {
+                errorMessage.style.display = 'none';
+            }, 3000);
+            return;
+        }
     }
+
 
 
 </script>
