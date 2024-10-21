@@ -100,7 +100,6 @@
                                data-slider-step="5" data-slider-value="[@(ViewBag.minPrice ?? 250),@(ViewBag.maxPrice ?? 450)]" />
                         <input type="hidden" name="minPrice" id="minPriceInput" value="@(ViewBag.minPrice ?? 250)" />
                         <input type="hidden" name="maxPrice" id="maxPriceInput" value="@(ViewBag.maxPrice ?? 450)" />
-                        <input type="hidden" name="page" value="@ViewBag.page" />
                         <input type="hidden" name="categoryId" value="@ViewBag.categoryId" />
                         <input type="hidden" name="searchQuery" value="@ViewBag.searchQuery" />
                         <button type="submit" class="btn btn-primary mt-3">Apply Filter</button>
@@ -117,7 +116,6 @@
                                 <span class="input-group-text"><i class="fas fa-search me-2" aria-hidden="true"></i></span>
                                 <input class="form-control p-1" placeholder="Search" type="text" name="searchQuery" value="@ViewBag.searchQuery" style="background-image:none; border:1px solid gray;">
                             </div>
-                            <input type="hidden" name="page" value="@ViewBag.page" />
                             <input type="hidden" name="categoryId" value="@ViewBag.categoryId" />
                             <input type="hidden" name="minPrice" value="@ViewBag.minPrice" />
                             <input type="hidden" name="maxPrice" value="@ViewBag.maxPrice" />

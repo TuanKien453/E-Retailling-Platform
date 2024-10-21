@@ -83,7 +83,7 @@ namespace E_Retalling_Portal.Controllers.Home
                     }
                 }
                 var pageNumber = page ?? 1;
-                var pageSize = 1;
+                var pageSize = 24;
                 List<Product> products = GetProductsIsNotDelete(productList);
                 var paginatedProducts = products.ToPagedList(pageNumber, pageSize);
 
@@ -95,7 +95,7 @@ namespace E_Retalling_Portal.Controllers.Home
                 ViewBag.currentPage = pageNumber;
                 ViewBag.recommendedProduct = GetRecommendProduct();
                 ViewBag.page = pageNumber;
-                return View(paginatedProducts);
+                return View(paginatedProducts);          
             }
         }
 
