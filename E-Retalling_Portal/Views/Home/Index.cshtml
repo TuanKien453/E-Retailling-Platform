@@ -1,4 +1,6 @@
-﻿@{
+﻿@model X.PagedList.IPagedList<E_Retalling_Portal.Models.Product>
+
+@{
     ViewData["Title"] = "Home Page";
 }
 <div class="container mt-4">
@@ -98,7 +100,9 @@
                                data-slider-step="5" data-slider-value="[@(ViewBag.minPrice ?? 250),@(ViewBag.maxPrice ?? 450)]" />
                         <input type="hidden" name="minPrice" id="minPriceInput" value="@(ViewBag.minPrice ?? 250)" />
                         <input type="hidden" name="maxPrice" id="maxPriceInput" value="@(ViewBag.maxPrice ?? 450)" />
+                        <input type="hidden" name="page" value="@ViewBag.page" />
                         <input type="hidden" name="categoryId" value="@ViewBag.categoryId" />
+                        <input type="hidden" name="searchQuery" value="@ViewBag.searchQuery" />
                         <button type="submit" class="btn btn-primary mt-3">Apply Filter</button>
                     </form>
 
@@ -111,15 +115,20 @@
                         <form method="get" action="@Url.Action("Index", "Home")">
                             <div class="input-group input-group-dynamic mb-4">
                                 <span class="input-group-text"><i class="fas fa-search me-2" aria-hidden="true"></i></span>
-                                <input class="form-control p-1" placeholder="Search" type="text" name="searchQuery" style="background-image:none; border:1px solid gray;">
+                                <input class="form-control p-1" placeholder="Search" type="text" name="searchQuery" value="@ViewBag.searchQuery" style="background-image:none; border:1px solid gray;">
                             </div>
+                            <input type="hidden" name="page" value="@ViewBag.page" />
+                            <input type="hidden" name="categoryId" value="@ViewBag.categoryId" />
+                            <input type="hidden" name="minPrice" value="@ViewBag.minPrice" />
+                            <input type="hidden" name="maxPrice" value="@ViewBag.maxPrice" />
                         </form>
                     </div>
                 </div>
 
 
+
                 <div class="row">
-                    @foreach (var product in ViewBag.productList)
+                    @foreach (var product in Model)
                     {
 
                         <div class="col-md-3 col-sm-6">
@@ -158,58 +167,16 @@
                         </div>
 
                     }
+                    @Html.PagedListPager(Model, page => Url.Action("Index", new { page, categoryId = ViewBag.categoryId, minPrice = ViewBag.minPrice, maxPrice = ViewBag.maxPrice, searchQuery = ViewBag.searchQuery }), new PagedListRenderOptions
+               {
+                   DisplayLinkToFirstPage = PagedListDisplayMode.IfNeeded,
+                   DisplayLinkToLastPage = PagedListDisplayMode.IfNeeded,
+                   MaximumPageNumbersToDisplay = 10,
+                   DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
+                   DisplayLinkToNextPage = PagedListDisplayMode.Always,
+
+               })
                 </div>
-                <hr />
-                <nav aria-label="Page navigation example">
-                    <ul class="pagination">
-                        @if (ViewBag.currentPage > 1)
-                        {
-                            <li class="page-item">
-                                <a class="page-link" href="?pageNumber=@(ViewBag.currentPage - 1)" aria-label="Previous">
-                                    <span aria-hidden="true">&laquo;</span>
-                                </a>
-                            </li>
-                        }
-                        else
-                        {
-                            <li class="page-item disabled">
-                                <a class="page-link" href="#" aria-label="Previous">
-                                    <span aria-hidden="true">&laquo;</span>
-                                </a>
-                            </li>
-                        }
-
-                        @for (int i = 1; i <= ViewBag.totalPages; i++)
-                        {
-                            if (i == ViewBag.currentPage)
-                            {
-                                <li class="page-item active"><a class="page-link" href="?pageNumber=@i">@i</a></li>
-                            }
-                            else
-                            {
-                                <li class="page-item"><a class="page-link" href="?pageNumber=@i">@i</a></li>
-                            }
-                        }
-
-                        @if (ViewBag.currentPage < ViewBag.totalPages)
-                        {
-                            <li class="page-item">
-                                <a class="page-link" href="?pageNumber=@(ViewBag.currentPage + 1)" aria-label="Next">
-                                    <span aria-hidden="true">&raquo;</span>
-                                </a>
-                            </li>
-                        }
-                        else
-                        {
-                            <li class="page-item disabled">
-                                <a class="page-link" href="#" aria-label="Next">
-                                    <span aria-hidden="true">&raquo;</span>
-                                </a>
-                            </li>
-                        }
-                    </ul>
-                </nav>
-
             </div>
         </div>
     </div>

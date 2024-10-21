@@ -21,21 +21,6 @@ namespace E_Retalling_Portal.Models.Query
             return dbProduct.Include(p => p.coverImage).Include(p => p.images).Include(p => p.productItems).Include(p => p.category).Where(p => p.deleteAt == null && p.category.parentCategoryId == category.parentCategoryId && p.id != productId || (p.productItems.Count > 0 && p.id != productId));
         }
 
-
-		public static IQueryable<Product> GetProdutsByPrice(this DbSet<Product> dbProduct, double? minPrice, double? maxPrice)
-		{
-
-            if (minPrice >= 2 && maxPrice < 1000)
-            {
-                return dbProduct.Where(p => p.price >= minPrice.Value && p.price < maxPrice.Value && p.deleteAt == null);
-            }
-            else
-                if (minPrice >= 2 && maxPrice >= 1000)
-            {
-                return dbProduct.Where(p => p.price >= minPrice.Value && p.deleteAt == null);
-            }
-            return dbProduct;
-        }
         public static void DeleteProductById(this DbSet<Product> dbProduct, int productId, DbContext context)
         {
             var product = dbProduct.GetProductById(productId).FirstOrDefault();

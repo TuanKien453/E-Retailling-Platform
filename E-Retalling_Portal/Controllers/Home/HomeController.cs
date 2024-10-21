@@ -9,6 +9,7 @@ using Newtonsoft.Json.Linq;
 using System.Diagnostics;
 using System.Drawing.Printing;
 using System.Linq;
+using X.PagedList.Extensions;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace E_Retalling_Portal.Controllers.Home
@@ -26,7 +27,7 @@ namespace E_Retalling_Portal.Controllers.Home
         {
             return View("Views/Shared/ErrorPage/Error500.cshtml");
         }
-        public IActionResult Index(string searchQuery, int? categoryId, double? minPrice, double? maxPrice, int pageNumber = 1, int pageSize = 8)
+        public IActionResult Index(string? searchQuery, int? categoryId, double? minPrice, double? maxPrice, int? page)
         {
             using (var context = new Context())
             {
@@ -51,23 +52,22 @@ namespace E_Retalling_Portal.Controllers.Home
                     ViewBag.categoryList = categoryList;
                 }
 
-                if (categoryId != null)
+                if (categoryId.HasValue)
                 {
-                    //Get productList by filter category
                     productList = GetProductsBySubCategories(categoryId, categoryList, productList, context);
                 }
 
-                if (searchQuery != null)
+                if (!string.IsNullOrEmpty(searchQuery))
                 {
-                    //Get product by filter search
                     productList = GetProductsByFilterSearch(productList, searchQuery);
                 }
 
-                if (minPrice != null || maxPrice != null)
+                if (minPrice.HasValue || maxPrice.HasValue)
                 {
-                    //Get product by filtery price
-                    productList = productList = context.Products.GetProdutsByPrice(minPrice, maxPrice).ToList();
+                    productList = GetProductsByPrice(minPrice, maxPrice, productList);
                 }
+
+
 
                 //Get min price of productItems
                 if (productList != null)
@@ -82,20 +82,20 @@ namespace E_Retalling_Portal.Controllers.Home
                         }
                     }
                 }
+                var pageNumber = page ?? 1;
+                var pageSize = 1;
                 List<Product> products = GetProductsIsNotDelete(productList);
-                int totalProducts = products.Count();
-                var paginatedProducts = products.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
+                var paginatedProducts = products.ToPagedList(pageNumber, pageSize);
 
+                ViewBag.searchQuery = searchQuery;
                 ViewBag.imageList = imageList;
                 ViewBag.categoryId = categoryId;
                 ViewBag.minPrice = minPrice;
                 ViewBag.maxPrice = maxPrice;
-                ViewBag.productList = paginatedProducts;
-                ViewBag.totalPages = (int)Math.Ceiling((double)totalProducts / pageSize);
                 ViewBag.currentPage = pageNumber;
                 ViewBag.recommendedProduct = GetRecommendProduct();
-
-                return View();
+                ViewBag.page = pageNumber;
+                return View(paginatedProducts);
             }
         }
 
@@ -122,6 +122,25 @@ namespace E_Retalling_Portal.Controllers.Home
             }
             return products;
         }
+        private List<Product> GetProductsByPrice(double? minPrice, double? maxPrice, List<Product> productList)
+        {
+            if (productList == null || !productList.Any())
+            {
+                return new List<Product>(); 
+            }
+
+            var filteredProducts = productList.Where(p => p.deleteAt == null);
+
+            if (minPrice >= 2 && maxPrice < 1000)
+            {                return filteredProducts.Where(p => p.price >= minPrice.Value && p.price < maxPrice.Value).ToList();
+            }
+            else if (minPrice >= 2 && maxPrice >= 1000)
+            {
+                return filteredProducts.Where(p => p.price >= minPrice.Value).ToList();
+            }
+
+            return filteredProducts.ToList();
+        }
 
         private List<BreadcrumbItem> GetBreadcrumListFromCategoryList(List<Category> categoryList, int? categoryId, List<BreadcrumbItem> breadcrumbList, Context context)
         {
@@ -143,8 +162,8 @@ namespace E_Retalling_Portal.Controllers.Home
         {
             if (!string.IsNullOrEmpty(searchQuery))
             {
-                return productList.Where(p => p.name.Contains(searchQuery, StringComparison.OrdinalIgnoreCase) && p.deleteAt != null)
-                        .ToList(); ;
+                return productList.Where(p => p.name.Contains(searchQuery, StringComparison.OrdinalIgnoreCase) && p.deleteAt == null)
+                        .ToList();
             }
             return productList;
         }
@@ -208,7 +227,7 @@ namespace E_Retalling_Portal.Controllers.Home
                     .OrderByDescending(p => p.Value)
                     .Take(6)
                     .Select(p => p.Key)
-                    .ToList();;
+                    .ToList();
         }
         private static double CompareSemantics(int productId1, int productId2)
         {
