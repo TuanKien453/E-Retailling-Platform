@@ -4,18 +4,6 @@
 
 @model Account;
 
-<!--
-=========================================================
-* Material Kit 2 PRO - v3.0.4
-=========================================================
-
-* Product Page:  https://www.creative-tim.com/product/material-kit-pro
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-* Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software. -->
 <!DOCTYPE html>
 <html lang="en" itemscope itemtype="http://schema.org/WebPage">
 <head>
@@ -64,6 +52,16 @@
 
 </head>
 <body class="bg-gray-200">
+	<!-- Nav bar -->
+	<nav class="navbar navbar-expand-lg navbar-light bg-light" style="height: 100px">
+		<div class="container">
+			<div>
+			<a class="navbar-brand" href="@Url.Action("Index", "Home")" style="font-size: 1.25rem">E-Retailing Portal</a>
+			| Login
+			</div>
+		</div>
+	</nav>
+
 	@{
 		// Lấy dữ liệu từ cooki
 		var usernameCookie = Context.Request.Cookies["Username_Customer"] ?? "";
@@ -107,7 +105,7 @@
 
 									@if (!string.IsNullOrEmpty(ViewBag.ErrorMessage))
 									{
-										<div class="alert alert-danger mt-3" role="alert">
+										<div class="alert alert-danger mt-3" style="color: white; background-color: #dc3545; border: 1px solid #dc3545; font-size: 0.975rem;" role="alert">
 											@ViewBag.ErrorMessage
 										</div>
 									}
@@ -163,7 +161,12 @@
 										<button type="submit" class="btn-custom text-info text-gradient font-weight-bold" style="padding: 5px 10px;">Register</button>
 									</p>
 								</form>
-
+								<form asp-controller="CustomerForgotPassword" asp-action="Index">
+									<p class="mb-0 mt-3 text-sm mx-auto">
+										Don't remember password?
+										<button type="submit" class="btn-custom text-info text-gradient font-weight-bold" style="padding: 5px 10px;">Forget Password</button>
+									</p>
+								</form>
 							</div>
 						</div>
 					</div>
@@ -172,19 +175,17 @@
 		</div>
 	</section>
 
-	<footer class="footer py-5">
-		<div class="container">
-			<div class="row">
-				<div class="col-8 mx-auto text-center mt-1">
-					<p class="mb-0 text-secondary">
-						Copyright © <script>
-							document.write(new Date().getFullYear())
-						</script> Material by Creative Tim.
-					</p>
-				</div>
-			</div>
+	<!-- Footer -->
+	<footer>
+		<div class="container text-center mt-4">
+			<p class="text-muted">&copy; 2024 E-Retailing Portal. All rights reserved.</p>
+			<ul class="list-inline" style="display: flex; justify-content: center; align-items: center;">
+				<li class="list-inline-item"><a href="@Url.Action("Privacy", "Home")">Privacy Policy</a></li>
+			</ul>
 		</div>
 	</footer>
+
+
 	<script>
 		document.getElementById("togglePassword").addEventListener("click", function () {
 			const passwordInput = document.getElementById("password");

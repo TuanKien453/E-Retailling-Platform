@@ -242,7 +242,7 @@ namespace E_Retalling_Portal.Models
                     address = "addresdds",
                     birthday = "2000-01-04",
                     displayName = "anh",
-                    email = "abcadsf@gmail.com",
+                    email = "quynxhe186459@fpt.edu.vn",
                     firstName = "first",
                     lastName = "last",
                     phoneNumber = "0123459145",

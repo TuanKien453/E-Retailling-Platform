@@ -20,32 +20,45 @@ namespace E_Retalling_Portal.Controllers.Login
 		public IActionResult Index()
 		{
 			var passwordCookie = HttpContext.Request.Cookies["Password_Customer"] ?? "";
-			if(passwordCookie != null)
+			if (passwordCookie != null)
 			{
 				passwordCookie = Base64.DecodeFromBase64(passwordCookie);
 				ViewBag.PasswordCookie_Customer = passwordCookie;
-				
+
 			}
-			int ?accountId = HttpContext.Session.GetInt32(SessionKeys.AccountId.ToString());
-			if ( accountId != null) {
+			int? accountId = HttpContext.Session.GetInt32(SessionKeys.AccountId.ToString());
+			if (accountId != null)
+			{
 				using (var context = new Context())
 				{
-					//If login session is not customer, delete old session and go to login
-					if(context.Accounts.GetAccountByAccountId((int)accountId).FirstOrDefault().id != 1)
+					if (context.Accounts.GetAccountByAccountId((int)accountId).FirstOrDefault().id != 1)
 					{
 						HttpContext.Session.Clear();
 						return View("LoginForm");
 					}
 				}
 				return RedirectToAction("Index", "Home");
-		    }
+			}
 			return View("LoginForm");
 		}
 
 
 		[HttpPost]
-		public IActionResult Login(Account account, Boolean rememberMe)
+		public IActionResult Login(Account account, bool rememberMe)
 		{
+			const int maxFailedAttempts = 5;
+			const int lockoutDurationMinutes = 10;
+
+			int? failedAttempts = HttpContext.Session.GetInt32(SessionKeys.FailedAttempts.ToString());
+			DateTime? lockoutEndTime = HttpContext.Session.GetString(SessionKeys.LockoutEndTime.ToString()) != null ?
+				DateTime.Parse(HttpContext.Session.GetString(SessionKeys.LockoutEndTime.ToString())) : (DateTime?)null;
+
+			if (lockoutEndTime.HasValue && DateTime.Now < lockoutEndTime.Value)
+			{
+				ViewBag.ErrorMessage = "Account is locked. Please try again after " + (lockoutEndTime.Value - DateTime.Now).Minutes + " minutes.";
+				return View("LoginForm");
+			}
+
 			using (var context = new Context())
 			{
 				if (HttpContext.Session.GetInt32(SessionKeys.AccountId.ToString()) == null)
@@ -55,8 +68,12 @@ namespace E_Retalling_Portal.Controllers.Login
 
 					if (acc != null)
 					{
+						HttpContext.Session.Remove(SessionKeys.FailedAttempts.ToString());
+						HttpContext.Session.Remove(SessionKeys.LockoutEndTime.ToString());
+
 						HttpContext.Session.SetInt32(SessionKeys.AccountId.ToString(), acc.id);
 						HttpContext.Session.SetString(SessionKeys.DisplayName.ToString(), context.Users.GetUserById(acc.userId).FirstOrDefault().displayName);
+
 						if (!rememberMe)
 						{
 							Response.Cookies.Append("Username_Customer", acc.username, new CookieOptions
@@ -65,25 +82,42 @@ namespace E_Retalling_Portal.Controllers.Login
 								HttpOnly = true,
 								Secure = true,
 								SameSite = SameSiteMode.Strict
-
 							});
-							String password = Base64.EncodeToBase64(acc.password);
+
+							string password = Base64.EncodeToBase64(acc.password);
 							Response.Cookies.Append("Password_Customer", password, new CookieOptions
 							{
 								Expires = DateTime.Now.AddDays(30),
 								HttpOnly = true,
 								Secure = true,
 								SameSite = SameSiteMode.Strict
-
 							});
 						}
+
 						return RedirectToAction("Index", "Home");
 					}
-					else { ViewBag.ErrorMessage = "Invalid username or password"; }
+					else
+					{
+						failedAttempts = (failedAttempts ?? 0) + 1;
+						HttpContext.Session.SetInt32(SessionKeys.FailedAttempts.ToString(), failedAttempts.Value);
+
+						if (failedAttempts >= maxFailedAttempts)
+						{
+							DateTime lockoutEnd = DateTime.Now.AddMinutes(lockoutDurationMinutes);
+							HttpContext.Session.SetString(SessionKeys.LockoutEndTime.ToString(), lockoutEnd.ToString());
+							ViewBag.ErrorMessage = "Too many failed login attempts. Please try again in " + lockoutDurationMinutes+ " minutes.";
+						}
+						else
+						{
+							ViewBag.ErrorMessage = "Invalid username or password. " + (maxFailedAttempts - failedAttempts.Value) + " attempts left.";
+						}
+					}
 				}
 			}
+
 			return View("LoginForm");
 		}
+
 
 		public IActionResult Logout()
 		{
@@ -115,8 +149,8 @@ namespace E_Retalling_Portal.Controllers.Login
 					if (account != null)
 					{
 						HttpContext.Session.SetInt32(SessionKeys.AccountId.ToString(), account.id);
-                        HttpContext.Session.SetString(SessionKeys.DisplayName.ToString(), context.Users.GetUserById(account.userId).FirstOrDefault().displayName);
-                        return RedirectToAction("Index", "Home");
+						HttpContext.Session.SetString(SessionKeys.DisplayName.ToString(), context.Users.GetUserById(account.userId).FirstOrDefault().displayName);
+						return RedirectToAction("Index", "Home");
 					}
 					else
 					{
@@ -140,9 +174,9 @@ namespace E_Retalling_Portal.Controllers.Login
 								await context.Accounts.SaveAccountToDatabase(context, acc);
 
 								HttpContext.Session.SetInt32(SessionKeys.AccountId.ToString(), acc.id);
-                                HttpContext.Session.SetString(SessionKeys.DisplayName.ToString(), context.Users.GetUserById(acc.userId).FirstOrDefault().displayName);
+								HttpContext.Session.SetString(SessionKeys.DisplayName.ToString(), context.Users.GetUserById(acc.userId).FirstOrDefault().displayName);
 
-                                return RedirectToAction("Index", "Home");
+								return RedirectToAction("Index", "Home");
 							}
 						}
 						else
@@ -164,9 +198,9 @@ namespace E_Retalling_Portal.Controllers.Login
 							await context.Accounts.SaveAccountToDatabase(context, acc);
 
 							HttpContext.Session.SetInt32(SessionKeys.AccountId.ToString(), acc.id);
-                            HttpContext.Session.SetString(SessionKeys.DisplayName.ToString(), context.Users.GetUserById(acc.userId).FirstOrDefault().displayName);
+							HttpContext.Session.SetString(SessionKeys.DisplayName.ToString(), context.Users.GetUserById(acc.userId).FirstOrDefault().displayName);
 
-                            return RedirectToAction("Index", "Home");
+							return RedirectToAction("Index", "Home");
 						}
 					}
 				}
@@ -199,8 +233,8 @@ namespace E_Retalling_Portal.Controllers.Login
 					if (account != null)
 					{
 						HttpContext.Session.SetInt32(SessionKeys.AccountId.ToString(), account.id);
-                        HttpContext.Session.SetString(SessionKeys.DisplayName.ToString(), context.Users.GetUserById(account.userId).FirstOrDefault().displayName);
-                        return RedirectToAction("Index", "Home");
+						HttpContext.Session.SetString(SessionKeys.DisplayName.ToString(), context.Users.GetUserById(account.userId).FirstOrDefault().displayName);
+						return RedirectToAction("Index", "Home");
 					}
 					else
 					{
@@ -220,9 +254,9 @@ namespace E_Retalling_Portal.Controllers.Login
 						await context.Accounts.SaveAccountToDatabase(context, acc);
 
 						HttpContext.Session.SetInt32(SessionKeys.AccountId.ToString(), acc.id);
-                        HttpContext.Session.SetString(SessionKeys.DisplayName.ToString(), context.Users.GetUserById(acc.userId).FirstOrDefault().displayName);
+						HttpContext.Session.SetString(SessionKeys.DisplayName.ToString(), context.Users.GetUserById(acc.userId).FirstOrDefault().displayName);
 
-                        return RedirectToAction("Index", "Home");
+						return RedirectToAction("Index", "Home");
 					}
 				}
 			}
