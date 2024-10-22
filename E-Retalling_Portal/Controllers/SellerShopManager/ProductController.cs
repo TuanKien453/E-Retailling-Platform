@@ -83,7 +83,7 @@ namespace E_Retalling_Portal.Controllers.ShopManager
 
 
             product.createAt = DateTime.Now.ToString();
-            if (!ModelState.IsValid && img.Count == 0)
+            if (!ModelState.IsValid || img.Count == 0)
             {
                 ModelState.ReadErrors();
                 return View("Views/Shared/ErrorPage/Error500.cshtml");

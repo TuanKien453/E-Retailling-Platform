@@ -29,5 +29,16 @@ namespace E_Retalling_Portal.Models.Query
                 context.SaveChanges();
             }
         }
+
+        public static bool IsShop(this DbSet<ProductItem> dbProductItem, int shopId, int productItemId)
+        {
+
+            var pi = dbProductItem.Include("product").Where(pi=>pi.id == productItemId).FirstOrDefault();
+            if (pi == null)
+            {
+                return false;
+            }
+            return pi.product.shopId== shopId;
+        }
     }
 }
