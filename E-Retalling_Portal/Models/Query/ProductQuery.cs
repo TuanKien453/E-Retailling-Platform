@@ -35,5 +35,15 @@ namespace E_Retalling_Portal.Models.Query
         {
             return dbProduct.Include(p => p.coverImage).Where(p => p.deleteAt == null && p.isVariation == false);
         }
+
+        public static bool IsShop(this DbSet<Product> dbProduct, int shopId, int productId) {
+        
+            var p = dbProduct.Where(p=>p.id==productId).FirstOrDefault();
+            if (p==null)
+            {
+                return false;
+            }
+            return p.shopId == shopId;
+        }
     }
 }
