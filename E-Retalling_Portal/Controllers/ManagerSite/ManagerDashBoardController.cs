@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using E_Retalling_Portal.Controllers.Filter;
+using Microsoft.AspNetCore.Mvc;
 
 namespace E_Retalling_Portal.Controllers.Manager
 {
-    public class ManagerDashBoardController : Controller
+	[TypeFilter(typeof(ManagerFilter))]
+	public class ManagerDashBoardController : Controller
     {
         public IActionResult Index()
         {

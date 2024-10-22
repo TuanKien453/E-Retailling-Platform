@@ -8,6 +8,7 @@ using X.PagedList.Mvc.Core;
 using X.PagedList.Extensions;
 using Newtonsoft.Json;
 using Microsoft.IdentityModel.Tokens;
+using X.PagedList;
 
 namespace E_Retalling_Portal.Controllers.Cart
 {
@@ -29,14 +30,24 @@ namespace E_Retalling_Portal.Controllers.Cart
 					productItem = ci.Key.EndsWith("PI") ? productItems.FirstOrDefault(pi => pi.id == int.Parse(ci.Key.TrimEnd("PI".ToCharArray()))) : null
 				}).ToList();
 
+			
 				// Paging
 				var pageNumber = page ?? 1;
 				var pageSize = 3;
 				var pagedCartItem = cartDetails.ToPagedList(pageNumber, pageSize);
-				if(pagedCartItem.Count() == 0)
+
+				if (cartDetails == null || !cartDetails.Any())
+				{
+					ViewBag.IsCartEmpty = true; 
+					return View();
+				}
+
+				if (pagedCartItem.Count() == 0)
 				{
 					return RedirectToAction("Index");
 				}
+				ViewBag.IsCartEmpty = false;
+				
 
 				return View(pagedCartItem);
 			}
