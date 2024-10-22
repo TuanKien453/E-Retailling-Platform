@@ -31,7 +31,7 @@ namespace E_Retalling_Portal.Controllers.Login
 			{
 				using (var context = new Context())
 				{
-					if (context.Accounts.GetAccountByAccountId((int)accountId).FirstOrDefault().id != 1)
+					if (context.Accounts.GetAccountByAccountId((int)accountId).FirstOrDefault().roleId != 1)
 					{
 						HttpContext.Session.Clear();
 						return View("LoginForm");

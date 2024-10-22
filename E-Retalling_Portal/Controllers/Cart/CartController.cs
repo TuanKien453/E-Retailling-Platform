@@ -31,7 +31,7 @@ namespace E_Retalling_Portal.Controllers.Cart
 
 				// Paging
 				var pageNumber = page ?? 1;
-				var pageSize = 1;
+				var pageSize = 3;
 				var pagedCartItem = cartDetails.ToPagedList(pageNumber, pageSize);
 				if(pagedCartItem.Count() == 0)
 				{

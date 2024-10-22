@@ -23,7 +23,7 @@ namespace E_Retalling_Portal.Controllers.Login
 			{
 				using (var context = new Context())
 				{
-					if (context.Accounts.GetAccountByAccountId((int)accountId).FirstOrDefault().id != 2)
+					if (context.Accounts.GetAccountByAccountId((int)accountId).FirstOrDefault().roleId != 2)
 					{
 						HttpContext.Session.Clear();
 						return View("SellerLoginForm");
@@ -86,7 +86,7 @@ namespace E_Retalling_Portal.Controllers.Login
 							});
 						}
 
-						return RedirectToAction("Index", "Home");
+						return RedirectToAction("Index", "CreateShop");
 					}
 					else
 					{
@@ -103,7 +103,6 @@ namespace E_Retalling_Portal.Controllers.Login
 						{
 							ViewBag.ErrorMessage = "Invalid username or password. " + (maxFailedAttempts - failedAttempts.Value) + " attempts left.";
 						}
-						return RedirectToAction("Index", "CreateShop");
 					}
 				}
 			}
