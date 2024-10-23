@@ -76,8 +76,9 @@ namespace E_Retalling_Portal.Controllers.UserProfile
             {
 
                 int? accountId = (int)HttpContext.Session.GetInt32(SessionKeys.AccountId.ToString());
+                Account account = context.Accounts.GetAccountByAccountId(accountId.Value).FirstOrDefault();
 
-                User newUser = context.Users.GetUserByUserIdInAccount(accountId.Value).FirstOrDefault();
+                User newUser = context.Users.GetUserByUserIdInAccount(account.userId).FirstOrDefault();
 
                 User testUser = context.Users.GetValidUserData(user.email, user.phoneNumber, newUser.id).FirstOrDefault();
 
@@ -114,7 +115,7 @@ namespace E_Retalling_Portal.Controllers.UserProfile
                 {
                     newUser.displayName = user.displayName;
 
-                    newUser.email = user.email;
+                    
 
                     newUser.phoneNumber = user.phoneNumber;
                     newUser.birthday = user.birthday;
@@ -125,9 +126,15 @@ namespace E_Retalling_Portal.Controllers.UserProfile
                     newUser.province = user.province;
                     newUser.district = user.district;
                     newUser.commune = user.commune;
-                    HttpContext.Session.SetString(SessionKeys.UserToUpdate.ToString(), JsonConvert.SerializeObject(user));
-					return RedirectToAction("SendOTP", new { emailTo = user.email });
-                   
+                    if (newUser.email != user.email)
+                    {
+                        newUser.email = user.email;
+                        HttpContext.Session.SetString(SessionKeys.UserToUpdate.ToString(), JsonConvert.SerializeObject(user));
+                        return RedirectToAction("SendOTP", new { emailTo = user.email });
+                    }
+                    context.SaveChanges();
+                    TempData["UpdateMessage"] = "Updated Successfully!";
+                    return RedirectToAction("ViewProfile");
                 }
                  
                 
