@@ -90,7 +90,9 @@ namespace E_Retalling_Portal.Controllers.UserProfile
                     newUser.firstName = user.firstName;
                     newUser.lastName = user.lastName;
                     newUser.address = user.address;
-                    
+                    newUser.province = user.province;
+                    newUser.district = user.district;
+                    newUser.commune = user.commune;
                     if (testUser.email == user.email)
                     {
                         TempData["ErrorEmail"] = "Email is already been registered";
@@ -120,7 +122,10 @@ namespace E_Retalling_Portal.Controllers.UserProfile
                     newUser.firstName = user.firstName;
                     newUser.lastName = user.lastName;
                     newUser.address = user.address;
-					HttpContext.Session.SetString(SessionKeys.UserToUpdate.ToString(), JsonConvert.SerializeObject(user));
+                    newUser.province = user.province;
+                    newUser.district = user.district;
+                    newUser.commune = user.commune;
+                    HttpContext.Session.SetString(SessionKeys.UserToUpdate.ToString(), JsonConvert.SerializeObject(user));
 					return RedirectToAction("SendOTP", new { emailTo = user.email });
                    
                 }
@@ -163,7 +168,9 @@ namespace E_Retalling_Portal.Controllers.UserProfile
                                 newUser.firstName = userToUpdate.firstName;
                                 newUser.lastName = userToUpdate.lastName;
                                 newUser.address = userToUpdate.address;
-
+                                newUser.province = userToUpdate.province;
+                                newUser.district = userToUpdate.district;
+                                newUser.commune = userToUpdate.commune;
                                 context.SaveChanges(); 
                             }
 
