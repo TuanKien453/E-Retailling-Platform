@@ -23,12 +23,44 @@ namespace E_Retalling_Portal.Controllers.Cart
 				var productItems = await context.ProductItems.GetAllProductItem().ToListAsync();
 				var products = await context.Products.GetProductsNoVariation().ToListAsync();
 
+				//Delete deletedItem in cookie
+				foreach (var item in cartItems)
+				{
+					var key = item.Key;
+
+					if (key.EndsWith("P"))
+					{
+						int productId = int.Parse(key.TrimEnd('P'));
+						if (!products.Any(p => p.id == productId))
+						{
+							DeleteFromCart(productId, true);
+						}
+					}
+					else if (key.EndsWith("PI"))
+					{
+						int productItemId = int.Parse(key.TrimEnd("PI".ToCharArray()));
+						if (!productItems.Any(pi => pi.id == productItemId))
+						{
+							DeleteFromCart(productItemId, false);
+						}
+					}
+				}
+
+				var cookiedata = Request.Cookies["Cart"];
+				if (cookiedata == null)
+				{
+					cartItems = new Dictionary<string, int>();
+				}
+
 				var cartDetails = cartItems.Select(ci => new CartItemModel
 				{
 					quantity = ci.Value,
 					product = ci.Key.EndsWith("P") ? products.FirstOrDefault(p => p.id == int.Parse(ci.Key.TrimEnd('P'))) : null,
 					productItem = ci.Key.EndsWith("PI") ? productItems.FirstOrDefault(pi => pi.id == int.Parse(ci.Key.TrimEnd("PI".ToCharArray()))) : null
 				}).ToList();
+				
+
+
 
 			
 				// Paging

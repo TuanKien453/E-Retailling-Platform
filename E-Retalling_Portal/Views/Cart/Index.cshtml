@@ -1,6 +1,7 @@
 ﻿@model X.PagedList.IPagedList<CartItemModel>
-
-
+@{
+	ViewData["Title"] = "Shopping Cart";
+}
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Shopping Cart</title>
@@ -146,7 +147,7 @@
 									<div class="flex-shrink-0 ms-2">
 										<ul class="list-inline mb-0 font-size-16">
 											<li class="list-inline-item">
-												<a href="javascript:void(0);" class="text-muted px-1" data-bs-toggle="modal" onclick="showDeleteModal(@item.productItem.id, 'Amazon Essentials Men\'s Straight-Fit Stretch Golf Pant', 'false' )">
+												<a href="javascript:void(0);" class="text-muted px-1" data-bs-toggle="modal" onclick="showDeleteModal(@item.productItem.id, `@Html.Raw(item.productItem.product.name)`, 'false' )">
 													<i class="mdi mdi-trash-can-outline"></i>
 												</a>
 											</li>

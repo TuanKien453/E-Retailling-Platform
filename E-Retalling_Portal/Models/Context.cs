@@ -20,6 +20,7 @@ namespace E_Retalling_Portal.Models
         public DbSet<ProductItem> ProductItems { get; set; }
         public DbSet<Shop> Shops { get; set; }
         public DbSet<Status> Statuses { get; set; }
+        public DbSet<Setting> Settings { get; set; }
 
 
 
@@ -150,6 +151,7 @@ namespace E_Retalling_Portal.Models
             SeedingProduct(modelBuilder);
             SeedingImage(modelBuilder);
             SeedingProductItem(modelBuilder);
+            SeedingSetting(modelBuilder);
         }
         private static void SeedingProductItem(ModelBuilder modelBuilder)
         {
@@ -254,14 +256,25 @@ namespace E_Retalling_Portal.Models
                     address = "LangHa",
                     birthday = "2004-01-04",
                     displayName = "phien",
-                    email = "hoangphien47@gmail.com",
+                    email = "hoangphien46@gmail.com",
                     firstName = "duc",
                     lastName = "phien",
                     phoneNumber = "0968059984",
                     gender = "Male"
-                }
-
-            );
+                },
+				new User
+				{
+					id = 4,
+					address = "LangHa",
+					birthday = "2004-01-04",
+					displayName = "phien",
+					email = "hoangphien47@gmail.com",
+					firstName = "duc",
+					lastName = "phien",
+					phoneNumber = "0968059984",
+					gender = "Male"
+				}
+			);
         }
 
         private static void SeedingAccount(ModelBuilder modelBuilder)
@@ -270,10 +283,16 @@ namespace E_Retalling_Portal.Models
                 new Account { id = 1, username = "admin", password = "123", roleId = 2, externalId = null, externalType = null, userId = 1 },
                 new Account { id = 2, username = "anh", password = "123", roleId = 1, externalId = null, externalType = null, userId = 2 },
                 new Account { id = 3, username = "seller", password = "123", roleId = 2, externalId = null, externalType = null, userId = 2 },
-                new Account { id = 4, username = "phien47", password = "123", roleId = 2, externalId = null, externalType = null, userId = 3 }
-            );
+                new Account { id = 4, username = "phien47", password = "123", roleId = 2, externalId = null, externalType = null, userId = 3 },
+				new Account { id = 5, username = "manager", password = "123", roleId = 3, externalId = null, externalType = null, userId = 3 }
+			);
         }
 
-
+        public static void SeedingSetting(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Setting>().HasData(
+                new Setting { id = 1, name = "fee", value = "10%" }
+                );
+        }
 	}
 }
