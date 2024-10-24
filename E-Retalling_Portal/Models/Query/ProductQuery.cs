@@ -33,7 +33,7 @@ namespace E_Retalling_Portal.Models.Query
         }
         public static IQueryable<Product> GetProductsNoVariation(this DbSet<Product> dbProduct)
         {
-            return dbProduct.Include(p => p.coverImage).Where(p => p.deleteAt == null && p.isVariation == false);
+            return dbProduct.Include(p => p.coverImage).Include(p => p.shop).Where(p => p.deleteAt == null && p.isVariation == false);
         }
 
         public static bool IsShop(this DbSet<Product> dbProduct, int shopId, int productId) {

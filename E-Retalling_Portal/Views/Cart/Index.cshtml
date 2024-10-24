@@ -71,6 +71,9 @@
 									</div>
 									<div class="flex-grow-1 align-self-center overflow-hidden">
 										<div>
+											<div class="text-muted" style="font-size: 14px;">
+												@item.product.shop.name
+											</div>
 											<h5 class="text-truncate font-size-18">
 												<a href="ViewProductDetail?area=Home&productId=@item.product.id" class="text-dark">@item.product.name</a>
 											</h5>
@@ -138,6 +141,9 @@
 									</div>
 									<div class="flex-grow-1 align-self-center overflow-hidden">
 										<div>
+											<div class="text-muted" style="font-size: 14px;">
+												@item.productItem.product.shop.name
+											</div>
 											<h5 class="text-truncate font-size-18">
 												<a href="ViewProductDetail?area=Home&productId=@item.productItem.product.id" class="text-dark">@item.productItem.product.name</a>
 											</h5>
