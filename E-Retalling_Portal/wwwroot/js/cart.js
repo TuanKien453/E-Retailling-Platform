@@ -101,8 +101,8 @@ function deleteFromCart(itemId, isProduct) {
             window.location.reload();
         },
         error: function (xhr, status, error) {
-            console.error("An error occurred while trying to delete the item:", error);
-            alert("An error occurred. Please try again.");
+            console.error("An error occurred while trying to delete the item. This item maybe not existed anymore", error);
+            alert("This item maybe not existed anymore. Please refresh page");
         }
     });
 }
