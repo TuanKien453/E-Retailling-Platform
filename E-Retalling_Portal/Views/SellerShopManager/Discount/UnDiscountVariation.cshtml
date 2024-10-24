@@ -1,0 +1,79 @@
+﻿@{
+    ViewData["Title"] = "UnDiscountVariation";
+    Layout = "~/Views/Shared/ShopManagerSideBarLayout.cshtml";
+}
+<link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.css" />
+<style>
+    .row-img {
+        width: 80px;
+        height: 80px;
+    }
+
+    .image-radio {
+        display: none;
+    }
+
+    .image-radio-label {
+        display: inline-block;
+        cursor: pointer;
+    }
+
+    .image-radio-label img {
+        width: 80px;
+        height: auto;
+        margin: 5px;
+        border: 2px solid transparent;
+     }
+
+    .image-radio:checked + .image-radio-label {
+        border: 2px solid blue;
+    }
+    label{
+        margin-left:5px;
+    }
+</style>
+<div class="content m-4 pb-3">
+
+    <div class="row p-4">
+        <div class="col-12">
+            <table id="myTable" class="display">
+                <thead>
+                    <tr>
+                        <th>Image</th>
+                        <th>Attribute</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in ViewBag.productItems)
+                    {
+                        <tr>
+                            <td><img class="row-img" src="~/productImages/@item.image.imageName" /></td>
+                            <td>@item.attribute</td>
+                            <td>@item.price</td>
+                            <td>@item.quantity</td>
+                            <td>
+                                <a href="ChooseDiscountProduct?productId=@ViewBag.productId&&productItemId=@item.id" class="text-primary font-weight-bold text-xs btn">
+                                    Discount
+                                </a>                               
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <a href="@Url.Action("ViewProductUnDiscount","DiscountManager")" class="btn btn-dark ms-4 btn-pill text-uppercase">
+        Back
+    </a>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/2.1.8/js/dataTables.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#myTable').DataTable();
+    });
+</script>

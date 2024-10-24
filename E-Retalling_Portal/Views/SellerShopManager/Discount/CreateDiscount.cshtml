@@ -1,0 +1,74 @@
+﻿@{
+    ViewData["Title"] = "CreateDiscount";
+    Layout = "~/Views/Shared/ShopManagerSideBarLayout.cshtml";
+}
+<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+
+<div class="content m-4 pb-3">
+    <div class="container-fluid ps-5">
+        <div class="row pt-5 ">
+            <h2 class="font-weight-bold">Discount Information</h2>
+        </div>
+        <form action="CreateDiscountProcess" method="post" enctype="multipart/form-data">
+            <div class="row">
+                <div class="col-6">
+
+                    <h4 class="font-weight-bold mt-6">
+                        Discount Name
+                    </h4>
+                    <input class="form-control" type="text" placeholder="Name" required maxlength="100" name="name">
+
+                    <h4 class="font-weight-bold mt-6">
+                        End Date
+                    </h4>
+                    <input class="form-control" type="date" id="endDate" name="endDate" required>
+                    
+                </div>
+
+                <div class="col-6">
+                    <h4 class="font-weight-bold mt-6">
+                        DiscountType
+                    </h4>
+                    <select class="form-control" id="discountType" name="discountType" required>
+                        <option value="" disabled selected>Select type</option>
+                        <option value="Seasonal discounts">Seasonal discounts</option>
+                        <option value="Bundled discounts">Bundled discounts</option>
+                        <option value="Time discounts">Time discounts</option>
+                    </select>
+
+                    <h4 class="font-weight-bold mt-6">
+                        Value
+                    </h4>
+                    <input id="value" class="form-control" placeholder="Value" type="number" required name="value" min="1" max="99">
+                    <input type="hidden" id="startDate" name="startDate">
+                </div>
+              
+            </div>
+            
+            <div class="row">
+                <div class="col-12 d-flex justify-content-end mt-4">
+                    <button type="submit" class="next-btn btn btn-dark btn-pill text-uppercase mb-2">
+                        &nbsp;&nbsp;Next&nbsp;&nbsp;<i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+
+        </form>
+    </div>
+    
+</div>
+<script>
+    // Get today's date
+    const today = new Date().toISOString().split('T')[0]; // Format: YYYY-MM-DD
+
+    // Set start date to today and make it readonly
+    document.getElementById('startDate').value = today;
+
+    // Set the minimum value of the end date to be tomorrow
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1); // Move date to the next day
+    const minEndDate = tomorrow.toISOString().split('T')[0];
+
+    // Set the min attribute for the end date input
+    document.getElementById('endDate').setAttribute('min', minEndDate);
+</script>

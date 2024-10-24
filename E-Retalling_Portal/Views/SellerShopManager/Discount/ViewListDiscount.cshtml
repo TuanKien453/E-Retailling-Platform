@@ -1,0 +1,85 @@
+﻿@{
+    ViewData["Title"] = "ViewListDiscount";
+    Layout = "~/Views/Shared/ShopManagerSideBarLayout.cshtml";
+}
+<link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.css" />
+<style>
+    .row-img{
+        width:80px;
+        height:80px;
+    }
+</style>
+<div class="content m-4 pb-3">
+
+    <div class="row p-4">
+        <div class="col-12">
+            <table id="myTable" class="display">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>DiscountType</th>
+                        <th>StartDate</th>
+                        <th>EndDate</th>
+                        <th>Value</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in ViewBag.discount)
+                    {
+                        <tr>
+                            <td>@item.name</td>
+                            <td>@item.discountType</td>
+                            <td>@item.startDate</td>
+                            <td>@item.endDate</td>
+                            <td>@item.value</td>
+
+                            <td>
+                                <a href="EditDiscount?discountId=@item.id" class="text-primary font-weight-bold text-xs btn">
+                                    Edit
+                                </a>|
+                                <a href="#" class="text-danger font-weight-bold text-xs" data-bs-toggle="modal" data-bs-target="#deleteModal" onclick="sendDataToModal(@item.id)">
+                                    Delete
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Modal-->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModal">Delete</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-danger text-uppercase font-weight-bold">
+                Confirm delete
+            </div>
+            <form action="DeleteDiscount">
+                <input type="hidden" name="discountId" value="" id="deleteDiscount" />
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/2.1.8/js/dataTables.js"></script>
+<script>
+    function sendDataToModal(id) {
+        $('#deleteDiscount').val(id);
+    }
+
+    $(document).ready(function () {
+        $('#myTable').DataTable();
+    });
+</script>
