@@ -9,6 +9,7 @@ using X.PagedList.Extensions;
 using Newtonsoft.Json;
 using Microsoft.IdentityModel.Tokens;
 using X.PagedList;
+using E_Retalling_Portal.Util;
 
 namespace E_Retalling_Portal.Controllers.Cart
 {
@@ -18,7 +19,7 @@ namespace E_Retalling_Portal.Controllers.Cart
 		{
 			using (var context = new Context())
 			{
-				Dictionary<string, int> cartItems = GetCartItems();
+				Dictionary<string, int> cartItems = CookiesUtils.GetCartItems(Request);
 
 				var productItems = await context.ProductItems.GetAllProductItem().ToListAsync();
 				var products = await context.Products.GetProductsNoVariation().ToListAsync();
@@ -123,7 +124,7 @@ namespace E_Retalling_Portal.Controllers.Cart
 
 		public IActionResult AddToCart(int itemId, int quantity, bool isProduct)
 		{
-			var cartItems = GetCartItems();
+			var cartItems = CookiesUtils.GetCartItems(Request);
 			string cartKey = isProduct ? $"{itemId}P" : $"{itemId}PI";
 
 			if (cartItems.ContainsKey(cartKey))
@@ -137,44 +138,15 @@ namespace E_Retalling_Portal.Controllers.Cart
 
 			TempData["CartItems"] = JsonConvert.SerializeObject(cartItems);
 
-			SetCartItems(cartItems); 
+			CookiesUtils.SetCartItems(cartItems, Response); 
 
 			return RedirectToAction("Index");
-		}
-
-		private Dictionary<string, int> GetCartItems()
-		{
-			var cartItems = new Dictionary<string, int>();
-
-			if (TempData["CartItems"] != null)
-			{
-				var cartString = TempData["CartItems"].ToString();
-				cartItems = JsonConvert.DeserializeObject<Dictionary<string, int>>(cartString);
-			}
-			else
-			{
-				var cookieValue = Request.Cookies["Cart"];
-				if (!string.IsNullOrEmpty(cookieValue))
-				{
-					var items = cookieValue.Split(',');
-					foreach (var item in items)
-					{
-						var parts = item.Split(':');
-						if (parts.Length == 2 && int.TryParse(parts[0].TrimEnd('P', 'I'), out int itemId) && int.TryParse(parts[1], out int quantity))
-						{
-							cartItems[parts[0]] = quantity;
-						}
-					}
-				}
-			}
-
-			return cartItems;
 		}
 
 		[HttpPost]
 		public IActionResult DeleteFromCart(int itemId, bool isProduct)
 		{
-			var cartItems = GetCartItems();
+			var cartItems = CookiesUtils.GetCartItems(Request);
 			string cartKey = isProduct ? $"{itemId}P" : $"{itemId}PI";
 
 			if (cartItems.ContainsKey(cartKey))
@@ -196,7 +168,7 @@ namespace E_Retalling_Portal.Controllers.Cart
 		[HttpPost]
 		public IActionResult UpdateFromCart(int itemId, int quantity, bool isProduct)
 		{
-			var cartItems = GetCartItems();
+			var cartItems = CookiesUtils.GetCartItems(Request);
 			string cartKey = isProduct ? $"{itemId}P" : $"{itemId}PI";
 
 			cartItems[cartKey] = quantity;
@@ -212,19 +184,5 @@ namespace E_Retalling_Portal.Controllers.Cart
 
 			return RedirectToAction("Index");
 		}
-
-		private void SetCartItems(Dictionary<string, int> cartItems)
-		{
-			var cartString = string.Join(",", cartItems.Select(ci => $"{ci.Key}:{ci.Value}"));
-
-			Response.Cookies.Append("Cart", cartString, new CookieOptions
-			{
-				Expires = DateTime.Now.AddDays(30),
-				HttpOnly = true,
-				Secure = true,
-				SameSite = SameSiteMode.Strict
-			});
-		}
-
 	}
 }
