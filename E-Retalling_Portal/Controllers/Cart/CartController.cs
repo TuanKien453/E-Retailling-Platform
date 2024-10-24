@@ -23,7 +23,11 @@ namespace E_Retalling_Portal.Controllers.Cart
 				var productItems = await context.ProductItems.GetAllProductItem().ToListAsync();
 				var products = await context.Products.GetProductsNoVariation().ToListAsync();
 
-				//Delete deletedItem in cookie
+
+				var removedProductIds = new HashSet<int>();
+				var removedProductItemIds = new HashSet<int>();
+
+            //Delete deletedItem in cookie and save deletedItem to hashset
 				foreach (var item in cartItems)
 				{
 					var key = item.Key;
@@ -33,6 +37,7 @@ namespace E_Retalling_Portal.Controllers.Cart
 						int productId = int.Parse(key.TrimEnd('P'));
 						if (!products.Any(p => p.id == productId))
 						{
+							removedProductIds.Add(productId);
 							DeleteFromCart(productId, true);
 						}
 					}
@@ -41,15 +46,49 @@ namespace E_Retalling_Portal.Controllers.Cart
 						int productItemId = int.Parse(key.TrimEnd("PI".ToCharArray()));
 						if (!productItems.Any(pi => pi.id == productItemId))
 						{
+							removedProductItemIds.Add(productItemId);
 							DeleteFromCart(productItemId, false);
 						}
 					}
 				}
 
+				//IF cookiedata null or check deleledItem is exist in cookie or not  
 				var cookiedata = Request.Cookies["Cart"];
 				if (cookiedata == null)
 				{
 					cartItems = new Dictionary<string, int>();
+				}
+				else
+				{
+					bool allItemsRemoved = true;
+
+					foreach (var item in cartItems)
+					{
+						var key = item.Key;
+						if (key.EndsWith("P"))
+						{
+							int productId = int.Parse(key.TrimEnd('P'));
+							if (!removedProductIds.Contains(productId))
+							{
+								allItemsRemoved = false;
+								break;
+							}
+						}
+						else if (key.EndsWith("PI"))
+						{
+							int productItemId = int.Parse(key.TrimEnd("PI".ToCharArray()));
+							if (!removedProductItemIds.Contains(productItemId))
+							{
+								allItemsRemoved = false;
+								break;
+							}
+						}
+					}
+
+					if (allItemsRemoved)
+					{
+						cartItems = new Dictionary<string, int>();
+					}
 				}
 
 				var cartDetails = cartItems.Select(ci => new CartItemModel
@@ -58,11 +97,7 @@ namespace E_Retalling_Portal.Controllers.Cart
 					product = ci.Key.EndsWith("P") ? products.FirstOrDefault(p => p.id == int.Parse(ci.Key.TrimEnd('P'))) : null,
 					productItem = ci.Key.EndsWith("PI") ? productItems.FirstOrDefault(pi => pi.id == int.Parse(ci.Key.TrimEnd("PI".ToCharArray()))) : null
 				}).ToList();
-				
 
-
-
-			
 				// Paging
 				var pageNumber = page ?? 1;
 				var pageSize = 3;
@@ -70,7 +105,7 @@ namespace E_Retalling_Portal.Controllers.Cart
 
 				if (cartDetails == null || !cartDetails.Any())
 				{
-					ViewBag.IsCartEmpty = true; 
+					ViewBag.IsCartEmpty = true;
 					return View();
 				}
 
@@ -78,12 +113,13 @@ namespace E_Retalling_Portal.Controllers.Cart
 				{
 					return RedirectToAction("Index");
 				}
+
 				ViewBag.IsCartEmpty = false;
-				
 
 				return View(pagedCartItem);
 			}
 		}
+
 
 		public IActionResult AddToCart(int itemId, int quantity, bool isProduct)
 		{
