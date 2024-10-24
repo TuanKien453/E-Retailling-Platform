@@ -1,65 +1,69 @@
-﻿
-
-@{
-    ViewData["Title"] = "View Setting";
-    Layout = "~/Views/Shared/ManagerSideBarLayout.cshtml";
+﻿@{
+	ViewData["Title"] = "View Setting";
+	Layout = "~/Views/Shared/ManagerSideBarLayout.cshtml";
 }
 
 <!-- Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Update Confirmation</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                Do you want to update <span id="nameUpdate" class="text-danger"></span> with the new value?
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <!-- Submit button triggers the form submission -->
-                <button type="button" class="btn btn-primary" id="confirmUpdateButton">Confirm Update</button>
-            </div>
-        </div>
-    </div>
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel">Update Confirmation</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				Do you want to update <span id="nameUpdate" class="text-danger"></span> with the new value?
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+				<!-- Submit button triggers the form submission -->
+				<button type="button" class="btn btn-primary" id="confirmUpdateButton">Confirm Update</button>
+			</div>
+		</div>
+	</div>
 </div>
 
-<!-- Update Fee Form -->
-<form id="updateForm" asp-action="UpdateFee" asp-controller="Setting">
-    <div class="form-group">
-        <label for="name">Name</label>
-        <input type="text" id="name" name="name" maxlength="50" class="form-control" value="@ViewBag.SettingFee.name" required readonly />
-    </div>
 
-    <div class="form-group">
-        <label for="value">Value</label>
-        <input type="text" id="value" name="value" maxlength="50" class="form-control" value="@ViewBag.SettingFee.value" required />
-        @if(ViewBag.errorFeeValue != null) 
-        {
-        <div class="alert-danger mt-2">@ViewBag.errorFeeValue</div>
-        }
-    </div>
+<div class="content m-4 pb-3">
+	<div class="container pt-5">
+		<div>
+			<!-- Update Fee Form -->
+			<form id="updateForm" asp-action="UpdateFee" asp-controller="Setting">
+				<div class="form-group">
+					<label for="name">Name</label>
+					<input type="text" id="name" name="name" maxlength="50" class="form-control" value="@ViewBag.SettingFee.name" style="width: 50%;" required readonly />
+				</div>
 
-    <input type="hidden" name="id" value="1" />
+				<div class="form-group">
+					<label for="value">Value</label>
+					<input type="text" id="value" name="value" maxlength="50" class="form-control" value="@ViewBag.SettingFee.value" style="width: 50%;" required />
+					@if (ViewBag.errorFeeValue != null)
+					{
+						<div class="alert-danger mt-2">@ViewBag.errorFeeValue</div>
+					}
+				</div>
 
-    <button type="button" class="btn btn-primary" onclick="openConfirmationModal()">Update Fee</button>
-</form>
+				<input type="hidden" name="id" value="1" />
 
+				<button type="button" class="btn btn-primary" onclick="openConfirmationModal()">Update Fee</button>
+			</form>
+		</div>
+	</div>
+</div>
 <script>
-    // Hàm để mở modal và hiển thị tên setting
-    function openConfirmationModal() {
-        var name = document.querySelector('#name').value;
-        var nameUpdate = document.querySelector('#nameUpdate');
-        nameUpdate.innerText = name;
-        // Hiển thị modal
-        var myModal = new bootstrap.Modal(document.getElementById('exampleModal'));
-        myModal.show();
-    }
+	// Hàm để mở modal và hiển thị tên setting
+	function openConfirmationModal() {
+		var name = document.querySelector('#name').value;
+		var nameUpdate = document.querySelector('#nameUpdate');
+		nameUpdate.innerText = name;
+		// Hiển thị modal
+		var myModal = new bootstrap.Modal(document.getElementById('exampleModal'));
+		myModal.show();
+	}
 
-    // Hàm để submit form khi nhấn "Confirm Update" trong modal
-    document.getElementById('confirmUpdateButton').addEventListener('click', function () {
-        document.getElementById('updateForm').submit();
-    });
+	// Hàm để submit form khi nhấn "Confirm Update" trong modal
+	document.getElementById('confirmUpdateButton').addEventListener('click', function () {
+		document.getElementById('updateForm').submit();
+	});
 </script>
 
