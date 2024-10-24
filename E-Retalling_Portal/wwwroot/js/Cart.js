@@ -72,29 +72,25 @@ function updateSubtotal() {
 
 
 let itemIdToDelete = null;
+let isProductToDelete = null;
 
 function showDeleteModal(itemId, productName, isProduct) {
     itemIdToDelete = parseInt(itemId);
     isProductToDelete = isProduct;
     document.getElementById('modalProductName').innerText = productName;
 
-    // Create and trigger button via JavaScript
-    let tempButton = document.createElement('button');
-    tempButton.type = 'button';
-    tempButton.setAttribute('data-bs-toggle', 'modal');
-    tempButton.setAttribute('data-bs-target', '#deleteModal');
-    tempButton.style.display = 'none';  // Hide the button since we're not using it directly
-
-    document.body.appendChild(tempButton);  // Add to body temporarily
-    tempButton.click();  // Trigger the modal opening
-    document.body.removeChild(tempButton);  // Remove after use
+    // Use Bootstrap's Modal API to show the modal
+    const modalElement = new bootstrap.Modal(document.getElementById('deleteModal'));
+    modalElement.show();
 }
 
+// Event listener for the confirm button in the modal
 document.getElementById('confirmDeleteButton').addEventListener('click', function () {
     if (itemIdToDelete) {
         deleteFromCart(itemIdToDelete, isProductToDelete);
     }
 });
+
 
 function deleteFromCart(itemId, isProduct) {
     $.ajax({
@@ -105,8 +101,8 @@ function deleteFromCart(itemId, isProduct) {
             window.location.reload();
         },
         error: function (xhr, status, error) {
-            console.error("An error occurred while trying to delete the item:", error);
-            alert("An error occurred. Please try again.");
+            console.error("An error occurred while trying to delete the item. This item maybe not existed anymore", error);
+            alert("This item maybe not existed anymore. Please refresh page");
         }
     });
 }

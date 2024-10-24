@@ -1,4 +1,5 @@
-﻿using E_Retalling_Portal.Models;
+﻿using E_Retalling_Portal.Controllers.Filter;
+using E_Retalling_Portal.Models;
 using E_Retalling_Portal.Models.Query;
 using E_Retalling_Portal.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -10,7 +11,8 @@ using X.PagedList.Extensions;
 
 namespace E_Retalling_Portal.Controllers.Manager
 {
-    public class CategoryController : Controller
+	[TypeFilter(typeof(ManagerFilter))]
+	public class CategoryController : Controller
     {
 
         public IActionResult Index(int? page)

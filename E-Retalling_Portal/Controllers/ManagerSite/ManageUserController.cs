@@ -1,9 +1,11 @@
-﻿using E_Retalling_Portal.Models;
+﻿using E_Retalling_Portal.Controllers.Filter;
+using E_Retalling_Portal.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace E_Retalling_Portal.Controllers.ManageUser
 {
-    public class ManageUserController : Controller
+	[TypeFilter(typeof(ManagerFilter))]
+	public class ManageUserController : Controller
     {
         public IActionResult Index()
         {
