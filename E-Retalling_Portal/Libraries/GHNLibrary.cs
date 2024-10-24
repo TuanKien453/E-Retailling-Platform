@@ -17,15 +17,15 @@ namespace E_Retalling_Portal.Libraries
             _httpClient.DefaultRequestHeaders.Add("Token", token);
         }
 
-        public async Task<OrderResponse> CreateOrderAsync(OrderRequest orderRequest, string shopId)
+        
+        public async Task<dynamic> CreateOrderAsync(dynamic orderItem, string shopId)
         {
-
-            _httpClient.DefaultRequestHeaders.Remove("ShopId");  
-            _httpClient.DefaultRequestHeaders.Add("ShopId", shopId); 
+            _httpClient.DefaultRequestHeaders.Remove("ShopId");
+            _httpClient.DefaultRequestHeaders.Add("ShopId", shopId);
 
             var requestUrl = "https://dev-online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/create";
 
-            var jsonRequest = JsonConvert.SerializeObject(orderRequest);
+            var jsonRequest = JsonConvert.SerializeObject(orderItem);
             var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
 
             var response = await _httpClient.PostAsync(requestUrl, content);
@@ -33,8 +33,7 @@ namespace E_Retalling_Portal.Libraries
             if (response.IsSuccessStatusCode)
             {
                 var jsonResponse = await response.Content.ReadAsStringAsync();
-                var orderResponse = JsonConvert.DeserializeObject<OrderResponse>(jsonResponse);
-                return orderResponse;
+                return JsonConvert.DeserializeObject<dynamic>(jsonResponse); // Return dynamic type
             }
             else
             {
@@ -42,7 +41,8 @@ namespace E_Retalling_Portal.Libraries
                 throw new Exception($"API call failed with status code: {response.StatusCode}, Error: {errorResponse}");
             }
         }
-        public async Task<List<Province>> GetProvincesAsync()
+
+        public async Task<dynamic> GetProvincesAsync()
         {
             var requestUrl = "https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/province";
             var response = await _httpClient.GetAsync(requestUrl);
@@ -50,8 +50,7 @@ namespace E_Retalling_Portal.Libraries
             if (response.IsSuccessStatusCode)
             {
                 var jsonResponse = await response.Content.ReadAsStringAsync();
-                var provinceResponse = JsonConvert.DeserializeObject<ProvinceResponse>(jsonResponse);
-                return provinceResponse.Data;
+                return JsonConvert.DeserializeObject<dynamic>(jsonResponse); // Return dynamic type
             }
             else
             {
@@ -59,7 +58,8 @@ namespace E_Retalling_Portal.Libraries
                 throw new Exception($"API call failed with status code: {response.StatusCode}, Error: {errorResponse}");
             }
         }
-        public async Task<List<District>> GetDistrictsAsync(int provinceId)
+
+        public async Task<dynamic> GetDistrictsAsync(int provinceId)
         {
             var requestUrl = "https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/district";
             var requestBody = new { province_id = provinceId };
@@ -71,8 +71,7 @@ namespace E_Retalling_Portal.Libraries
             if (response.IsSuccessStatusCode)
             {
                 var jsonResponse = await response.Content.ReadAsStringAsync();
-                var districtResponse = JsonConvert.DeserializeObject<DistrictResponse>(jsonResponse);
-                return districtResponse.Data;
+                return JsonConvert.DeserializeObject<dynamic>(jsonResponse); // Return dynamic type
             }
             else
             {
@@ -80,7 +79,8 @@ namespace E_Retalling_Portal.Libraries
                 throw new Exception($"API call failed with status code: {response.StatusCode}, Error: {errorResponse}");
             }
         }
-        public async Task<List<Ward>> GetWardsAsync(int districtId)
+
+        public async Task<dynamic> GetWardsAsync(int districtId)
         {
             var requestUrl = $"https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/ward?district_id={districtId}";
             var content = new StringContent("", Encoding.UTF8, "application/json");
@@ -90,8 +90,7 @@ namespace E_Retalling_Portal.Libraries
             if (response.IsSuccessStatusCode)
             {
                 var jsonResponse = await response.Content.ReadAsStringAsync();
-                var wardResponse = JsonConvert.DeserializeObject<WardResponse>(jsonResponse);
-                return wardResponse.Data;
+                return JsonConvert.DeserializeObject<dynamic>(jsonResponse); // Return dynamic type
             }
             else
             {
@@ -100,4 +99,5 @@ namespace E_Retalling_Portal.Libraries
             }
         }
     }
+
 }
