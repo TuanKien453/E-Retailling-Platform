@@ -222,7 +222,15 @@ namespace E_Retalling_Portal.Controllers.Home
                     recommendedProducts[product]=point;
                 }
             }
+            foreach (var product in recommendedProducts.Keys)
+            {
+                if (product.isVariation == true && product.productItems.Count > 0)
+                {
+                    var min = product.productItems.Min(item => item.price);
 
+                    product.price = min;
+                }
+            }
             return recommendedProducts
                     .OrderByDescending(p => p.Value)
                     .Take(6)
