@@ -39,13 +39,34 @@
                                 <label for="birthday" class="form-label">Birthday</label>
                                 <input type="date" class="form-control" value="1999-10-10"
                                        id="birthday" name="birthday" placeholder="s" required value="@ViewBag.Birthday" />
-                            </div>                           
+                            </div>    
+                            
+                            <!-- Location Selection -->
+                            <div class="row mb-3">
+                                <div class="col-sm-3">
+                                    <label for="location" class="form-label">Location</label>
+                                </div>
+                                <div class="col-sm-9">
+                                    <div class="css_select_div">
+                                        <select class="css_select" id="tinh" name="province" title="Chọn Tỉnh Thành">
+                                            <option value="0">Tỉnh Thành</option>
+                                        </select>
+                                        <select class="css_select" id="quan" name="district" title="Chọn Quận Huyện">
+                                            <option value="0">Quận Huyện</option>
+                                        </select>
+                                        <select class="css_select" id="phuong" name="commune" title="Chọn Phường Xã">
+                                            <option value="0">Phường Xã</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
                             <!-- Address Field -->
                             <div class="input-group input-group-outline mb-3">
-                                <label for="address" class="form-label">Address</label>
-                                <input type="text" class="form-control"
-                                       id="address" name="address" required maxlength="100" value="@ViewBag.Address" />
+                                <label for="address" class="form-label">Address Detail</label>
+                                <input type="text" class="form-control" id="address" name="address" required maxlength="100" value="@ViewBag.Address" />
                             </div>
+
                             <!-- Gender Radio -->
                             <div class="input-group input-group-outline mb-3">
                                 <h6 class="mb-2 pb-1">Gender: </h6>
@@ -127,4 +148,59 @@
             });
         });
     });
+    $(document).ready(function () {
+        // Fetch provinces
+        $.getJSON('https://esgoo.net/api-tinhthanh/1/0.htm', function (data_tinh) {
+            if (data_tinh.error === 0) {
+                $.each(data_tinh.data, function (key_tinh, val_tinh) {
+                    $("#tinh").append('<option value="' + val_tinh.id + '">' + val_tinh.full_name + '</option>');
+                });
+
+                // Handle province change
+                $("#tinh").change(function () {
+                    var idtinh = $(this).val();
+                    // Reset district and commune when changing province
+                    $("#quan").html('<option value="0">Quận Huyện</option>');
+                    $("#phuong").html('<option value="0">Phường Xã</option>');
+                    $('#address').val(""); // Clear address field
+
+                    // Fetch districts
+                    $.getJSON('https://esgoo.net/api-tinhthanh/2/' + idtinh + '.htm', function (data_quan) {
+                        if (data_quan.error === 0) {
+                            $.each(data_quan.data, function (key_quan, val_quan) {
+                                $("#quan").append('<option value="' + val_quan.id + '">' + val_quan.full_name + '</option>');
+                            });
+                        }
+                    });
+                });
+
+                // Handle district change
+                $("#quan").change(function () {
+                    var idquan = $(this).val();
+                    var selectedProvince = $("#tinh option:selected").text();
+                    // Reset commune selection and address field
+                    $("#phuong").html('<option value="0">Phường Xã</option>');
+                    $('#address').val(selectedProvince); // Set address to province name only
+
+                    // Fetch communes
+                    $.getJSON('https://esgoo.net/api-tinhthanh/3/' + idquan + '.htm', function (data_phuong) {
+                        if (data_phuong.error === 0) {
+                            $.each(data_phuong.data, function (key_phuong, val_phuong) {
+                                $("#phuong").append('<option value="' + val_phuong.id + '">' + val_phuong.full_name + '</option>');
+                            });
+                        }
+                    });
+                });
+
+                // Handle commune change
+                $("#phuong").change(function () {
+                    var selectedCommune = $("#phuong option:selected").text();
+                    var selectedDistrict = $("#quan option:selected").text();
+                    var selectedProvince = $("#tinh option:selected").text();
+                    $('#address').val(selectedProvince + ', ' + selectedDistrict + ', ' + selectedCommune); // Set address to include province, district, and commune
+                });
+            }
+        });
+    });
+
 </script>

@@ -200,8 +200,8 @@ namespace E_Retalling_Portal.Models
         private static void SeedingShop(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Shop>().HasData(
-                new Shop { id = 1, accountId = 1, address = "address", name = "shopname", createdAt = "2000-05-04", shopDescription = "sd", statusId = 1 },
-                new Shop { id = 2, accountId = 3, address = "address", name = "shopname", createdAt = "2000-05-04", shopDescription = "sd", statusId = 1 }
+                new Shop { id = 1, accountId = 1, address = "address", province = "adf", name = "shopname", createdAt = "2000-05-04", shopDescription = "sd", statusId = 1 },
+                new Shop { id = 2, accountId = 3, address = "address", province = "asdf", name = "shopname", createdAt = "2000-05-04", shopDescription = "sd", statusId = 1 }
              );
         }
         private static void SeedingStatus(ModelBuilder modelBuilder)

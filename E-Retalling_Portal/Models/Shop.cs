@@ -17,7 +17,10 @@ namespace E_Retalling_Portal.Models
         public string shopDescription { get; set; }
         public int statusId {  get; set; }
         [Required, MaxLength(100)]
-        public string address {  get; set; }
+        public string? province { get; set; }
+        public string? district { get; set; }
+        public string? commune { get; set; }
+        public string? address { get; set; }
         public Status? status { get; set; }
         public Account? account { get; set; }
         public List<Product>? products { get; set; }
