@@ -156,6 +156,25 @@
 
                             <div class="row mb-3">
                                 <div class="col-sm-3">
+                                    <label for="location" class="form-label">Location</label>
+                                </div>
+                                <div class="col-sm-9">
+                                    <div class="css_select_div">
+                                        <select class="css_select" id="tinh" name="province" title="Chọn Tỉnh Thành">
+                                            <option value="0">Tỉnh Thành</option>
+                                        </select>
+                                        <select class="css_select" id="quan" name="district" title="Chọn Quận Huyện">
+                                            <option value="0">Quận Huyện</option>
+                                        </select>
+                                        <select class="css_select" id="phuong" name="commune" title="Chọn Phường Xã">
+                                            <option value="0">Phường Xã</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-sm-3">
                                     <label for="address" class="form-label">Address</label>
                                 </div>
                                 <div class="col-sm-9">
@@ -227,6 +246,7 @@
         </div>
     </div>
 </div>
+
 @section Scripts {
     <script>
         window.onload = function () {
@@ -299,11 +319,12 @@
                         var selectedCommune = $("#phuong option:selected").text();
                         var selectedDistrict = $("#quan option:selected").text();
                         var selectedProvince = $("#tinh option:selected").text();
-                        $('#address').val(selectedProvince + ', ' + selectedDistrict + ', ' + selectedCommune); // Set address to include province, district, and commune
+                        $('#address').val(selectedProvince + ', ' + selectedDistrict + ', ' + selectedCommune + ','); // Set address to include province, district, and commune
                     });
                 }
             });
         });
+
     </script>
 }
 

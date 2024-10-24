@@ -141,6 +141,11 @@ namespace E_Retalling_Portal.Models
                 .HasForeignKey(pd => pd.productId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<Shipment>()
+                .HasOne(s => s.orderItem)
+                .WithMany(oi => oi.shipments)
+                .HasForeignKey(s => s.oderItemId);
+
 			SeedingCategory(modelBuilder);
             SeedingRole(modelBuilder);
             SeedingUser(modelBuilder);
@@ -227,7 +232,10 @@ namespace E_Retalling_Portal.Models
                 new User
                 {
                     id = 1,
-                    address = "address",
+                    province = "BacNinh",
+                    district = "TienDu",
+                    commune = "HoanSon",
+                    address = "",
                     birthday = "2000-05-04",
                     displayName = "kienhocgioi",
                     email = "abc@gmail.com",
@@ -239,7 +247,10 @@ namespace E_Retalling_Portal.Models
                 new User
                 {
                     id = 2,
-                    address = "addresdds",
+                    province = "BacNinh",
+                    district = "TienDu",
+                    commune = "VietDoan",
+                    address = "",
                     birthday = "2000-01-04",
                     displayName = "anh",
                     email = "abcadsf@gmail.com",
@@ -251,7 +262,10 @@ namespace E_Retalling_Portal.Models
                 new User
                 {
                     id = 3,
-                    address = "LangHa",
+                    province = "BacNinh",
+                    district = "TienDu",
+                    commune = "LacVe",
+                    address = "",
                     birthday = "2004-01-04",
                     displayName = "phien",
                     email = "hoangphien47@gmail.com",

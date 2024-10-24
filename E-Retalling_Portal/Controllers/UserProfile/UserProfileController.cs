@@ -22,9 +22,9 @@ namespace E_Retalling_Portal.Controllers.UserProfile
 
                 User user = context.Users.GetUserByUserIdInAccount(userId).FirstOrDefault();
 
-                
+
                 ViewBag.User = user;
-            
+
                 ViewBag.Account = account;
 
 
@@ -78,13 +78,15 @@ namespace E_Retalling_Portal.Controllers.UserProfile
                 if (testUser != null)
                 {
                     newUser.displayName = user.displayName;
-                    
+
                     newUser.birthday = user.birthday;
                     newUser.gender = user.gender;
                     newUser.firstName = user.firstName;
                     newUser.lastName = user.lastName;
+                    newUser.province = user.province;
+                    newUser.district = user.district;
+                    newUser.commune = user.commune;
                     newUser.address = user.address;
-                    
                     if (testUser.email == user.email)
                     {
                         TempData["ErrorEmail"] = "Email is already been registered";
@@ -94,7 +96,7 @@ namespace E_Retalling_Portal.Controllers.UserProfile
                     {
                         TempData["ErrorPhone"] = "PhoneNumber is already registered.";
                     }
-                    if(testUser.email != user.email && testUser.phoneNumber != user.phoneNumber)
+                    if (testUser.email != user.email && testUser.phoneNumber != user.phoneNumber)
                     {
                         newUser.email = user.email;
                         newUser.phoneNumber = user.phoneNumber;
@@ -113,15 +115,18 @@ namespace E_Retalling_Portal.Controllers.UserProfile
                     newUser.gender = user.gender;
                     newUser.firstName = user.firstName;
                     newUser.lastName = user.lastName;
+                    newUser.province = user.province;
+                    newUser.district = user.district;
+                    newUser.commune = user.commune;
                     newUser.address = user.address;
                     context.SaveChanges();
 
                     TempData["UpdateMessage"] = "Updated Successfully!";
                     return RedirectToAction("ViewProfile");
-                   
+
                 }
-                 
-                
+
+
             }
 
         }
