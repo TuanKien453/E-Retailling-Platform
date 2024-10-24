@@ -332,7 +332,7 @@ namespace E_Retalling_Portal.Controllers.AccountController
             {
                 using (var context = new Context())
                 {
-                    User newUser = new User { email = email, phoneNumber = phoneNumber, displayName = displayName, birthday = birthday, gender = gender, firstName = firstName, lastName = lastName, address = address, province = province, district = district, commune = commune };
+                    User newUser = new User { email = email, phoneNumber = phoneNumber, displayName = displayName, birthday = birthday, gender = gender, firstName = firstName, lastName = lastName, province = province, district = district, commune = commune, address = address };
                     context.Add(newUser);
                     context.SaveChanges();
 

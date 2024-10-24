@@ -41,26 +41,22 @@
                                        id="birthday" name="birthday" placeholder="s" required value="@ViewBag.Birthday" />
                             </div>    
                             
-                            <!-- Location Selection -->
-                            <div class="row mb-3">
-                                <div class="col-sm-3">
-                                    <label for="location" class="form-label">Location</label>
-                                </div>
-                                <div class="col-sm-9">
-                                    <div class="css_select_div">
-                                        <select class="css_select" id="tinh" name="province" title="Chọn Tỉnh Thành">
-                                            <option value="0">Tỉnh Thành</option>
-                                        </select>
-                                        <select class="css_select" id="quan" name="district" title="Chọn Quận Huyện">
-                                            <option value="0">Quận Huyện</option>
-                                        </select>
-                                        <select class="css_select" id="phuong" name="commune" title="Chọn Phường Xã">
-                                            <option value="0">Phường Xã</option>
-                                        </select>
-                                    </div>
-                                </div>
+                            
+                            <div class="input-group input-group-outline mb-3">
+                                <select class="form-control" id="tinh" name="province" title="Chọn Tỉnh Thành">
+                                    <option value="0">Tỉnh Thành</option>
+                                </select>
                             </div>
-
+                            <div class="input-group input-group-outline mb-3">
+                                <select class="form-control" id="quan" name="district" title="Chọn Quận Huyện">
+                                    <option value="0">Quận Huyện</option>
+                                </select>
+                            </div>
+                            <div class="input-group input-group-outline mb-3">
+                                <select class="form-control" id="phuong" name="commune" title="Chọn Phường Xã">
+                                    <option value="0">Phường Xã</option>
+                                </select>
+                            </div>
                             <!-- Address Field -->
                             <div class="input-group input-group-outline mb-3">
                                 <label for="address" class="form-label">Address Detail</label>
@@ -126,6 +122,8 @@
 </section>
 
 <script src="~/js/materialkitpro.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
 <script>
     window.addEventListener('load', function () {
         // Lấy tất cả các input có trong form
