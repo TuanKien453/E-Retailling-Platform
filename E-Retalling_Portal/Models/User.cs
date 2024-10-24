@@ -17,6 +17,9 @@ namespace E_Retalling_Portal.Models
         public string? birthday { get; set; }
         public string? gender { get; set; }
         public string? address { get; set; }
+        public string? province { get; set; }
+        public string? district { get; set; }
+        public string? commune { get; set; }
         public string? firstName { get; set; }
         public string? lastName { get; set; }
 

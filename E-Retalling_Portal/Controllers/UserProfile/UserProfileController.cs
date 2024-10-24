@@ -89,6 +89,9 @@ namespace E_Retalling_Portal.Controllers.UserProfile
                     newUser.gender = user.gender;
                     newUser.firstName = user.firstName;
                     newUser.lastName = user.lastName;
+                    newUser.province = user.province;
+                    newUser.district = user.district;
+                    newUser.commune = user.commune;
                     newUser.address = user.address;
                     
                     if (testUser.email == user.email)
@@ -119,6 +122,9 @@ namespace E_Retalling_Portal.Controllers.UserProfile
                     newUser.gender = user.gender;
                     newUser.firstName = user.firstName;
                     newUser.lastName = user.lastName;
+                    newUser.province = user.province;
+                    newUser.district = user.district;
+                    newUser.commune = user.commune;
                     newUser.address = user.address;
 					HttpContext.Session.SetString(SessionKeys.UserToUpdate.ToString(), JsonConvert.SerializeObject(user));
 					return RedirectToAction("SendOTP", new { emailTo = user.email });

@@ -11,5 +11,6 @@ namespace E_Retalling_Portal.Models
         public int quanity {  get; set; }
         public Order order { get; set; }
         public ProductItem productItem { get; set; }
+        public List<Shipment> shipments { get; set; }
     }
 }
