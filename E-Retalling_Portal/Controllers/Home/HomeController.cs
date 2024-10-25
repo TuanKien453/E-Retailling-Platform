@@ -98,6 +98,32 @@ namespace E_Retalling_Portal.Controllers.Home
                 return View(paginatedProducts);          
             }
         }
+        public IActionResult ViewShop(int id, int? page)
+        {
+            List<Product> productList;
+            using (var context = new Context())
+            {
+                productList = context.Products.GetProduct().Where(p=>p.shopId==id).ToList();
+            }
+            if (productList != null)
+            {
+                foreach (var product in productList)
+                {
+                    if (product.isVariation == true && product.productItems.Count > 0)
+                    {
+                        var min = product.productItems.Min(item => item.price);
+
+                        product.price = min;
+                    }
+                }
+            }
+            var pageNumber = page ?? 1;
+            var pageSize = 1;
+            List<Product> products = GetProductsIsNotDelete(productList);
+            var paginatedProducts = products.ToPagedList(pageNumber, pageSize);
+            ViewBag.id = id;
+            return View("ViewShop", paginatedProducts);
+        }
 
         private List<Product> GetProductsIsNotDelete(List<Product>? productList)
         {

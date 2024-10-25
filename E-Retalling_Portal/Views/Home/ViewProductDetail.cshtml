@@ -14,15 +14,14 @@
 <section class="py-5">
     <div class="container">
         <div class="row gx-5">
-            <aside class="col-lg-6">
+            <aside class="col-lg-5">
                 <div class="border rounded-4 mb-3 d-flex justify-content-center">
                     <a data-fslightbox="mygalley" class="rounded-4" target="_blank" data-type="image" href="~/productImages/@(ViewBag.product.coverImage.imageName)">
-                        <img id="mainImage" style="width: 100%; height: 300px; object-fit: cover; margin: auto;" class="rounded-4 fit" src="~/productImages/@(ViewBag.product.coverImage.imageName)" />
+                        <img id="mainImage" style="width: 100%; height: 500px; object-fit: cover; margin: auto;" class="rounded-4 fit" src="~/productImages/@(ViewBag.product.coverImage.imageName)" />
                     </a>
 
                 </div>
 
-                <!-- Danh sách các ảnh nhỏ -->
                 <div class="d-flex justify-content-center mb-3">
                     @foreach (var image in ViewBag.productImageList)
                     {
@@ -35,9 +34,8 @@
                 </div>
             </aside>
 
-            <!-- Khởi tạo lightbox -->
 
-            <main class="col-lg-6">
+            <main class="col-lg-7">
                 <div class="ps-lg-3">
                     <h4 class="title text-dark">
                         @ViewBag.product.name
@@ -107,7 +105,7 @@
                             <button class="btn btn-white border border-secondary px-3" type="button" id="button-addon2" data-mdb-ripple-color="dark" onclick="increaseValue()">
                                 <i class="fas fa-plus"></i>
                             </button>
-                            Quantity available:<span id="quantityDisplay">@ViewBag.product.quantity</span>
+                            Quantity available: <span id="quantityDisplay">@ViewBag.product.quantity</span>
                         </div>
                     </div>
                     <a href="/Cart" class="btn btn-warning shadow-0"> Buy now </a>
@@ -119,31 +117,46 @@
                     <button onclick="addToCart(selectedProductId, document.getElementById('quantityInput').value)" class="btn btn-primary shadow-0">
                         <i class="me-1 fa fa-shopping-basket"></i> Add to cart
                     </button>
-                    <div id="popupMessage" class="popup-message" style="display: none;">Added to cart successfully!</div>
-                    <div id="errorMessage" class="popup-message" style="display: none; color: red;">Please choose a product!</div>
+                    <div id="popupMessage" class="popup-message" style="display: none; top:50px; height:40px;">Added to cart successfully!</div>
+                    <div id="errorMessage" class="popup-message" style="display: none; background-color:white;color: red; top:50px; height:40px;">Please choose a product!</div>
                 </div>
             </main>
         </div>
+
+
+        <div class="row shop-bar">
+            <div class="row">
+                <div class="col-1 d-flex justify-content-end align-items-center">
+                    <a class="avatar rounded-circle" style="display:inline-block; width:auto; height:auto;">
+                        <img src="~/img/Shop_Icon.png" style="border:black 1px solid; width:60px;">
+                    </a>
+                </div>
+
+                <div class="col-2 d-flex flex-column justify-content-center">
+                    <div class="shopname">
+                        <div>@ViewBag.product.shop.name</div>
+                    </div>
+                    <a href="Home/ViewShop?id=@ViewBag.product.shop.id" class="btn btn-success shadow-0 mt-2 viewshop-btn">View Shop</a>
+                </div>
+            </div>
+        </div>
+
+
         <div class="row g-3">
-            <h5 class="card-title">Similar items</h5>
-            @foreach (var similarProduct in ViewBag.similarProducts)
+            <h5 class="card-title">Similar</h5>
+            @foreach (var product in ViewBag.similarProducts)
             {
-                <div class="col-lg-3 col-md-4 col-sm-6">
-                    <div class="px-0 border rounded-2 shadow-0">
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="d-flex mb-3">
-                                    <a href="@Url.Action("Index", "ViewProductDetail", new { area = "Home", productId = @similarProduct.id })" class="me-3">
-                                        <img src="~/productImages/@similarProduct.coverImage.imageName" style="min-width: 96px; height: 96px;" class="img-md img-thumbnail" />
-                                    </a>
-                                    <div class="info">
-                                        <a href="#" class="nav-link mb-1">
-                                            @similarProduct.name
-                                        </a>
-                                        <strong class="text-dark"> $@similarProduct.price</strong>
-                                    </div>
-                                </div>
-                            </div>
+                <div class="col-md-2 col-sm-6">
+                    <div class="product-grid">
+                        <div class="product-image">
+                            <a href="@Url.Action("Index", "ViewProductDetail", new { area = "Home", productId = product.id })" class="image">
+                                <img class="img-1" src="~/productImages/@product.coverImage.imageName">
+                            </a>
+                            <a href="@Url.Action("Index", "ViewProductDetail", new { area = "Home", productId = product.id })" class="product-view"><i class="fa fa-search"></i></a>
+                        </div>
+                        <div class="product-content">
+                            <h3 class="title"><a href="@Url.Action("Index", "ViewProductDetail", new { area = "Home", productId = product.id })">@product.name</a></h3>
+                            <div class="price">$@product.price</div>
                         </div>
                     </div>
                 </div>
@@ -182,7 +195,7 @@
                 if (minPrice === maxPrice) {
                     document.getElementById('productPrice').innerText = '$' + minPrice;
                 } else {
-                    document.getElementById('productPrice').innerText = '$' + minPrice + ' - $' + maxPrice; 
+                    document.getElementById('productPrice').innerText = '$' + minPrice + ' - $' + maxPrice;
                 }
             }
 

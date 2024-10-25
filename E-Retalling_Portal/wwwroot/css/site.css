@@ -409,3 +409,17 @@ body {
     z-index: 1000; /* ??m b?o nó n?m trên các ph?n t? khác */
     transition: opacity 0.5s; /* Hi?u ?ng chuy?n ??ng m? d?n */
 }
+.shop-bar {
+    border-top:1px solid gray;
+    margin: 20px;
+    height:120px;
+}
+.shopname {
+    padding-top:20px;
+    font-size: 22px;
+    font-weight: 600;
+    color: black;
+}
+.viewshop-btn{
+    width:120px;
+}

@@ -20,7 +20,7 @@
 
     <!-- Navbar Transparent -->
 
-    <nav class="navbar navbar-expand-lg w-100 shadow-none my-3 navbar-transparent">
+    <nav class="navbar navbar-expand-lg w-100 my-3 navbar-transparent">
         <div class="container">
             @{
                 var session = Context.Session;
@@ -28,11 +28,9 @@
                 string displayName = session.GetString(SessionKeys.DisplayName.ToString());
 
             }
-            <a class="navbar-brand" href="@Url.Action("ShopOwnerEmailRegister","Register")" data-placement="bottom" target="_blank">
-                Become seller
-            </a>
-            <a class="navbar-brand" href="@Url.Action("Index","SellerLogin")" data-placement="bottom" target="_blank">
-                Seller Centre
+
+            <a class="navbar-brand font-weight-bolder text-sm  text-white  d-none d-md-block" href="@Url.Action("Index","Home")">
+                <img src="~/img/Logo.png" style="width:140px;"/>
             </a>
 
             <button class="navbar-toggler shadow-none ms-2" type="button" data-bs-toggle="collapse" data-bs-target="#navigation" aria-controls="navigation" aria-expanded="false" aria-label="Toggle navigation">
@@ -56,14 +54,14 @@
                         </a>
                     </li>
                     <li class="nav-item mx-2">
-                        <a class="nav-link ps-2 d-flex justify-content-between cursor-pointer align-items-center text-dark" role="button">
-                            Blocks
+                        <a class="nav-link ps-2 d-flex justify-content-between cursor-pointer align-items-center text-dark" href="@Url.Action("ShopOwnerEmailRegister","Register")" data-placement="bottom" target="_blank">
+                            Become seller
                         </a>
                     </li>
 
                     <li class="nav-item mx-2">
-                        <a class="nav-link ps-2 d-flex justify-content-between cursor-pointer align-items-center text-dark" role="button">
-                            Docs
+                        <a class="nav-link ps-2 d-flex justify-content-between cursor-pointer align-items-center text-dark" href="@Url.Action("Index","SellerLogin")" data-placement="bottom" target="_blank">
+                            Seller Centre
                         </a>
                     </li>
                 </ul>
