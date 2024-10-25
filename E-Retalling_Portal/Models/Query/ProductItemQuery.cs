@@ -40,5 +40,21 @@ namespace E_Retalling_Portal.Models.Query
             }
             return pi.product.shopId== shopId;
         }
+
+        public static double GetProductItemDiscountPrice(this DbSet<ProductItem> dbProductItem, ProductItem productItem)
+        {
+            using (var context = new Context())
+            {
+                ProductDiscount productDiscount = context.ProductDiscount.GetProductDiscountByProductIdAndProductItemId(productItem.productId, productItem.id).FirstOrDefault();
+                if (productDiscount == null)
+                {
+                    return productItem.price;
+                }
+                Discount discount = context.Discounts.GetDiscountByDiscountId(productDiscount.discountId).FirstOrDefault();
+                return productItem.price - Math.Round(productItem.price * Math.Round(((double)discount.value / 100), 2), 2);
+
+
+            }
+        }
     }
 }

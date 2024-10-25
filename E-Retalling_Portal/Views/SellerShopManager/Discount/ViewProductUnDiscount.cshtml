@@ -1,0 +1,79 @@
+﻿@{
+    ViewData["Title"] = "ViewProductUnDiscount";
+    Layout = "~/Views/Shared/ShopManagerSideBarLayout.cshtml";
+}
+<link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.css" />
+<style>
+    .row-img {
+        width: 80px;
+        height: 80px;
+    }
+</style>
+<div class="content m-4 pb-3">
+
+    <div class="row p-4">
+        <div class="col-12">
+            <table id="myTable" class="display">
+                <thead>
+                    <tr>
+                        <th>coverImage</th>
+                        <th>Name</th>
+                        <th>Category</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in ViewBag.products)
+                    {
+                        <tr>
+                            <td><img class="row-img" src="~/productImages/@item.coverImage.imageName" /></td>
+                            <td>@item.name</td>
+                            <td>@item.category.name</td>
+
+                            @if (item.isVariation == true)
+                            {
+                                <td class="font-weight-bold text-xs" style="color:gray;">N/A</td>
+                            }
+                            else
+                            {
+                                <td>@item.price</td>
+                            }
+                            @if (item.isVariation == true)
+                            {
+                                <td class="font-weight-bold text-xs" style="color:gray;">N/A</td>
+                            }
+                            else
+                            {
+                                <td>@item.quantity</td>
+                            }
+                            <td>
+                                @if (item.isVariation == true)
+                                {
+                                    <a href="UnDiscountVariation?productId=@item.id" class="text-primary font-weight-bold text-xs btn ">
+                                       Variation
+                                    </a>
+                                } else
+                                {
+                                    <a href="ChooseDiscountProduct?productId=@item.id&&productItemId=null" class="text-primary font-weight-bold text-xs btn">
+                                        Discount
+                                    </a>
+                                }                              
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/2.1.8/js/dataTables.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#myTable').DataTable();
+    });
+</script>

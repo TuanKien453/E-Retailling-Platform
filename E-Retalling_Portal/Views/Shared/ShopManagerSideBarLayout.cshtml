@@ -58,6 +58,25 @@
                                 </ul>
                             </div>
                         </li>
+
+                        <li class="mb-1">
+                            <div class="sidebar-parent">
+                                <button class="btn btn-toggle align-items-center rounded collapsed no-shadow text-white" data-bs-toggle="collapse" data-bs-target="#shop-collapse" aria-expanded="false">
+                                    <i class="fa-solid fa-table-columns">&nbsp;</i>
+                                    Discount
+                                    <i class="fa-solid fa-chevron-down dropdown-icon"></i>
+                                </button>
+                            </div>
+                            <div class="collapse" id="shop-collapse">
+                                <ul class="btn-toggle-nav list-unstyled fw-normal pb-2 small">
+                                    <li class="activeable"><a href="@Url.Action("ViewProductOnDiscount","DiscountManager")" class="">Product Applied Discount</a></li>
+                                    <li class="activeable"><a href="@Url.Action("ViewProductUnDiscount","DiscountManager")" class="">Apply Discount</a></li>
+                                    <li class="activeable"><a href="@Url.Action("CreateDiscount","DiscountManager")" class="">Create Discount</a></li>
+                                    <li class="activeable"><a href="@Url.Action("ViewListDiscount","DiscountManager")" class="">List Discount</a></li>
+                                </ul>
+                            </div>
+                        </li>
+
                     </ul>
                 </div>
             </div>

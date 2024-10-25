@@ -13,9 +13,9 @@ namespace E_Retalling_Portal.Models
 		public string endDate { get; set; }
 		public int value { get; set; }
 		public int shopId { get; set; }
-		public int deleteAt { get; set; }
+		public int? deleteAt { get; set; }
 		public Shop shop { get; set; }
-		public List<ProductDiscount> productDiscounts { get; set; }
+		public List<ProductDiscount>? productDiscounts { get; set; }
 
 
 

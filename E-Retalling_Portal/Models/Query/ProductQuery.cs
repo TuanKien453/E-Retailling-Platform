@@ -45,5 +45,21 @@ namespace E_Retalling_Portal.Models.Query
             }
             return p.shopId == shopId;
         }
+
+        public static double GetProductDiscountPrice (this DbSet<Product> dbProduct, Product product)
+        {
+            using (var context = new Context())
+            {
+                ProductDiscount productDiscount = context.ProductDiscount.GetProductDiscountByProductIdAndProductItemId(product.id, null).FirstOrDefault();
+                if (productDiscount == null)
+                {
+                    return product.price;
+                }
+                Discount discount = context.Discounts.GetDiscountByDiscountId(productDiscount.discountId).FirstOrDefault();
+                return product.price - Math.Round(product.price * Math.Round(((double)discount.value / 100), 2), 2);
+
+
+            }
+        }
     }
 }

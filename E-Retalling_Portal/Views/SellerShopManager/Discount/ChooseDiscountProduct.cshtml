@@ -1,0 +1,59 @@
+﻿@{
+    ViewData["Title"] = "ChooseDiscountProduct";
+    Layout = "~/Views/Shared/ShopManagerSideBarLayout.cshtml";
+}
+<link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.css" />
+<style>
+    .row-img{
+        width:80px;
+        height:80px;
+    }
+</style>
+<div class="content m-4 pb-3">
+
+    <div class="row p-4">
+        <div class="col-12">
+            <table id="myTable" class="display">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>DiscountType</th>
+                        <th>StartDate</th>
+                        <th>EndDate</th>
+                        <th>Value</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in ViewBag.discount)
+                    {
+                        <tr>
+                            <td>@item.name</td>
+                            <td>@item.discountType</td>
+                            <td>@item.startDate</td>
+                            <td>@item.endDate</td>
+                            <td>@item.value</td>
+
+                            <td>
+                                <a href="ChooseDiscountProductProcess?discountId=@item.id" class="text-primary font-weight-bold text-xs btn">
+                                    Choose
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/2.1.8/js/dataTables.js"></script>
+<script>
+
+    $(document).ready(function () {
+        $('#myTable').DataTable();
+    });
+</script>

@@ -1,0 +1,110 @@
+﻿@{
+    ViewData["Title"] = "DiscountVariation";
+    Layout = "~/Views/Shared/ShopManagerSideBarLayout.cshtml";
+}
+<link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.css" />
+<style>
+    .row-img {
+        width: 80px;
+        height: 80px;
+    }
+
+    .image-radio {
+        display: none;
+    }
+
+    .image-radio-label {
+        display: inline-block;
+        cursor: pointer;
+    }
+
+    .image-radio-label img {
+        width: 80px;
+        height: auto;
+        margin: 5px;
+        border: 2px solid transparent;
+     }
+
+    .image-radio:checked + .image-radio-label {
+        border: 2px solid blue;
+    }
+    label{
+        margin-left:5px;
+    }
+</style>
+<div class="content m-4 pb-3">
+
+    <div class="row p-4">
+        <div class="col-12">
+            <table id="myTable" class="display">
+                <thead>
+                    <tr>
+                        <th>Image</th>
+                        <th>Attribute</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in ViewBag.productItems)
+                    {
+                        <tr>
+                            <td><img class="row-img" src="~/productImages/@item.image.imageName" /></td>
+                            <td>@item.attribute</td>
+                            <td>@item.price</td>
+                            <td>@item.quantity</td>
+                            <td>
+                                <a href="ViewDetailDiscount?productId=@ViewBag.productId&&productItemId=@item.id" class="text-primary font-weight-bold text-xs btn">
+                                    Detail Discount
+                                </a>|
+                                <a href="#" class="text-danger font-weight-bold text-xs" data-bs-toggle="modal" data-bs-target="#deleteModal" onclick="sendDataToModal(@ViewBag.productId,@item.id)">
+                                    Stop Discount
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <a href="@Url.Action("ViewProductOnDiscount","DiscountManager")" class="btn btn-dark ms-4 btn-pill text-uppercase">
+        Back
+    </a>
+</div>
+
+<!-- Delete Modal-->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModal">Delete</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-danger text-uppercase font-weight-bold">
+                Confirm Stop
+            </div>
+            <form action="StopDiscount">
+                <input type="hidden" name="productId" value="" id="delete-product-id" />
+                <input type="hidden" name="productItemId" value="" id="delete-product-item-id" />
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger">Stop</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/2.1.8/js/dataTables.js"></script>
+<script>
+    function sendDataToModal(productId, productitemId) {
+        $('#delete-product-id').val(productId);
+        $('#delete-product-item-id').val(productitemId);
+    }
+
+    $(document).ready(function () {
+        $('#myTable').DataTable();
+    });
+</script>
