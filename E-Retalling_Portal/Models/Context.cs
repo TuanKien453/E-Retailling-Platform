@@ -20,9 +20,9 @@ namespace E_Retalling_Portal.Models
         public DbSet<ProductItem> ProductItems { get; set; }
         public DbSet<Shop> Shops { get; set; }
         public DbSet<Status> Statuses { get; set; }
-        public DbSet<Setting> Settings { get; set; }
         public DbSet<ProductDiscount> ProductDiscount { get; set; }
         public DbSet<Discount> Discounts { get; set; }
+        public DbSet<Setting> Settings { get; set; }
 
 
 
@@ -158,9 +158,9 @@ namespace E_Retalling_Portal.Models
             SeedingProduct(modelBuilder);
             SeedingImage(modelBuilder);
             SeedingProductItem(modelBuilder);
-            SeedingSetting(modelBuilder);
             SeedingDiscount(modelBuilder);
             SeedingProductDiscount(modelBuilder);
+            SeedingSetting(modelBuilder);
         }
         private static void SeedingProductItem(ModelBuilder modelBuilder)
         {
@@ -314,7 +314,7 @@ namespace E_Retalling_Portal.Models
                 new Setting { id = 1, name = "fee", value = "10%" }
                 );
         }
-	}
+
         private static void SeedingDiscount(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Discount>().HasData(
