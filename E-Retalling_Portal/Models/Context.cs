@@ -142,6 +142,11 @@ namespace E_Retalling_Portal.Models
                 .HasForeignKey(pd => pd.productId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<Shipment>()
+                .HasOne(s => s.orderItem)
+                .WithMany(oi => oi.shipments)
+                .HasForeignKey(s => s.oderItemId);
+
 			SeedingCategory(modelBuilder);
             SeedingRole(modelBuilder);
             SeedingUser(modelBuilder);
@@ -202,8 +207,8 @@ namespace E_Retalling_Portal.Models
         private static void SeedingShop(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Shop>().HasData(
-                new Shop { id = 1, accountId = 1, address = "address", name = "shopname", createdAt = "2000-05-04", shopDescription = "sd", statusId = 1 },
-                new Shop { id = 2, accountId = 3, address = "address", name = "shopname", createdAt = "2000-05-04", shopDescription = "sd", statusId = 1 }
+                new Shop { id = 1, accountId = 1, address = "address", province = "adf", name = "shopname", createdAt = "2000-05-04", shopDescription = "sd", statusId = 1 },
+                new Shop { id = 2, accountId = 3, address = "address", province = "asdf", name = "shopname", createdAt = "2000-05-04", shopDescription = "sd", statusId = 1 }
              );
         }
         private static void SeedingStatus(ModelBuilder modelBuilder)
@@ -229,7 +234,10 @@ namespace E_Retalling_Portal.Models
                 new User
                 {
                     id = 1,
-                    address = "address",
+                    province = "BacNinh",
+                    district = "TienDu",
+                    commune = "HoanSon",
+                    address = "",
                     birthday = "2000-05-04",
                     displayName = "kienhocgioi",
                     email = "abc@gmail.com",
@@ -241,7 +249,10 @@ namespace E_Retalling_Portal.Models
                 new User
                 {
                     id = 2,
-                    address = "addresdds",
+                    province = "BacNinh",
+                    district = "TienDu",
+                    commune = "VietDoan",
+                    address = "",
                     birthday = "2000-01-04",
                     displayName = "anh",
                     email = "quynxhe186459@fpt.edu.vn",
@@ -253,7 +264,10 @@ namespace E_Retalling_Portal.Models
                 new User
                 {
                     id = 3,
-                    address = "LangHa",
+                    province = "BacNinh",
+                    district = "TienDu",
+                    commune = "LacVe",
+                    address = "",
                     birthday = "2004-01-04",
                     displayName = "phien",
                     email = "hoangphien46@gmail.com",
