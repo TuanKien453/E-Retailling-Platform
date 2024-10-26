@@ -24,8 +24,6 @@ namespace E_Retalling_Portal.Models
         public DbSet<Discount> Discounts { get; set; }
         public DbSet<Setting> Settings { get; set; }
 
-
-
         static Context()
         {
             InitializeFromXml("configDatabase.xml");
@@ -122,6 +120,12 @@ namespace E_Retalling_Portal.Models
                 .HasForeignKey(oi => oi.productItemId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<OrderItem>()
+                .HasOne(p => p.product)
+                .WithMany(p => p.orderItems)
+                .HasForeignKey(oi => oi.productId)
+                .OnDelete(DeleteBehavior.Restrict);
+
             modelBuilder.Entity<Image>()
                 .HasOne(i => i.productCovered)
                 .WithOne(p => p.coverImage)
@@ -144,11 +148,6 @@ namespace E_Retalling_Portal.Models
                 .HasForeignKey(pd => pd.productId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<Shipment>()
-                .HasOne(s => s.orderItem)
-                .WithMany(oi => oi.shipments)
-                .HasForeignKey(s => s.oderItemId);
-
 			SeedingCategory(modelBuilder);
             SeedingRole(modelBuilder);
             SeedingUser(modelBuilder);
@@ -158,8 +157,6 @@ namespace E_Retalling_Portal.Models
             SeedingProduct(modelBuilder);
             SeedingImage(modelBuilder);
             SeedingProductItem(modelBuilder);
-            SeedingDiscount(modelBuilder);
-            SeedingProductDiscount(modelBuilder);
             SeedingSetting(modelBuilder);
         }
         private static void SeedingProductItem(ModelBuilder modelBuilder)
@@ -314,21 +311,5 @@ namespace E_Retalling_Portal.Models
                 new Setting { id = 1, name = "fee", value = "10%" }
                 );
         }
-
-        private static void SeedingDiscount(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<Discount>().HasData(
-                new Discount { id = 1, name = "phien" , discountType = "lol", startDate = "2024-10-20", endDate = "2024-10-22", value = 10, shopId = 1, deleteAt = null }
-            );
-        }
-
-        private static void SeedingProductDiscount(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<ProductDiscount>().HasData(
-                new ProductDiscount { id = 1, productId = 1, productItemId = 1, discountId = 1}
-            );
-        }
-
-
     }
 }
