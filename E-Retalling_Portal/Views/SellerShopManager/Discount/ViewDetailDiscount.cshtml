@@ -22,22 +22,21 @@
                     </h4>
                     <input class="form-control" type="date" id="startDate" name="startDate" readonly value="@ViewBag.discount?.startDate">
 
+                    
+                </div>
+
+                <div class="col-6">
+                    
+                    <h4 class="font-weight-bold mt-6">
+                        Value(%)
+                    </h4>
+                    <input id="value" class="form-control" type="number" name="value" readonly value="@ViewBag.discount?.value">
+
                     <h4 class="font-weight-bold mt-6">
                         End Date
                     </h4>
                     <input class="form-control" type="date" id="endDate" name="endDate" readonly value="@ViewBag.discount?.endDate">
-                </div>
 
-                <div class="col-6">
-                    <h4 class="font-weight-bold mt-6">
-                        Discount Type
-                    </h4>
-                    <input class="form-control" id="discountType" name="discountType" readonly value="@ViewBag.discount?.discountType">
-
-                    <h4 class="font-weight-bold mt-6">
-                        Value
-                    </h4>
-                    <input id="value" class="form-control" type="number" name="value" readonly value="@ViewBag.discount?.value">
                 </div>
             </div>
         </form>

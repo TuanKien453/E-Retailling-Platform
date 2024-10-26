@@ -13,11 +13,21 @@
 
     <div class="row p-4">
         <div class="col-12">
+            <div class="row">
+                <div class="d-flex justify-content-between mb-3">
+                    <button type="button" class="btn btn-dark btn-pill text-uppercase" onclick="location.href='@Url.Action("ViewProductUnDiscount","DiscountManager")'">
+                        Applied Discount
+                    </button>
+                    <button type="button" class="btn btn-dark btn-pill text-uppercase" onclick="location.href='@Url.Action("CreateDiscount","DiscountManager")'">
+                        Create Discount
+                    </button>
+                </div>
+
+
             <table id="myTable" class="display">
                 <thead>
                     <tr>
                         <th>Name</th>
-                        <th>DiscountType</th>
                         <th>StartDate</th>
                         <th>EndDate</th>
                         <th>Value</th>
@@ -29,7 +39,6 @@
                     {
                         <tr>
                             <td>@item.name</td>
-                            <td>@item.discountType</td>
                             <td>@item.startDate</td>
                             <td>@item.endDate</td>
                             <td>@item.value</td>
