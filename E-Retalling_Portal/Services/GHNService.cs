@@ -10,12 +10,13 @@ namespace E_Retalling_Portal.Services
     {
         private readonly HttpClient _httpClient;
         private readonly GHNLibrary _ghnLibrary;
-
-        public GHNService(string token, GHNLibrary ghnLibrary)
+        private readonly IConfiguration _configuration;
+        public GHNService(string token, GHNLibrary ghnLibrary, IConfiguration configuration)
         {
+            _configuration = configuration;
             _httpClient = new HttpClient();
             _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            _httpClient.DefaultRequestHeaders.Add("Token", token);
+            _httpClient.DefaultRequestHeaders.Add("Token", _configuration["token"]);
             _ghnLibrary = ghnLibrary;
         }
 
