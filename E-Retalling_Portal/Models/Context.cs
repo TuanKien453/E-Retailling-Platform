@@ -24,8 +24,6 @@ namespace E_Retalling_Portal.Models
         public DbSet<Discount> Discounts { get; set; }
         public DbSet<Setting> Settings { get; set; }
 
-
-
         static Context()
         {
             InitializeFromXml("configDatabase.xml");
@@ -122,6 +120,12 @@ namespace E_Retalling_Portal.Models
                 .HasForeignKey(oi => oi.productItemId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<OrderItem>()
+                .HasOne(p => p.product)
+                .WithMany(p => p.orderItems)
+                .HasForeignKey(oi => oi.productId)
+                .OnDelete(DeleteBehavior.Restrict);
+
             modelBuilder.Entity<Image>()
                 .HasOne(i => i.productCovered)
                 .WithOne(p => p.coverImage)
@@ -143,11 +147,6 @@ namespace E_Retalling_Portal.Models
                 .WithMany(p => p.productDiscounts)
                 .HasForeignKey(pd => pd.productId)
                 .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<Shipment>()
-                .HasOne(s => s.orderItem)
-                .WithMany(oi => oi.shipments)
-                .HasForeignKey(s => s.oderItemId);
 
 			SeedingCategory(modelBuilder);
             SeedingRole(modelBuilder);
