@@ -157,8 +157,6 @@ namespace E_Retalling_Portal.Models
             SeedingProduct(modelBuilder);
             SeedingImage(modelBuilder);
             SeedingProductItem(modelBuilder);
-            SeedingDiscount(modelBuilder);
-            SeedingProductDiscount(modelBuilder);
             SeedingSetting(modelBuilder);
         }
         private static void SeedingProductItem(ModelBuilder modelBuilder)
@@ -313,21 +311,5 @@ namespace E_Retalling_Portal.Models
                 new Setting { id = 1, name = "fee", value = "10%" }
                 );
         }
-
-        private static void SeedingDiscount(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<Discount>().HasData(
-                new Discount { id = 1, name = "phien" , discountType = "lol", startDate = "2024-10-20", endDate = "2024-10-22", value = 10, shopId = 1, deleteAt = null }
-            );
-        }
-
-        private static void SeedingProductDiscount(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<ProductDiscount>().HasData(
-                new ProductDiscount { id = 1, productId = 1, productItemId = 1, discountId = 1}
-            );
-        }
-
-
     }
 }

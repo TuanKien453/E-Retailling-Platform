@@ -17,10 +17,9 @@
                 <thead>
                     <tr>
                         <th>Name</th>
-                        <th>DiscountType</th>
                         <th>StartDate</th>
                         <th>EndDate</th>
-                        <th>Value</th>
+                        <th>Value(%)</th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -29,14 +28,13 @@
                     {
                         <tr>
                             <td>@item.name</td>
-                            <td>@item.discountType</td>
                             <td>@item.startDate</td>
                             <td>@item.endDate</td>
                             <td>@item.value</td>
 
                             <td>
                                 <a href="ChooseDiscountProductProcess?discountId=@item.id" class="text-primary font-weight-bold text-xs btn">
-                                    Choose
+                                    Apply Discount
                                 </a>
                             </td>
                         </tr>

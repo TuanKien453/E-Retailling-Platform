@@ -25,19 +25,10 @@
 
                 </div>
 
-                <div class="col-6">
-                    <h4 class="font-weight-bold mt-6">
-                        DiscountType
-                    </h4>
-                    <select class="form-control" id="discountType" name="discountType" required>
-                        <option value="" disabled selected>Select type</option>
-                        <option value="Seasonal discounts">Seasonal discounts</option>
-                        <option value="Bundled discounts" >Bundled discounts</option>
-                        <option value="Time discounts">Time discounts</option>
-                    </select>
+                <div class="col-6">                   
 
                     <h4 class="font-weight-bold mt-6">
-                        Value
+                        Value(%)
                     </h4>
                     <input id="value" class="form-control" placeholder="Value" type="number" required name="value" min="1" max="99" value="@ViewBag.discount.value">
                     <input type="hidden" id="startDate" name="startDate">

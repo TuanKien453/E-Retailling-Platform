@@ -8,7 +8,6 @@ namespace E_Retalling_Portal.Models
 		[Required,MaxLength(100)]
 		public string name { get; set; }
 		[Required, MaxLength(2000)]
-		public string discountType { get; set; }
 		public string startDate { get; set; }
 		public string endDate { get; set; }
 		public int value { get; set; }
