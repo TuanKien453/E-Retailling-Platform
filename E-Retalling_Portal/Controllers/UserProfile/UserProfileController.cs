@@ -90,6 +90,9 @@ namespace E_Retalling_Portal.Controllers.UserProfile
                     newUser.gender = user.gender;
                     newUser.firstName = user.firstName;
                     newUser.lastName = user.lastName;
+                    newUser.province = user.province;
+                    newUser.district = user.district;
+                    newUser.commune = user.commune;
                     newUser.address = user.address;
                     newUser.province = user.province;
                     newUser.district = user.district;
@@ -122,6 +125,9 @@ namespace E_Retalling_Portal.Controllers.UserProfile
                     newUser.gender = user.gender;
                     newUser.firstName = user.firstName;
                     newUser.lastName = user.lastName;
+                    newUser.province = user.province;
+                    newUser.district = user.district;
+                    newUser.commune = user.commune;
                     newUser.address = user.address;
                     newUser.province = user.province;
                     newUser.district = user.district;

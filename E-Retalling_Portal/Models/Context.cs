@@ -20,8 +20,9 @@ namespace E_Retalling_Portal.Models
         public DbSet<ProductItem> ProductItems { get; set; }
         public DbSet<Shop> Shops { get; set; }
         public DbSet<Status> Statuses { get; set; }
-
-
+        public DbSet<ProductDiscount> ProductDiscount { get; set; }
+        public DbSet<Discount> Discounts { get; set; }
+        public DbSet<Setting> Settings { get; set; }
 
         static Context()
         {
@@ -119,6 +120,12 @@ namespace E_Retalling_Portal.Models
                 .HasForeignKey(oi => oi.productItemId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<OrderItem>()
+                .HasOne(p => p.product)
+                .WithMany(p => p.orderItems)
+                .HasForeignKey(oi => oi.productId)
+                .OnDelete(DeleteBehavior.Restrict);
+
             modelBuilder.Entity<Image>()
                 .HasOne(i => i.productCovered)
                 .WithOne(p => p.coverImage)
@@ -150,6 +157,7 @@ namespace E_Retalling_Portal.Models
             SeedingProduct(modelBuilder);
             SeedingImage(modelBuilder);
             SeedingProductItem(modelBuilder);
+            SeedingSetting(modelBuilder);
         }
         private static void SeedingProductItem(ModelBuilder modelBuilder)
         {
@@ -157,7 +165,9 @@ namespace E_Retalling_Portal.Models
                 new ProductItem { id = 1, productId = 1, quantity = 5, price = 15, imageId = 1, attribute = "L", deleteAt = "afad" },
                 new ProductItem { id = 2, productId = 1, quantity = 7, price = 13, imageId = 3, attribute = "S" },
                 new ProductItem { id = 3, productId = 3, quantity = 10, price = 20, imageId = 8, attribute = "X" },
-                new ProductItem { id = 4, productId = 3, quantity = 10, price = 14, imageId = 9, attribute = "X" }
+                new ProductItem { id = 4, productId = 3, quantity = 10, price = 14, imageId = 9, attribute = "X" },
+                new ProductItem { id = 5, productId = 3, quantity = 10, price = 20, imageId = 8, attribute = "M" },
+                new ProductItem { id = 6, productId = 3, quantity = 13, price = 14, imageId = 9, attribute = "L" }
             );
         }
         private static void SeedingImage(ModelBuilder modelBuilder)
@@ -200,8 +210,8 @@ namespace E_Retalling_Portal.Models
         private static void SeedingShop(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Shop>().HasData(
-                new Shop { id = 1, accountId = 1, address = "address", name = "shopname", createdAt = "2000-05-04", shopDescription = "sd", statusId = 1 },
-                new Shop { id = 2, accountId = 3, address = "address", name = "shopname", createdAt = "2000-05-04", shopDescription = "sd", statusId = 1 }
+                new Shop { id = 1, accountId = 1, address = "address", province = "adf", name = "shopname", createdAt = "2000-05-04", shopDescription = "sd", statusId = 1 },
+                new Shop { id = 2, accountId = 3, address = "address", province = "asdf", name = "shopname", createdAt = "2000-05-04", shopDescription = "sd", statusId = 1 }
              );
         }
         private static void SeedingStatus(ModelBuilder modelBuilder)
@@ -227,7 +237,10 @@ namespace E_Retalling_Portal.Models
                 new User
                 {
                     id = 1,
-                    address = "address",
+                    province = "BacNinh",
+                    district = "TienDu",
+                    commune = "HoanSon",
+                    address = "",
                     birthday = "2000-05-04",
                     displayName = "kienhocgioi",
                     email = "abc@gmail.com",
@@ -239,7 +252,10 @@ namespace E_Retalling_Portal.Models
                 new User
                 {
                     id = 2,
-                    address = "addresdds",
+                    province = "BacNinh",
+                    district = "TienDu",
+                    commune = "VietDoan",
+                    address = "",
                     birthday = "2000-01-04",
                     displayName = "anh",
                     email = "quynxhe186459@fpt.edu.vn",
@@ -251,17 +267,31 @@ namespace E_Retalling_Portal.Models
                 new User
                 {
                     id = 3,
-                    address = "LangHa",
+                    province = "BacNinh",
+                    district = "TienDu",
+                    commune = "LacVe",
+                    address = "",
                     birthday = "2004-01-04",
                     displayName = "phien",
-                    email = "hoangphien47@gmail.com",
+                    email = "hoangphien46@gmail.com",
                     firstName = "duc",
                     lastName = "phien",
                     phoneNumber = "0968059984",
                     gender = "Male"
-                }
-
-            );
+                },
+				new User
+				{
+					id = 4,
+					address = "LangHa",
+					birthday = "2004-01-04",
+					displayName = "phien",
+					email = "hoangphien47@gmail.com",
+					firstName = "duc",
+					lastName = "phien",
+					phoneNumber = "0968059984",
+					gender = "Male"
+				}
+			);
         }
 
         private static void SeedingAccount(ModelBuilder modelBuilder)
@@ -270,10 +300,16 @@ namespace E_Retalling_Portal.Models
                 new Account { id = 1, username = "admin", password = "123", roleId = 2, externalId = null, externalType = null, userId = 1 },
                 new Account { id = 2, username = "anh", password = "123", roleId = 1, externalId = null, externalType = null, userId = 2 },
                 new Account { id = 3, username = "seller", password = "123", roleId = 2, externalId = null, externalType = null, userId = 2 },
-                new Account { id = 4, username = "phien47", password = "123", roleId = 2, externalId = null, externalType = null, userId = 3 }
-            );
+                new Account { id = 4, username = "phien47", password = "123", roleId = 2, externalId = null, externalType = null, userId = 3 },
+				new Account { id = 5, username = "manager", password = "123", roleId = 3, externalId = null, externalType = null, userId = 3 }
+			);
         }
 
-
-	}
+        public static void SeedingSetting(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Setting>().HasData(
+                new Setting { id = 1, name = "fee", value = "10%" }
+                );
+        }
+    }
 }

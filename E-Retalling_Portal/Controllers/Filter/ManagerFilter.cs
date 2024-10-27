@@ -31,7 +31,7 @@ namespace E_Retalling_Portal.Controllers.Filter
 
 			if (!haveAccess)
 			{
-				context.Result = new RedirectResult("ManagerLogin/Index");
+				context.Result = new RedirectResult("/Home/Error505");
 			}
 		}
 	}

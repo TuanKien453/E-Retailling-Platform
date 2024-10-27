@@ -10,11 +10,11 @@ namespace E_Retalling_Portal.Models.Query
         }
         public static IQueryable<Product> GetProductById(this DbSet<Product> dbProduct, int productId)
         {
-            return dbProduct.Include("coverImage").Include("images").Include("category").Where(p => p.id == productId && p.deleteAt == null);
+            return dbProduct.Include("coverImage").Include("images").Include("category").Include("shop").Where(p => p.id == productId && p.deleteAt == null);
         }
         public static IQueryable<Product> GetProduct(this DbSet<Product> dbProduct)
         {
-            return dbProduct.Include("coverImage").Include("category").Include("images").Include("productItems").Where(p => p.deleteAt == null || (p.productItems.Where(pi=>pi.deleteAt==null).ToList().Count > 0 && p.isVariation == true) );
+            return dbProduct.Include("coverImage").Include("category").Include("images").Include("productItems").Include("shop").Where(p => p.deleteAt == null || (p.productItems.Where(pi=>pi.deleteAt==null).ToList().Count > 0 && p.isVariation == true) );
         }
         public static IQueryable<Product> GetSimilarProductByProductCategory(this DbSet<Product> dbProduct, Category category, int productId)
         {
@@ -33,7 +33,7 @@ namespace E_Retalling_Portal.Models.Query
         }
         public static IQueryable<Product> GetProductsNoVariation(this DbSet<Product> dbProduct)
         {
-            return dbProduct.Include(p => p.coverImage).Where(p => p.deleteAt == null && p.isVariation == false);
+            return dbProduct.Include(p => p.coverImage).Include(p => p.shop).Where(p => p.deleteAt == null && p.isVariation == false);
         }
 
         public static bool IsShop(this DbSet<Product> dbProduct, int shopId, int productId) {
@@ -44,6 +44,22 @@ namespace E_Retalling_Portal.Models.Query
                 return false;
             }
             return p.shopId == shopId;
+        }
+
+        public static double GetProductDiscountPrice (this DbSet<Product> dbProduct, Product product)
+        {
+            using (var context = new Context())
+            {
+                ProductDiscount productDiscount = context.ProductDiscount.GetProductDiscountByProductIdAndProductItemId(product.id, null).FirstOrDefault();
+                if (productDiscount == null)
+                {
+                    return product.price;
+                }
+                Discount discount = context.Discounts.GetDiscountByDiscountId(productDiscount.discountId).FirstOrDefault();
+                return product.price - Math.Round(product.price * Math.Round(((double)discount.value / 100), 2), 2);
+
+
+            }
         }
     }
 }

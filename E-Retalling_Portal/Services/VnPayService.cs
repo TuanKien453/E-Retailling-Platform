@@ -13,7 +13,7 @@ namespace E_Retalling_Portal.Services
             _configuration = configuration;
         }
 
-        public string CreatePaymentUrl(HttpContext context, String orderInfo)
+        public string CreatePaymentUrl(HttpContext context, String orderInfo, String amount)
         {
             var timeZoneById = TimeZoneInfo.FindSystemTimeZoneById(_configuration["TimeZoneId"]);
             var timeNow = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, timeZoneById);
@@ -24,8 +24,6 @@ namespace E_Retalling_Portal.Services
             pay.AddRequestData("vnp_Version", _configuration["Vnpay:Version"]);
             pay.AddRequestData("vnp_Command", _configuration["Vnpay:Command"]);
             pay.AddRequestData("vnp_TmnCode", _configuration["Vnpay:TmnCode"]);
-            //cal amout for oder
-            string amount = "1000000";
             pay.AddRequestData("vnp_Amount", amount);
             pay.AddRequestData("vnp_CreateDate", timeNow.ToString("yyyyMMddHHmmss"));
             pay.AddRequestData("vnp_CurrCode", _configuration["Vnpay:CurrCode"]);

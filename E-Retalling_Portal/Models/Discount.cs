@@ -8,14 +8,13 @@ namespace E_Retalling_Portal.Models
 		[Required,MaxLength(100)]
 		public string name { get; set; }
 		[Required, MaxLength(2000)]
-		public string discountType { get; set; }
 		public string startDate { get; set; }
 		public string endDate { get; set; }
 		public int value { get; set; }
 		public int shopId { get; set; }
-		public int deleteAt { get; set; }
+		public int? deleteAt { get; set; }
 		public Shop shop { get; set; }
-		public List<ProductDiscount> productDiscounts { get; set; }
+		public List<ProductDiscount>? productDiscounts { get; set; }
 
 
 

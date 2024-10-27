@@ -30,7 +30,7 @@
                         <li class="mb-1">
                             <div class="sidebar-parent">
                                 <button class="btn btn-toggle align-items-center rounded collapsed no-shadow text-white" data-bs-toggle="collapse" data-bs-target="#shop-collapse" aria-expanded="false">
-                                    <i class="fa-solid fa-table-columns">&nbsp;</i>
+                                    <i class="fa-solid fa-shop">&nbsp;</i>
                                     Shop
                                     <i class="fa-solid fa-chevron-down dropdown-icon"></i>
                                 </button>
@@ -45,7 +45,7 @@
                         <li class="mb-1">
                             <div class="sidebar-parent">
                                 <button class="btn btn-toggle align-items-center rounded collapsed no-shadow text-white" data-bs-toggle="collapse" data-bs-target="#product-collapse" aria-expanded="false">
-                                    <i class="fa-solid fa-table-columns">&nbsp;</i>
+                                    <i class="fa-solid fa-bag-shopping">&nbsp;</i>
                                     Product
                                     <i class="fa-solid fa-chevron-down dropdown-icon"></i>
                                 </button>
@@ -58,6 +58,29 @@
                                 </ul>
                             </div>
                         </li>
+
+                        <li class="mb-1">
+                            <div class="sidebar-parent">
+                                <button class="btn btn-toggle align-items-center rounded collapsed no-shadow text-white" data-bs-toggle="collapse" data-bs-target="#discount-collapse" aria-expanded="false">
+                                    <i class="fa-solid fa-tag">&nbsp;</i>
+                                    Discount
+                                    <i class="fa-solid fa-chevron-down dropdown-icon"></i>
+                                </button>
+                            </div>
+                            <div class="collapse" id="discount-collapse">
+                                <ul class="btn-toggle-nav list-unstyled fw-normal pb-2 small">
+                                    <li class="activeable"><a href="@Url.Action("ViewProductOnDiscount","DiscountManager")" class="">Product Applied Discount</a></li>
+                                    <li class="activeable"><a href="@Url.Action("ViewListDiscount","DiscountManager")" class="">List Discount</a></li>
+                                </ul>
+                            </div>
+                        </li>
+
+                        <li class="mb-1 single-item activeable">
+                            <button class="btn btn-toggle align-items-center rounded collapsed no-shadow text-white" onclick="showLogoutModal()">
+                                <i class="fa-solid fa-right-from-bracket">&nbsp;</i>
+                                <a href="#">Logout</a>
+                            </button>
+                        </li>                  
                     </ul>
                 </div>
             </div>
@@ -67,6 +90,32 @@
         </div>
     </div>
 
+    <!-- Logout Confirmation Modal -->
+    <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="logoutModalLabel">Confirm Logout</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to log out?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                    <a href="@Url.Action("Logout","SellerLogin")" class="btn btn-danger">Yes, Logout</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        function showLogoutModal() {
+            var myModal = new bootstrap.Modal(document.getElementById('logoutModal'));
+            myModal.show();
+        }
+    </script>
     <script src="~/js/SidebarControl.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @RenderSection("Scripts", required: false)

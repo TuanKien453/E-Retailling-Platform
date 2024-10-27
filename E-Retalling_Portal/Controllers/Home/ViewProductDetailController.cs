@@ -3,6 +3,7 @@ using E_Retalling_Portal.Models;
 using E_Retalling_Portal.Models.Query;
 using E_Retalling_Portal.Models.Enums;
 using E_Retalling_Portal.Util;
+using PagedList;
 namespace E_Retalling_Portal.Controllers.Home
 {
     public class ViewProductDetailController : Controller
@@ -21,7 +22,8 @@ namespace E_Retalling_Portal.Controllers.Home
                     double maxPrice = productItemList.Max(pi => pi.price);
                     ViewBag.minPrice = minPrice; ViewBag.maxPrice = maxPrice;
                 }
-                List<Product> products = GetProductsIsNotDelete(similarProducts);
+                
+                List<Product> products = GetProductsIsNotDelete(similarProducts).Take(6).ToList();
                 ViewBag.productImageList = product.images;
                 ViewBag.product = product;
                 Console.WriteLine(product.quantity+","+product.price);

@@ -9,6 +9,7 @@ using X.PagedList.Extensions;
 using Newtonsoft.Json;
 using Microsoft.IdentityModel.Tokens;
 using X.PagedList;
+using E_Retalling_Portal.Util;
 
 namespace E_Retalling_Portal.Controllers.Cart
 {
@@ -18,10 +19,78 @@ namespace E_Retalling_Portal.Controllers.Cart
 		{
 			using (var context = new Context())
 			{
-				Dictionary<string, int> cartItems = GetCartItems();
+				Dictionary<string, int> cartItems = CookiesUtils.GetCartItems(Request);
 
 				var productItems = await context.ProductItems.GetAllProductItem().ToListAsync();
 				var products = await context.Products.GetProductsNoVariation().ToListAsync();
+
+
+				var removedProductIds = new HashSet<int>();
+				var removedProductItemIds = new HashSet<int>();
+
+            //Delete deletedItem in cookie and save deletedItem to hashset
+				foreach (var item in cartItems)
+				{
+					var key = item.Key;
+
+					if (key.EndsWith("P"))
+					{
+						int productId = int.Parse(key.TrimEnd('P'));
+						if (!products.Any(p => p.id == productId))
+						{
+							removedProductIds.Add(productId);
+							DeleteFromCart(productId, true);
+						}
+					}
+					else if (key.EndsWith("PI"))
+					{
+						int productItemId = int.Parse(key.TrimEnd("PI".ToCharArray()));
+						if (!productItems.Any(pi => pi.id == productItemId))
+						{
+							removedProductItemIds.Add(productItemId);
+							DeleteFromCart(productItemId, false);
+						}
+					}
+				}
+
+				//IF cookiedata null or check deleledItem is exist in cookie or not  
+				var cookiedata = Request.Cookies["Cart"];
+				if (cookiedata == null)
+				{
+					cartItems = new Dictionary<string, int>();
+				}
+				else
+				{
+					bool allItemsRemoved = true;
+
+					foreach (var item in cartItems)
+					{
+						var key = item.Key;
+						if (key.EndsWith("P"))
+						{
+							int productId = int.Parse(key.TrimEnd('P'));
+							if (!removedProductIds.Contains(productId))
+							{
+								allItemsRemoved = false;
+								break;
+							}
+						}
+						else if (key.EndsWith("PI"))
+						{
+							int productItemId = int.Parse(key.TrimEnd("PI".ToCharArray()));
+							if (!removedProductItemIds.Contains(productItemId))
+							{
+								allItemsRemoved = false;
+								break;
+							}
+						}
+					}
+
+					if (allItemsRemoved)
+					{
+						cartItems = new Dictionary<string, int>();
+					}
+				}
 
 				var cartDetails = cartItems.Select(ci => new CartItemModel
 				{
@@ -30,7 +99,6 @@ namespace E_Retalling_Portal.Controllers.Cart
 					productItem = ci.Key.EndsWith("PI") ? productItems.FirstOrDefault(pi => pi.id == int.Parse(ci.Key.TrimEnd("PI".ToCharArray()))) : null
 				}).ToList();
 
-			
 				// Paging
 				var pageNumber = page ?? 1;
 				var pageSize = 3;
@@ -38,7 +106,7 @@ namespace E_Retalling_Portal.Controllers.Cart
 
 				if (cartDetails == null || !cartDetails.Any())
 				{
-					ViewBag.IsCartEmpty = true; 
+					ViewBag.IsCartEmpty = true;
 					return View();
 				}
 
@@ -46,16 +114,17 @@ namespace E_Retalling_Portal.Controllers.Cart
 				{
 					return RedirectToAction("Index");
 				}
+
 				ViewBag.IsCartEmpty = false;
-				
 
 				return View(pagedCartItem);
 			}
 		}
 
+
 		public IActionResult AddToCart(int itemId, int quantity, bool isProduct)
 		{
-			var cartItems = GetCartItems();
+			var cartItems = CookiesUtils.GetCartItems(Request);
 			string cartKey = isProduct ? $"{itemId}P" : $"{itemId}PI";
 
 			if (cartItems.ContainsKey(cartKey))
@@ -69,44 +138,15 @@ namespace E_Retalling_Portal.Controllers.Cart
 
 			TempData["CartItems"] = JsonConvert.SerializeObject(cartItems);
 
-			SetCartItems(cartItems); 
+			CookiesUtils.SetCartItems(cartItems, Response); 
 
 			return RedirectToAction("Index");
-		}
-
-		private Dictionary<string, int> GetCartItems()
-		{
-			var cartItems = new Dictionary<string, int>();
-
-			if (TempData["CartItems"] != null)
-			{
-				var cartString = TempData["CartItems"].ToString();
-				cartItems = JsonConvert.DeserializeObject<Dictionary<string, int>>(cartString);
-			}
-			else
-			{
-				var cookieValue = Request.Cookies["Cart"];
-				if (!string.IsNullOrEmpty(cookieValue))
-				{
-					var items = cookieValue.Split(',');
-					foreach (var item in items)
-					{
-						var parts = item.Split(':');
-						if (parts.Length == 2 && int.TryParse(parts[0].TrimEnd('P', 'I'), out int itemId) && int.TryParse(parts[1], out int quantity))
-						{
-							cartItems[parts[0]] = quantity;
-						}
-					}
-				}
-			}
-
-			return cartItems;
 		}
 
 		[HttpPost]
 		public IActionResult DeleteFromCart(int itemId, bool isProduct)
 		{
-			var cartItems = GetCartItems();
+			var cartItems = CookiesUtils.GetCartItems(Request);
 			string cartKey = isProduct ? $"{itemId}P" : $"{itemId}PI";
 
 			if (cartItems.ContainsKey(cartKey))
@@ -128,7 +168,7 @@ namespace E_Retalling_Portal.Controllers.Cart
 		[HttpPost]
 		public IActionResult UpdateFromCart(int itemId, int quantity, bool isProduct)
 		{
-			var cartItems = GetCartItems();
+			var cartItems = CookiesUtils.GetCartItems(Request);
 			string cartKey = isProduct ? $"{itemId}P" : $"{itemId}PI";
 
 			cartItems[cartKey] = quantity;
@@ -144,19 +184,5 @@ namespace E_Retalling_Portal.Controllers.Cart
 
 			return RedirectToAction("Index");
 		}
-
-		private void SetCartItems(Dictionary<string, int> cartItems)
-		{
-			var cartString = string.Join(",", cartItems.Select(ci => $"{ci.Key}:{ci.Value}"));
-
-			Response.Cookies.Append("Cart", cartString, new CookieOptions
-			{
-				Expires = DateTime.Now.AddDays(30),
-				HttpOnly = true,
-				Secure = true,
-				SameSite = SameSiteMode.Strict
-			});
-		}
-
 	}
 }

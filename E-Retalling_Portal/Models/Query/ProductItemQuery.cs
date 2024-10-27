@@ -11,12 +11,12 @@ namespace E_Retalling_Portal.Models.Query
 
 		public static IQueryable<ProductItem> GetProductItemByProductItemId(this DbSet<ProductItem> dbProductItem, int productItemId)
 		{
-			return dbProductItem.Where(pi => pi.id == productItemId && pi.deleteAt == null);
+			return dbProductItem.Include("image").Where(pi => pi.id == productItemId && pi.deleteAt == null);
 		}
 
 		public static IQueryable<ProductItem> GetAllProductItem(this DbSet<ProductItem> dbProductItem)
 		{
-			return dbProductItem.Include(p => p.image).Include(p => p.product).Where(pi => pi.deleteAt == null);
+			return dbProductItem.Include(p => p.image).Include(p => p.product).Include(p => p.product.shop).Where(pi => pi.deleteAt == null);
 		}
 
         public static void DeleteProductItemById(this DbSet<ProductItem> dbProductItem, int productItemId, DbContext context)
@@ -39,6 +39,22 @@ namespace E_Retalling_Portal.Models.Query
                 return false;
             }
             return pi.product.shopId== shopId;
+        }
+
+        public static double GetProductItemDiscountPrice(this DbSet<ProductItem> dbProductItem, ProductItem productItem)
+        {
+            using (var context = new Context())
+            {
+                ProductDiscount productDiscount = context.ProductDiscount.GetProductDiscountByProductIdAndProductItemId(productItem.productId, productItem.id).FirstOrDefault();
+                if (productDiscount == null)
+                {
+                    return productItem.price;
+                }
+                Discount discount = context.Discounts.GetDiscountByDiscountId(productDiscount.discountId).FirstOrDefault();
+                return productItem.price - Math.Round(productItem.price * Math.Round(((double)discount.value / 100), 2), 2);
+
+
+            }
         }
     }
 }
