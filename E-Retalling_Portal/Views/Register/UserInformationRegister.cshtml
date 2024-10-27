@@ -147,58 +147,84 @@
         });
     });
     $(document).ready(function () {
-        // Fetch provinces
-        $.getJSON('https://esgoo.net/api-tinhthanh/1/0.htm', function (data_tinh) {
-            if (data_tinh.error === 0) {
-                $.each(data_tinh.data, function (key_tinh, val_tinh) {
-                    $("#tinh").append('<option value="' + val_tinh.id + '">' + val_tinh.full_name + '</option>');
-                });
+            // Lấy danh sách tỉnh thành
+            $.ajax({
+                url: 'https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/province',
+                type: 'GET',
+                headers: {
+                    'Token': '38a65a5a-90f7-11ef-8e53-0a00184fe694' // Đảm bảo token là hợp lệ
+                },
+                success: function (data_tinh) {
+                    console.log(data_tinh); // Xem dữ liệu trả về để kiểm tra cấu trúc
+                    if (data_tinh.code === 200) { // Kiểm tra mã thành công
+                        $.each(data_tinh.data, function (key_tinh, val_tinh) {
+                            $("#tinh").append('<option value="' + val_tinh.ProvinceID + '">' + val_tinh.ProvinceName + '</option>');
+                        });
 
-                // Handle province change
-                $("#tinh").change(function () {
-                    var idtinh = $(this).val();
-                    // Reset district and commune when changing province
-                    $("#quan").html('<option value="0">Quận Huyện</option>');
-                    $("#phuong").html('<option value="0">Phường Xã</option>');
-                    $('#address').val(""); // Clear address field
+                        // Xử lý sự kiện thay đổi tỉnh
+                        $("#tinh").change(function () {
+                            var idtinh = $(this).val();
+                            $("#quan").html('<option value="0">Quận Huyện</option>');
+                            $("#phuong").html('<option value="0">Phường Xã</option>');
+                            $('#address').val(""); // Xóa trường địa chỉ
 
-                    // Fetch districts
-                    $.getJSON('https://esgoo.net/api-tinhthanh/2/' + idtinh + '.htm', function (data_quan) {
-                        if (data_quan.error === 0) {
-                            $.each(data_quan.data, function (key_quan, val_quan) {
-                                $("#quan").append('<option value="' + val_quan.id + '">' + val_quan.full_name + '</option>');
+                            // Lấy danh sách quận huyện
+                            $.ajax({
+                                url: 'https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/district?province_id=' + idtinh,
+                                type: 'GET',
+                                headers: {
+                                    'Token': '38a65a5a-90f7-11ef-8e53-0a00184fe694'
+                                },
+                                success: function (data_quan) {
+                                    if (data_quan.code === 200) {
+                                        $.each(data_quan.data, function (key_quan, val_quan) {
+                                            $("#quan").append('<option value="' + val_quan.DistrictID + '">' + val_quan.DistrictName + '</option>');
+                                        });
+                                    }
+                                }
                             });
-                        }
-                    });
-                });
+                        });
 
-                // Handle district change
-                $("#quan").change(function () {
-                    var idquan = $(this).val();
-                    var selectedProvince = $("#tinh option:selected").text();
-                    // Reset commune selection and address field
-                    $("#phuong").html('<option value="0">Phường Xã</option>');
-                    $('#address').val(selectedProvince); // Set address to province name only
+                        // Xử lý sự kiện thay đổi quận huyện
+                        $("#quan").change(function () {
+                            var idquan = $(this).val();
+                            var selectedProvince = $("#tinh option:selected").text();
+                            $("#phuong").html('<option value="0">Phường Xã</option>');
+                            $('#address').val(selectedProvince); // Đặt địa chỉ chỉ bằng tên tỉnh
 
-                    // Fetch communes
-                    $.getJSON('https://esgoo.net/api-tinhthanh/3/' + idquan + '.htm', function (data_phuong) {
-                        if (data_phuong.error === 0) {
-                            $.each(data_phuong.data, function (key_phuong, val_phuong) {
-                                $("#phuong").append('<option value="' + val_phuong.id + '">' + val_phuong.full_name + '</option>');
+                            // Lấy danh sách phường xã
+                            $.ajax({
+                                url: 'https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/ward?district_id=' + idquan,
+                                type: 'GET',
+                                headers: {
+                                    'Token': '38a65a5a-90f7-11ef-8e53-0a00184fe694'
+                                },
+                                success: function (data_phuong) {
+                                    if (data_phuong.code === 200) {
+                                        $.each(data_phuong.data, function (key_phuong, val_phuong) {
+                                            $("#phuong").append('<option value="' + val_phuong.WardCode + '">' + val_phuong.WardName + '</option>');
+                                        });
+                                    }
+                                }
                             });
-                        }
-                    });
-                });
+                        });
 
-                // Handle commune change
-                $("#phuong").change(function () {
-                    var selectedCommune = $("#phuong option:selected").text();
-                    var selectedDistrict = $("#quan option:selected").text();
-                    var selectedProvince = $("#tinh option:selected").text();
-                    $('#address').val(selectedProvince + ', ' + selectedDistrict + ', ' + selectedCommune); // Set address to include province, district, and commune
-                });
-            }
+                        // Xử lý sự kiện thay đổi phường xã
+                        $("#phuong").change(function () {
+                            var selectedCommune = $("#phuong option:selected").text();
+                            var selectedDistrict = $("#quan option:selected").text();
+                            var selectedProvince = $("#tinh option:selected").text();
+                            $('#address').val(selectedProvince + ', ' + selectedDistrict + ', ' + selectedCommune);
+                        });
+                    } else {
+                        console.error("Lỗi khi lấy tỉnh thành:", data_tinh.message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Có lỗi xảy ra:", error);
+                    console.log("Mã trạng thái:", xhr.status); // Kiểm tra mã trạng thái
+                }
+            });
         });
-    });
 
 </script>

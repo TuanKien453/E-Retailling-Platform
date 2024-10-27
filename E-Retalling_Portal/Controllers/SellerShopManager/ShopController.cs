@@ -45,6 +45,9 @@ namespace E_Retalling_Portal.Controllers.SellerShopManager
                 int? accId = HttpContext.Session.GetInt32(SessionKeys.AccountId.ToString());
                 Shop shop = context.Shops.GetShopbyAccId(accId.Value).FirstOrDefault();
                 ViewBag.Name = shop.name;
+                ViewBag.Provine = shop.province;
+                ViewBag.District = shop.district;
+                ViewBag.Commune = shop.commune;
                 ViewBag.Address = shop.address;
                 ViewBag.ShopDescription = shop.shopDescription;
                 return View("Views/SellerShopManager/ShopInformation/UpdateShop.cshtml");

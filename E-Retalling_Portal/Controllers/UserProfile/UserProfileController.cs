@@ -16,7 +16,7 @@ namespace E_Retalling_Portal.Controllers.UserProfile
 {
     public class UserProfileController : Controller
     {
-
+        private GHNService ghNService;
 
         public IActionResult ViewProfile()
         {
@@ -85,7 +85,6 @@ namespace E_Retalling_Portal.Controllers.UserProfile
                 if (testUser != null)
                 {
                     newUser.displayName = user.displayName;
-                    
                     newUser.birthday = user.birthday;
                     newUser.gender = user.gender;
                     newUser.firstName = user.firstName;
@@ -94,9 +93,6 @@ namespace E_Retalling_Portal.Controllers.UserProfile
                     newUser.district = user.district;
                     newUser.commune = user.commune;
                     newUser.address = user.address;
-                    newUser.province = user.province;
-                    newUser.district = user.district;
-                    newUser.commune = user.commune;
                     if (testUser.email == user.email)
                     {
                         TempData["ErrorEmail"] = "Email is already been registered";
@@ -117,9 +113,6 @@ namespace E_Retalling_Portal.Controllers.UserProfile
                 else
                 {
                     newUser.displayName = user.displayName;
-
-                    
-
                     newUser.phoneNumber = user.phoneNumber;
                     newUser.birthday = user.birthday;
                     newUser.gender = user.gender;
