@@ -1,4 +1,4 @@
-﻿@model X.PagedList.IPagedList<CartItemModel>
+﻿@model List<CartItemModel>
 @{
 	ViewData["Title"] = "Shopping Cart";
 }
@@ -38,6 +38,23 @@
 			</div>
 			<div class="modal-body">
 				<p id="quantityModalMessage"></p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="noItemsModal" tabindex="-1" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">No Products Founded</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<p>There are no products to check out</p>
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -94,14 +111,28 @@
 									<div class="row">
 										<div class="col-md-1">
 											<div class="mt-3">
-												<input type="checkbox" onchange="updateSubtotal()" id="check-product-@item.product.id" style="margin-left: 16px; margin-top: 25px" />
+												<input type="checkbox" class="product-checkbox" data-id="@(@item.product.id + "P")" data-quantity="@item.quantity" onchange="updateSubtotal()" id="check-product-@item.product.id" style="margin-left: 16px; margin-top: 25px" />
 											</div>
 										</div>
 										<div class="col-md-3">
 											<div class="mt-3">
 												<p class="text-muted mb-2">Price</p>
-												<h5 class="mb-0 mt-2">
-													<span class="text-muted me-2">$@item.product.price</span>
+												<h5 class="d-flex align-items-center mb-0 mt-2">
+													@if (item.discountedPrice != 0 && item.discountedPrice < item.product.price)
+													{
+														<span class="text-muted me-2 text-decoration-line-through">
+															$@item.product.price
+														</span>
+														<span class="ms-2 fw-bold text-danger">
+															$@item.discountedPrice
+														</span>
+													}
+													else
+													{
+														<span class="text-muted me-2">
+															$@item.product.price
+														</span>
+													}
 												</h5>
 											</div>
 										</div>
@@ -111,7 +142,7 @@
 												<div class="d-inline-flex">
 													<input type="number" class="form-control form-control-sm"
 														   min="1" value="@item.quantity"
-														   data-price="@item.product.price"
+														   data-price="@((item.discountedPrice != 0 && item.discountedPrice < item.product.price) ? item.discountedPrice : item.product.price)"
 														   data-total-id="total-product-@item.product.id"
 														   data-product-id="@item.product.id"
 														   data-quantityInStock="@item.product.quantity"
@@ -122,7 +153,7 @@
 										<div class="col-md-4">
 											<div class="mt-3">
 												<p class="text-muted mb-2">Total</p>
-												<h5 id="total-product-@item.product.id">$@((item.quantity * item.product.price).ToString("F2"))</h5>
+												<h5 id="total-product-@item.product.id">$@(((item.discountedPrice != 0 && item.discountedPrice < item.product.price ? item.discountedPrice : item.product.price) * item.quantity).ToString("F2"))</h5>
 											</div>
 										</div>
 									</div>
@@ -165,14 +196,28 @@
 									<div class="row">
 										<div class="col-md-1">
 											<div class="mt-3">
-												<input type="checkbox" onchange="updateSubtotal()" id="check-productItem-@item.productItem.id" style="margin-left: 16px; margin-top: 25px" />
+												<input type="checkbox" class="product-checkbox" data-id="@(@item.productItem.id + "PI")" data-quantity="@item.quantity" onchange="updateSubtotal()" id="check-productItem-@item.productItem.id" style="margin-left: 16px; margin-top: 25px" />
 											</div>
 										</div>
 										<div class="col-md-3">
 											<div class="mt-3">
 												<p class="text-muted mb-2">Price</p>
-												<h5 class="mb-0 mt-2">
-													<span class="text-muted me-2">$@item.productItem.price</span>
+												<h5 class="d-flex align-items-center mb-0 mt-2">
+													@if (item.discountedPrice != 0 && item.discountedPrice < item.productItem.price)
+													{
+														<span class="text-muted me-2 text-decoration-line-through">
+															$@item.productItem.price
+														</span>
+														<span class="ms-2 fw-bold text-danger">
+															$@item.discountedPrice
+														</span>
+													}
+													else
+													{
+														<span class="text-muted me-2">
+															$@item.productItem.price
+														</span>
+													}
 												</h5>
 											</div>
 										</div>
@@ -182,7 +227,7 @@
 												<div class="d-inline-flex">
 													<input type="number" class="form-control form-control-sm"
 														   min="1" value="@item.quantity"
-														   data-price="@item.productItem.price"
+														   data-price="@((item.discountedPrice != 0 && item.discountedPrice < item.productItem.price) ? item.discountedPrice : item.productItem.price)"
 														   data-total-id="total-productItem-@item.productItem.id"
 														   data-product-id="@item.productItem.id"
 														   data-quantityInStock="@item.productItem.quantity"
@@ -193,7 +238,7 @@
 										<div class="col-md-4">
 											<div class="mt-3">
 												<p class="text-muted mb-2">Total</p>
-												<h5 id="total-productItem-@item.productItem.id">$@((item.quantity * item.productItem.price).ToString("F2"))</h5>
+												<h5 id="total-productItem-@item.productItem.id">$@(((item.discountedPrice != 0 && item.discountedPrice < item.productItem.price ? item.discountedPrice : item.productItem.price) * item.quantity).ToString("F2"))</h5>
 											</div>
 										</div>
 									</div>
@@ -202,16 +247,6 @@
 						</div>
 					}
 				}
-				@Html.PagedListPager(Model, page => Url.Action("Index", new { page }), new PagedListRenderOptions
-{
-	DisplayLinkToFirstPage = PagedListDisplayMode.IfNeeded,
-	DisplayLinkToLastPage = PagedListDisplayMode.IfNeeded,
-	MaximumPageNumbersToDisplay = 10,
-	DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
-	DisplayLinkToNextPage = PagedListDisplayMode.Always,
-
-})
-
 				<div class="row my-4">
 					<div class="col-sm-6">
 						<a href="home" class="btn btn-link text-muted">
@@ -221,8 +256,9 @@
 					<div class="col-sm-6">
 						<div class="text-sm-end mt-2 mt-sm-0">
 							<a href="" class="btn btn-success">
-								<i class="mdi mdi-cart-outline me-1"></i> Checkout
+								<i class="mdi mdi-cart-outline me-1"></i> Checkout1
 							</a>
+							<button id="checkoutButton">Check Out</button>
 						</div>
 					</div> <!-- end col -->
 				</div> <!-- end row-->
