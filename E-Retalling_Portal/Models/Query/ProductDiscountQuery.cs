@@ -17,6 +17,18 @@ namespace E_Retalling_Portal.Models.Query
             return dbpd.Where(pd => pd.productId == productId && pd.productItemId == productItemId);
         }
 
+        public static void DeleteProductDiscount(this DbSet<ProductDiscount> dbpd, int productId, int? productItemId)
+        {
+            using (var context = new Context())
+            {
+                ProductDiscount pd = context.ProductDiscount.GetProductDiscountByProductIdAndProductItemId(productId, productItemId).FirstOrDefault();
+                if (pd != null)
+                {
+                    context.Remove(pd);
+                    context.SaveChanges();
+                }
+            }
 
+        }
     }
 }

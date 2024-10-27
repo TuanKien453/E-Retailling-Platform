@@ -183,7 +183,19 @@ namespace E_Retalling_Portal.Controllers.SellerShopManager
                         products.Add(context.Products.GetProductById(discount.productId).FirstOrDefault());
                     } 
                 }
-
+                List<Discount> discountItem = new List<Discount>();
+                foreach (var product in products)
+                {
+                    if (!product.isVariation)
+                    {
+                        ProductDiscount pd = context.ProductDiscount.GetProductDiscountByProductIdAndProductItemId(product.id, null).FirstOrDefault();
+                        var discount = context.Discounts.GetDiscountByDiscountId(pd.discountId).FirstOrDefault();
+                        discountItem.Add(discount);
+                    }
+                    else discountItem.Add(null);
+                   
+                }
+                ViewBag.discount = discountItem;
                 ViewBag.products = products;
             }
 
@@ -219,10 +231,18 @@ namespace E_Retalling_Portal.Controllers.SellerShopManager
 
                 }
 
+                List<Discount> discountItem = new List<Discount>();
+                foreach (var productItem in productItemsDiscount)
+                {
+                    ProductDiscount pd = context.ProductDiscount.GetProductDiscountByProductIdAndProductItemId(productId, productItem.id).FirstOrDefault();
+                    var discount = context.Discounts.GetDiscountByDiscountId(pd.discountId).FirstOrDefault();
+                    discountItem.Add(discount);
+                }
+
                 ViewBag.images = context.Images.GetImagesByProductId(productId).ToList();
                 ViewBag.productId = productId;
                 ViewBag.productItems = productItemsDiscount;
-
+                ViewBag.discount = discountItem;
             }
 
             return View("/Views/SellerShopManager/Discount/DiscountVariation.cshtml");
