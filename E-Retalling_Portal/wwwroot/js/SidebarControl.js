@@ -31,3 +31,8 @@
 function clearSessionStorage() {
     sessionStorage.clear();
 }
+
+function showLogoutModal() {
+    var myModal = new bootstrap.Modal(document.getElementById('logoutModal'));
+    myModal.show();
+}

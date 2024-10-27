@@ -19,19 +19,24 @@
                     <input class="form-control" type="text" placeholder="Name" required maxlength="100" name="name" value="@ViewBag.discount.name">
 
                     <h4 class="font-weight-bold mt-6">
-                        End Date
-                    </h4>
-                    <input class="form-control" type="date" id="endDate" name="endDate" required value="@ViewBag.discount.endDate">
-
-                </div>
-
-                <div class="col-6">                   
-
-                    <h4 class="font-weight-bold mt-6">
                         Value(%)
                     </h4>
                     <input id="value" class="form-control" placeholder="Value" type="number" required name="value" min="1" max="99" value="@ViewBag.discount.value">
-                    <input type="hidden" id="startDate" name="startDate">
+                    
+                </div>
+
+                <div class="col-6"> 
+                    
+                    <h4 class="font-weight-bold mt-6">
+                        Start Date
+                    </h4>
+                    <input class="form-control" type="date" id="startDate" name="startDate" required value="@ViewBag.discount.startDate">
+
+                    <h4 class="font-weight-bold mt-6">
+                        End Date
+                    </h4>
+                    <input class="form-control" type="date" id="endDate" name="endDate" required value="@ViewBag.discount.endDate">
+                              
                 </div>
 
             </div>
@@ -48,17 +53,37 @@
 
 </div>
 <script>
-    const disData = JSON.parse('@Html.Raw(Json.Serialize(ViewBag.discount))');
+    const startDateInput = document.getElementById('startDate');
+    const endDateInput = document.getElementById('endDate');
 
-    // Set start date to today and make it readonly
-    document.getElementById('startDate').value = disData.startDate;
+    // Set the minimum value of startDate to today
+    const today = new Date();
+    startDateInput.setAttribute('min', today.toISOString().split('T')[0]);
 
-    // Set the minimum value of the end date to be tomorrow
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1); // Move date to the next day
-    const minEndDate = tomorrow.toISOString().split('T')[0];
+    // Set initial endDate min to today + 1 day
+    const tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 1);
+    endDateInput.setAttribute('min', tomorrow.toISOString().split('T')[0]);
 
-    // Set the min attribute for the end date input
-    document.getElementById('endDate').setAttribute('min', minEndDate);
+    // Function to update endDate's min value based on startDate
+    function updateEndDateMin() {
+        const startDate = new Date(startDateInput.value);
+        const endDate = new Date(endDateInput.value);
+
+        // Calculate the next day after the selected startDate
+        const nextDay = new Date(startDate);
+        nextDay.setDate(startDate.getDate() + 1);
+
+        // Update the minimum value for endDate to one day after startDate
+        endDateInput.setAttribute('min', nextDay.toISOString().split('T')[0]);
+
+        // If startDate is greater than or equal to endDate, adjust endDate to startDate + 1 day
+        if (startDate >= endDate) {
+            endDateInput.value = nextDay.toISOString().split('T')[0];
+        }
+    }
+
+    // Event listeners to check changes in startDate and endDate
+    startDateInput.addEventListener('change', updateEndDateMin);
 </script>
 

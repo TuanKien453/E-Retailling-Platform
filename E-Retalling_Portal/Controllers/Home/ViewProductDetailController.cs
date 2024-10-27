@@ -22,7 +22,11 @@ namespace E_Retalling_Portal.Controllers.Home
                     double maxPrice = productItemList.Max(pi => pi.price);
                     ViewBag.minPrice = minPrice; ViewBag.maxPrice = maxPrice;
                 }
-                
+                product.price = context.Products.GetProductDiscountPrice(product);
+                foreach (var item in productItemList)
+                {
+                    item.price = (float)context.ProductItems.GetProductItemDiscountPrice(item);
+                }
                 List<Product> products = GetProductsIsNotDelete(similarProducts).Take(6).ToList();
                 ViewBag.productImageList = product.images;
                 ViewBag.product = product;
