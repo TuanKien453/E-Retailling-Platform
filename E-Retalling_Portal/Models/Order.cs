@@ -14,11 +14,17 @@ namespace E_Retalling_Portal.Models
         [MaxLength(100)]
         public string? endTime { get; set; }
         [MaxLength(60)]
-        public string status { get; set; }
+        public string paymentStatus { get; set; }
         [MaxLength(200)]
-        public string note { get; set; }
+        public string? note { get; set; }
         [MaxLength(100)]
-        public string address { get; set; }
+        public string province { get; set; }
+		[MaxLength(100)]
+		public string district { get; set; }
+		[MaxLength(100)]
+		public string commune { get; set; }
+		[MaxLength(100)]
+		public string? address { get; set; }
         public User user { get; set; }
         public List<OrderItem> orderItems { get; set; }
 
