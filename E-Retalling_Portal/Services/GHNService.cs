@@ -39,10 +39,10 @@ namespace E_Retalling_Portal.Services
             return _ghnLibrary.DeserializeJsonResponse<ProvinceResponse>(jsonResponse).Data;
         }
 
-        public async Task<List<District>> GetDistrictsAsync()
+        public async Task<List<District>> GetDistrictsAsync(int provinceId)
         {
             var requestUrl = "https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/district";
-            var requestBody = new {};
+            var requestBody = new { province_id = provinceId };
             var request = _ghnLibrary.CreateRequest(requestUrl, HttpMethod.Post, requestBody);
 
             var jsonResponse = await GetJsonResponseAsync(request);

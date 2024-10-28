@@ -107,8 +107,14 @@ namespace E_Retalling_Portal.Controllers.Cart
 					return View();
 				}
 
+                User user = null;
+				if (HttpContext.Session.Keys.Contains(SessionKeys.AccountId.ToString())) {
+                    var accId = HttpContext.Session.GetInt32(SessionKeys.AccountId.ToString());
+                    var acc = context.Accounts.GetAccountByAccountId(accId.Value).FirstOrDefault();
+					user = acc.user;
+				}
 				ViewBag.IsCartEmpty = false;
-
+				ViewBag.User = user;
 				return View(cartDetails);
 			}
 		}

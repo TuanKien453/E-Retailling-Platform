@@ -1,6 +1,6 @@
 ﻿@model List<CartItemModel>
 @{
-	ViewData["Title"] = "Shopping Cart";
+    ViewData["Title"] = "Shopping Cart";
 }
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,281 +11,414 @@
 
 <!-- Modal for delete product in cart-->
 <div class="modal fade" id="deleteModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
-				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-			</div>
-			<div class="modal-body">
-				Are you sure you want to remove <span style="color:blue" id="modalProductName"></span> product from your cart?
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-				<button type="button" class="btn btn-danger" id="confirmDeleteButton">Delete</button>
-			</div>
-		</div>
-	</div>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to remove <span style="color:blue" id="modalProductName"></span> product from your cart?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteButton">Delete</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- Modal for update quantity in cart -->
 <div class="modal fade" id="quantityModal" tabindex="-1" aria-labelledby="quantityModalLabel" aria-hidden="true">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h5 class="modal-title" id="quantityModalLabel">Quantity Error</h5>
-				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-			</div>
-			<div class="modal-body">
-				<p id="quantityModalMessage"></p>
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-			</div>
-		</div>
-	</div>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="quantityModalLabel">Quantity Error</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p id="quantityModalMessage"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <div class="modal fade" id="noItemsModal" tabindex="-1" aria-hidden="true">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h5 class="modal-title">No Products Founded</h5>
-				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-			</div>
-			<div class="modal-body">
-				<p>There are no products to check out</p>
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-			</div>
-		</div>
-	</div>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">No Products Founded</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>There are no products to check out</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <div class="container">
-	<div class="row">
-		<div class="col-xl-8">
-			@if (ViewBag.IsCartEmpty)
-			{
-				<div class="empty-cart-container" style="text-align: center; margin-top: 20px;">
-					<img src="https://static.vecteezy.com/system/resources/previews/005/006/007/non_2x/no-item-in-the-shopping-cart-click-to-go-shopping-now-concept-illustration-flat-design-eps10-modern-graphic-element-for-landing-page-empty-state-ui-infographic-icon-vector.jpg" style="width: 150px; height: 150px;" />
-					<h3 style="margin-top: 10px;">Your cart is empty</h3>
-					<a href="/home" class="btn btn-primary" style="margin-top: 15px;">Go to Shopping</a>
-				</div>
-			}
-			else
-			{
-				@foreach (var item in Model)
-				{
-					if (item.product != null)
-					{
-						<div class="card border shadow-none">
-							<div class="card-body">
-								<div class="d-flex align-items-start border-bottom pb-3">
-									<div class="me-4">
-										<img src="/productImages/@item.product.coverImage.imageName" alt="@item.product.name" class="avatar-lg rounded">
-									</div>
-									<div class="flex-grow-1 align-self-center overflow-hidden">
-										<div>
-											<div class="text-muted" style="font-size: 14px;">
-												@item.product.shop.name
-											</div>
-											<h5 class="text-truncate font-size-18">
-												<a href="ViewProductDetail?area=Home&productId=@item.product.id" class="text-dark">@item.product.name</a>
-											</h5>
-										</div>
-									</div>
-									<div class="flex-shrink-0 ms-2">
-										<ul class="list-inline mb-0 font-size-16">
-											<li class="list-inline-item">
-												<a href="javascript:void(0);" class="text-muted px-1" onclick="showDeleteModal(@item.product.id, `@Html.Raw(item.product.name)`, true)">
-													<i class="mdi mdi-trash-can-outline"></i>
-												</a>
-											</li>
-										</ul>
-									</div>
-								</div>
+    <div class="row">
+        <div class="col-xl-8">
+            @if (ViewBag.IsCartEmpty)
+            {
+                <div class="empty-cart-container" style="text-align: center; margin-top: 20px;">
+                    <img src="https://static.vecteezy.com/system/resources/previews/005/006/007/non_2x/no-item-in-the-shopping-cart-click-to-go-shopping-now-concept-illustration-flat-design-eps10-modern-graphic-element-for-landing-page-empty-state-ui-infographic-icon-vector.jpg" style="width: 150px; height: 150px;" />
+                    <h3 style="margin-top: 10px;">Your cart is empty</h3>
+                    <a href="/home" class="btn btn-primary" style="margin-top: 15px;">Go to Shopping</a>
+                </div>
+            }
+            else
+            {
+                @foreach (var item in Model)
+                {
+                    if (item.product != null)
+                    {
+                        <div class="card border shadow-none">
+                            <div class="card-body">
+                                <div class="d-flex align-items-start border-bottom pb-3">
+                                    <div class="me-4">
+                                        <img src="/productImages/@item.product.coverImage.imageName" alt="@item.product.name" class="avatar-lg rounded">
+                                    </div>
+                                    <div class="flex-grow-1 align-self-center overflow-hidden">
+                                        <div>
+                                            <div class="text-muted" style="font-size: 14px;">
+                                                @item.product.shop.name
+                                            </div>
+                                            <h5 class="text-truncate font-size-18">
+                                                <a href="ViewProductDetail?area=Home&productId=@item.product.id" class="text-dark">@item.product.name</a>
+                                            </h5>
+                                        </div>
+                                    </div>
+                                    <div class="flex-shrink-0 ms-2">
+                                        <ul class="list-inline mb-0 font-size-16">
+                                            <li class="list-inline-item">
+                                                <a href="javascript:void(0);" class="text-muted px-1" onclick="showDeleteModal(@item.product.id, `@Html.Raw(item.product.name)`, true)">
+                                                    <i class="mdi mdi-trash-can-outline"></i>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
 
-								<div>
-									<div class="row">
-										<div class="col-md-1">
-											<div class="mt-3">
-												<input type="checkbox" class="product-checkbox" data-id="@(@item.product.id + "P")" data-quantity="@item.quantity" onchange="updateSubtotal()" id="check-product-@item.product.id" style="margin-left: 16px; margin-top: 25px" />
-											</div>
-										</div>
-										<div class="col-md-3">
-											<div class="mt-3">
-												<p class="text-muted mb-2">Price</p>
-												<h5 class="d-flex align-items-center mb-0 mt-2">
-													@if (item.discountedPrice != 0 && item.discountedPrice < item.product.price)
-													{
-														<span class="text-muted me-2 text-decoration-line-through">
-															$@item.product.price
-														</span>
-														<span class="ms-2 fw-bold text-danger">
-															$@item.discountedPrice
-														</span>
-													}
-													else
-													{
-														<span class="text-muted me-2">
-															$@item.product.price
-														</span>
-													}
-												</h5>
-											</div>
-										</div>
-										<div class="col-md-4">
-											<div class="mt-3">
-												<p class="text-muted mb-2">Quantity</p>
-												<div class="d-inline-flex">
-													<input type="number" class="form-control form-control-sm"
-														   min="1" value="@item.quantity"
-														   data-price="@((item.discountedPrice != 0 && item.discountedPrice < item.product.price) ? item.discountedPrice : item.product.price)"
-														   data-total-id="total-product-@item.product.id"
-														   data-product-id="@item.product.id"
-														   data-quantityInStock="@item.product.quantity"
-														   data-isProduct="true" />
-												</div>
-											</div>
-										</div>
-										<div class="col-md-4">
-											<div class="mt-3">
-												<p class="text-muted mb-2">Total</p>
-												<h5 id="total-product-@item.product.id">$@(((item.discountedPrice != 0 && item.discountedPrice < item.product.price ? item.discountedPrice : item.product.price) * item.quantity).ToString("F2"))</h5>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
+                                <div>
+                                    <div class="row">
+                                        <div class="col-md-1">
+                                            <div class="mt-3">
+                                                <input type="checkbox" class="product-checkbox" data-id="@(@item.product.id + "P")" data-quantity="@item.quantity" onchange="updateSubtotal()" id="check-product-@item.product.id" style="margin-left: 16px; margin-top: 25px" />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="mt-3">
+                                                <p class="text-muted mb-2">Price</p>
+                                                <h5 class="d-flex align-items-center mb-0 mt-2">
+                                                    @if (item.discountedPrice != 0 && item.discountedPrice < item.product.price)
+                                                    {
+                                                        <span class="text-muted me-2 text-decoration-line-through">
+                                                            $@item.product.price
+                                                        </span>
+                                                        <span class="ms-2 fw-bold text-danger">
+                                                            $@item.discountedPrice
+                                                        </span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="text-muted me-2">
+                                                            $@item.product.price
+                                                        </span>
+                                                    }
+                                                </h5>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="mt-3">
+                                                <p class="text-muted mb-2">Quantity</p>
+                                                <div class="d-inline-flex">
+                                                    <input type="number" class="form-control form-control-sm"
+                                                           min="1" value="@item.quantity"
+                                                           data-price="@((item.discountedPrice != 0 && item.discountedPrice < item.product.price) ? item.discountedPrice : item.product.price)"
+                                                           data-total-id="total-product-@item.product.id"
+                                                           data-product-id="@item.product.id"
+                                                           data-quantityInStock="@item.product.quantity"
+                                                           data-isProduct="true" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="mt-3">
+                                                <p class="text-muted mb-2">Total</p>
+                                                <h5 id="total-product-@item.product.id">$@(((item.discountedPrice != 0 && item.discountedPrice < item.product.price ? item.discountedPrice : item.product.price) * item.quantity).ToString("F2"))</h5>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
-					}
-					else if (item.productItem != null)
-					{
-						<div class="card border shadow-none">
-							<div class="card-body">
-								<div class="d-flex align-items-start border-bottom pb-3">
-									<div class="me-4">
-										<img src="/productImages/@item.productItem.image.imageName" alt="@item.productItem.product.name" class="avatar-lg rounded">
-									</div>
-									<div class="flex-grow-1 align-self-center overflow-hidden">
-										<div>
-											<div class="text-muted" style="font-size: 14px;">
-												@item.productItem.product.shop.name
-											</div>
-											<h5 class="text-truncate font-size-18">
-												<a href="ViewProductDetail?area=Home&productId=@item.productItem.product.id" class="text-dark">@item.productItem.product.name</a>
-											</h5>
-											<p class="mb-0 mt-1">Attribute: <span class="fw-medium">@item.productItem.attribute</span></p>
-										</div>
-									</div>
-									<div class="flex-shrink-0 ms-2">
-										<ul class="list-inline mb-0 font-size-16">
-											<li class="list-inline-item">
-												<a href="javascript:void(0);" class="text-muted px-1" data-bs-toggle="modal" onclick="showDeleteModal(@item.productItem.id, `@Html.Raw(item.productItem.product.name)`, 'false' )">
-													<i class="mdi mdi-trash-can-outline"></i>
-												</a>
-											</li>
-										</ul>
-									</div>
-								</div>
+                    }
+                    else if (item.productItem != null)
+                    {
+                        <div class="card border shadow-none">
+                            <div class="card-body">
+                                <div class="d-flex align-items-start border-bottom pb-3">
+                                    <div class="me-4">
+                                        <img src="/productImages/@item.productItem.image.imageName" alt="@item.productItem.product.name" class="avatar-lg rounded">
+                                    </div>
+                                    <div class="flex-grow-1 align-self-center overflow-hidden">
+                                        <div>
+                                            <div class="text-muted" style="font-size: 14px;">
+                                                @item.productItem.product.shop.name
+                                            </div>
+                                            <h5 class="text-truncate font-size-18">
+                                                <a href="ViewProductDetail?area=Home&productId=@item.productItem.product.id" class="text-dark">@item.productItem.product.name</a>
+                                            </h5>
+                                            <p class="mb-0 mt-1">Attribute: <span class="fw-medium">@item.productItem.attribute</span></p>
+                                        </div>
+                                    </div>
+                                    <div class="flex-shrink-0 ms-2">
+                                        <ul class="list-inline mb-0 font-size-16">
+                                            <li class="list-inline-item">
+                                                <a href="javascript:void(0);" class="text-muted px-1" data-bs-toggle="modal" onclick="showDeleteModal(@item.productItem.id, `@Html.Raw(item.productItem.product.name)`, 'false' )">
+                                                    <i class="mdi mdi-trash-can-outline"></i>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
 
-								<div>
-									<div class="row">
-										<div class="col-md-1">
-											<div class="mt-3">
-												<input type="checkbox" class="product-checkbox" data-id="@(@item.productItem.id + "PI")" data-quantity="@item.quantity" onchange="updateSubtotal()" id="check-productItem-@item.productItem.id" style="margin-left: 16px; margin-top: 25px" />
-											</div>
-										</div>
-										<div class="col-md-3">
-											<div class="mt-3">
-												<p class="text-muted mb-2">Price</p>
-												<h5 class="d-flex align-items-center mb-0 mt-2">
-													@if (item.discountedPrice != 0 && item.discountedPrice < item.productItem.price)
-													{
-														<span class="text-muted me-2 text-decoration-line-through">
-															$@item.productItem.price
-														</span>
-														<span class="ms-2 fw-bold text-danger">
-															$@item.discountedPrice
-														</span>
-													}
-													else
-													{
-														<span class="text-muted me-2">
-															$@item.productItem.price
-														</span>
-													}
-												</h5>
-											</div>
-										</div>
-										<div class="col-md-4">
-											<div class="mt-3">
-												<p class="text-muted mb-2">Quantity</p>
-												<div class="d-inline-flex">
-													<input type="number" class="form-control form-control-sm"
-														   min="1" value="@item.quantity"
-														   data-price="@((item.discountedPrice != 0 && item.discountedPrice < item.productItem.price) ? item.discountedPrice : item.productItem.price)"
-														   data-total-id="total-productItem-@item.productItem.id"
-														   data-product-id="@item.productItem.id"
-														   data-quantityInStock="@item.productItem.quantity"
-														   data-isProduct="false" />
-												</div>
-											</div>
-										</div>
-										<div class="col-md-4">
-											<div class="mt-3">
-												<p class="text-muted mb-2">Total</p>
-												<h5 id="total-productItem-@item.productItem.id">$@(((item.discountedPrice != 0 && item.discountedPrice < item.productItem.price ? item.discountedPrice : item.productItem.price) * item.quantity).ToString("F2"))</h5>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					}
-				}
-				<div class="row my-4">
-					<div class="col-sm-6">
-						<a href="home" class="btn btn-link text-muted">
-							<i class="mdi mdi-arrow-left me-1"></i> Continue Shopping
-						</a>
-					</div> <!-- end col -->
-					<div class="col-sm-6">
-						<div class="text-sm-end mt-2 mt-sm-0">
-							<a href="" class="btn btn-success">
-								<i class="mdi mdi-cart-outline me-1"></i> Checkout1
-							</a>
-							<button id="checkoutButton">Check Out</button>
-						</div>
-					</div> <!-- end col -->
-				</div> <!-- end row-->
-			}
-		</div>
-		<div class="col-xl-4">
-			<div class="mt-5 mt-lg-0">
-				<div class="card border shadow-none">
-					<div class="card-header bg-transparent border-bottom py-3 px-4">
-						<h5 class="font-size-16 mb-0">Order Summary</h5>
-					</div>
-					<div class="card-body p-4 pt-2">
+                                <div>
+                                    <div class="row">
+                                        <div class="col-md-1">
+                                            <div class="mt-3">
+                                                <input type="checkbox" class="product-checkbox" data-id="@(@item.productItem.id + "PI")" data-quantity="@item.quantity" onchange="updateSubtotal()" id="check-productItem-@item.productItem.id" style="margin-left: 16px; margin-top: 25px" />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="mt-3">
+                                                <p class="text-muted mb-2">Price</p>
+                                                <h5 class="d-flex align-items-center mb-0 mt-2">
+                                                    @if (item.discountedPrice != 0 && item.discountedPrice < item.productItem.price)
+                                                    {
+                                                        <span class="text-muted me-2 text-decoration-line-through">
+                                                            $@item.productItem.price
+                                                        </span>
+                                                        <span class="ms-2 fw-bold text-danger">
+                                                            $@item.discountedPrice
+                                                        </span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="text-muted me-2">
+                                                            $@item.productItem.price
+                                                        </span>
+                                                    }
+                                                </h5>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="mt-3">
+                                                <p class="text-muted mb-2">Quantity</p>
+                                                <div class="d-inline-flex">
+                                                    <input type="number" class="form-control form-control-sm"
+                                                           min="1" value="@item.quantity"
+                                                           data-price="@((item.discountedPrice != 0 && item.discountedPrice < item.productItem.price) ? item.discountedPrice : item.productItem.price)"
+                                                           data-total-id="total-productItem-@item.productItem.id"
+                                                           data-product-id="@item.productItem.id"
+                                                           data-quantityInStock="@item.productItem.quantity"
+                                                           data-isProduct="false" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="mt-3">
+                                                <p class="text-muted mb-2">Total</p>
+                                                <h5 id="total-productItem-@item.productItem.id">$@(((item.discountedPrice != 0 && item.discountedPrice < item.productItem.price ? item.discountedPrice : item.productItem.price) * item.quantity).ToString("F2"))</h5>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+                <div class="row my-4">
+                    <div class="col-sm-6">
+                        <a href="home" class="btn btn-link text-muted">
+                            <i class="mdi mdi-arrow-left me-1"></i> Continue Shopping
+                        </a>
+                    </div> <!-- end col -->
+                    <div class="col-sm-6">
+                        <div class="text-sm-end mt-2 mt-sm-0">
 
-						<div class="table-responsive">
-							<table class="table mb-0">
-								<tbody>
-									<tr>
-										<td>Total :</td>
-										<td class="text-end" id="subtotal">$0.00</td>
-									</tr>
-								</tbody>
-							</table>
-						</div> <!-- end table-responsive -->
-					</div>
-				</div> <!-- end card -->
-			</div>
-		</div> <!-- end col -->
-	</div> <!-- end row -->
+                            <button id="checkoutButton" class="btn btn-success">Check Out</button>
+                        </div>
+                    </div> <!-- end col -->
+                </div> <!-- end row-->
+            }
+        </div>
+        <div class="col-xl-4">
+            <div class="mt-5 mt-lg-0">
+                <div class="card border shadow-none">
+                    <div class="card-header bg-transparent border-bottom py-3 px-4">
+                        <h5 class="font-size-16 mb-0">Order Summary</h5>
+                    </div>
+                    <div class="card-body p-4 pt-2">
+
+                        <div class="table-responsive">
+                            <table class="table mb-0">
+                                <tbody>
+                                    <tr>
+                                        <td>Total :</td>
+                                        <td class="text-end" id="subtotal">$0.00</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div> <!-- end table-responsive -->
+                    </div>
+                </div> <!-- end card -->
+            </div>
+
+            <div class="mt-3">
+                <div class="card border shadow-none">
+                    <div class="card-header bg-transparent border-bottom py-3 px-4">
+                        <h5 class="font-size-16 mb-0">Ship Address</h5>
+                    </div>
+                    <div class="card-body p-4 pt-2">
+
+                        <div class="table-responsive">
+                            <table class="table mb-0">
+                                <tbody>
+                                    <tr style="display:flex; flex-direction:column;">
+                                        <td style="width:100%;">
+                                            <select class="css_select" id="tinh" name="province" title="Chọn Tỉnh Thành">
+                                                <option value="0">Tỉnh Thành</option>
+                                            </select>
+                                        </td>
+                                        <td style="width:100%;">
+                                            <select class="css_select" id="quan" name="district" title="Chọn Quận Huyện">
+                                                <option value="0">Quận Huyện</option>
+                                            </select>
+                                        </td>
+                                        <td style="width:100%;">
+                                            <select class="css_select" id="phuong" name="ward" title="Chọn Phường Xã">
+                                                <option value="0">Phường Xã</option>
+                                            </select>
+                                        </td>
+                                        <td style="width:100%;">
+                                            <input type="text" minlength="5" maxlength="100" class="form-control" id="address" name="address" value="@(ViewBag.User?.address ?? " ")">
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div> <!-- end table-responsive -->
+                    </div>
+                </div> <!-- end card -->
+            </div>
+
+
+
+        </div> <!-- end col -->
+    </div> <!-- end row -->
 </div> <!-- end container -->
 <script src="~/js/Cart.js"></script>
+@section Scripts {
+
+    <script>
+        var userProvince = "@(ViewBag.User?.province)";
+        var userDistrict = "@(ViewBag.User?.district)";
+        var userWard = "@(ViewBag.User?.commune)";
+
+        $(document).ready(function () {
+            console.log("Document is ready");
+
+            // Load provinces
+            $.ajax({
+                url: '/address/getProvinces',
+                type: 'GET',
+                success: function (data_tinh) {
+                    console.log("Provinces loaded:", data_tinh);
+
+                    // Populate provinces dropdown
+                    $.each(data_tinh, function (key_tinh, val_tinh) {
+                        $("#tinh").append('<option value="' + val_tinh.provinceID + '">' + val_tinh.provinceName + '</option>');
+                    });
+
+                    // Set userProvince if available after provinces are loaded
+                    if (userProvince) {
+                        console.log("Setting province to:", userProvince);
+                        $("#tinh").val(userProvince).trigger('change'); 
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error loading provinces:", error);
+                    console.log("Status code:", xhr.status);
+                }
+            });
+
+            // Province change event
+            $(document).on('change', '#tinh', function () {
+                var idtinh = $(this).val();
+                $("#quan").html('<option value="0">Quận Huyện</option>');
+                $("#phuong").html('<option value="0">Phường Xã</option>');
+                $('#address').val("");
+
+                // Load districts
+                $.ajax({
+                    url: '/address/getDistricts?provinceId=' + idtinh,
+                    type: 'GET',
+                    success: function (data_quan) {
+                        console.log("Districts loaded:", data_quan);
+                        $.each(data_quan, function (key_quan, val_quan) {
+                            $("#quan").append('<option value="' + val_quan.districtID + '">' + val_quan.districtName + '</option>');
+                        });
+
+                        // Set userDistrict if available after districts are loaded
+                        if (userDistrict) {
+                            console.log("Setting district to:", userDistrict);
+                            $("#quan").val(userDistrict).trigger('change'); 
+                        }
+                    }
+                });
+            });
+
+            // District change event
+            $(document).on('change', '#quan', function () {
+                var idquan = $(this).val();
+                var selectedProvince = $("#tinh option:selected").text();
+                $("#phuong").html('<option value="0">Phường Xã</option>');
+                $('#address').val(selectedProvince);
+
+                $.ajax({
+                    url: '/address/getWards?districtId=' + idquan,
+                    type: 'GET',
+                    success: function (data_phuong) {
+                        console.log("Wards loaded:", data_phuong);
+                        $.each(data_phuong, function (key_phuong, val_phuong) {
+                            $("#phuong").append('<option value="' + val_phuong.wardCode + '">' + val_phuong.wardName + '</option>');
+                        });
+
+                        // Set userWard if available after wards are loaded
+                        if (userWard) {
+                            console.log("Setting ward to:", userWard);
+                            $("#phuong").val(userWard); 
+                        }
+                    }
+                });
+            });
+
+            // Ward change event
+            $(document).on('change', '#phuong', function () {
+                var selectedCommune = $(this).find("option:selected").text();
+                var selectedDistrict = $("#quan option:selected").text();
+                var selectedProvince = $("#tinh option:selected").text();
+            });
+        });
+    </script>
+    </script>
+}

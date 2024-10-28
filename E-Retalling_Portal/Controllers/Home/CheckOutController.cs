@@ -1,5 +1,7 @@
 ﻿using Azure;
+using E_Retalling_Portal.Controllers.Filter;
 using E_Retalling_Portal.Models;
+using E_Retalling_Portal.Models.Enums;
 using E_Retalling_Portal.Models.GHNRequestModel;
 using E_Retalling_Portal.Services;
 using E_Retalling_Portal.Services.ExtendService;
@@ -9,7 +11,8 @@ using NuGet.Protocol;
 
 namespace E_Retalling_Portal.Controllers.Home
 {
-    public class CheckOutController : Controller
+	[TypeFilter(typeof(CustomerFilter))]
+	public class CheckOutController : Controller
     {
         private readonly IVnPayService _vnPayService;
         private readonly GHNService _ghnService;
@@ -23,6 +26,7 @@ namespace E_Retalling_Portal.Controllers.Home
             var piItems = new Dictionary<int, int>();
             var pItems = new Dictionary<int, int>();
 			var items = cartItems.Split(';');
+			int? accId = HttpContext.Session.GetInt32(SessionKeys.AccountId.ToString());
             using (var context = new Context()) {
 				foreach (var item in items)
 				{
@@ -55,23 +59,23 @@ namespace E_Retalling_Portal.Controllers.Home
 			var orderRequest = new OrderRequest
 			{
 				PaymentTypeId = 2,
-				ServiceTypeId = 0,
-				ServiceId = 53330,
-				RequiredNote = "KHONGCHOXEMHANG", 
+				ServiceId = 53320,
+
+                RequiredNote = "KHONGCHOXEMHANG", 
 				FromName = "TinTest124",
 				FromPhone = "0987654321",
 				FromAddress = "72 Thành Thái, Phường 14, Quận 10, Hồ Chí Minh, Vietnam",
-				FromWardName = "Phường 14",
-				FromDistrictName = "Quận 10",
-				FromProvinceName = "HCM",
+				FromWardName = "Phường Thành Tô",
+				FromDistrictName = "Quận Hải An",
+				FromProvinceName = "Hải Phòng",
 
 				// Required fields for the recipient
 				ToName = "TinTest124", 
 				ToPhone = "0987654321",  
 				ToAddress = "72 Thành Thái, Phường 14, Quận 10, Hồ Chí Minh, Vietnam",
-				ToWardName = "Xã Vĩnh Viễn A",
-				ToDistrictName = "Long Mỹ",
-				ToProvinceName = "Hậu Giang",
+				ToWardCode = "220714",
+				ToDistrictId = 3451,
+
 
 				// Order details
 				Weight = 200,  

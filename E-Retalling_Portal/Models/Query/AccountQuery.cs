@@ -10,7 +10,7 @@ namespace E_Retalling_Portal.Models.Query
         }
         public static IQueryable<Account> GetAccountByAccountId(this DbSet<Account> dbAccount, int accId)
         {
-            return dbAccount.Where(a => a.id == accId);
+            return dbAccount.Include("user").Where(a => a.id == accId);
         }
 
 		public static IQueryable<Account> GetAccountByRoleIdAndUserId(this DbSet<Account> dbAccount, int roleId, User user)
