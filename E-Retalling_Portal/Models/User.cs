@@ -17,9 +17,8 @@ namespace E_Retalling_Portal.Models
         public string? birthday { get; set; }
         public string? gender { get; set; }
         [MaxLength(100)]
-        public string? province { get; set; }
-        [MaxLength(100)]
-        public string? district { get; set; }
+        public string province { get; set; }
+        public string district { get; set; }
         [MaxLength(100)]
         public string? commune { get; set; }
         [MaxLength(300)]

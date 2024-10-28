@@ -106,3 +106,28 @@ function deleteFromCart(itemId, isProduct) {
         }
     });
 }
+document.addEventListener("DOMContentLoaded", function () {
+    document.getElementById("checkoutButton").addEventListener("click", function () {
+        let selectedItemsString = Array.from(document.querySelectorAll(".product-checkbox:checked")).map(checkbox => {
+            const id = checkbox.getAttribute("data-id");
+            const quantity = checkbox.getAttribute("data-quantity");
+
+            return `${id}:${quantity}`;
+        }).join(",");
+
+        // Kiểm tra xem có sản phẩm nào được chọn không
+        if (selectedItemsString === "") {
+            // Hiển thị modal thông báo
+            $('#noItemsModal').modal('show');
+        } else {
+            // Lưu selectedItemsString vào sessionStorage
+            sessionStorage.setItem('selectedItems', selectedItemsString);
+            // Chuyển hướng đến CreatePaymentUrl
+            window.location.href = '/CheckOut/CreatePaymentUrl';
+        }
+    });
+});
+
+
+
+

@@ -278,19 +278,7 @@ namespace E_Retalling_Portal.Models
                     lastName = "phien",
                     phoneNumber = "0968059984",
                     gender = "Male"
-                },
-				new User
-				{
-					id = 4,
-					address = "LangHa",
-					birthday = "2004-01-04",
-					displayName = "phien",
-					email = "hoangphien47@gmail.com",
-					firstName = "duc",
-					lastName = "phien",
-					phoneNumber = "0968059984",
-					gender = "Male"
-				}
+                }
 			);
         }
 
