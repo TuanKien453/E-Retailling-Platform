@@ -56,11 +56,11 @@ namespace E_Retalling_Portal.Models.GHNRequestModel
 		[JsonProperty("to_address")]
 		public string ToAddress { get; set; }
 
-		[JsonProperty("to_district_name")]
-		public string ToDistrictName { get; set; }
+		[JsonProperty("to_district_id")]
+		public int ToDistrictId { get; set; }
 
 		[JsonProperty("to_ward_code")]
-		public string ToWardName { get; set; }
+		public string ToWardCode { get; set; }
 
 		[JsonProperty("items")]
 		public List<OrderItemRequest> Items { get; set; }
