@@ -13,7 +13,9 @@ namespace E_Retalling_Portal.Models.GHNRequestModel
 		[JsonProperty("weight")]
 		public int Weight { get; set; }
 
-		[JsonProperty("length")]
+        [JsonProperty("cod_amount")]
+        public int COD { get; set; }
+        [JsonProperty("length")]
 		public int Length { get; set; } = 30;
 
 		[JsonProperty("width")]
@@ -24,8 +26,8 @@ namespace E_Retalling_Portal.Models.GHNRequestModel
 
 		[JsonProperty("service_type_id")]
 		public int ServiceTypeId { get; set; }
-		[JsonProperty("service_id")]
-		public int ServiceId { get; set; }
+		//[JsonProperty("service_id")]
+		//public int ServiceId { get; set; }
 
 		[JsonProperty("from_name")]
 		public string FromName { get; set; }

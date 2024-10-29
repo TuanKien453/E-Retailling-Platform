@@ -16,6 +16,7 @@ namespace E_Retalling_Portal.Models
         public string desc { get; set; }
         public double price { get; set; }
         public int quantity {  get; set; }
+        public int weight {  get; set; }
         public bool isVariation { get; set; }
         public int status {  get; set; }
         [MaxLength(60)]

@@ -3,6 +3,7 @@ using E_Retalling_Portal.Controllers.Filter;
 using E_Retalling_Portal.Models;
 using E_Retalling_Portal.Models.Enums;
 using E_Retalling_Portal.Models.GHNRequestModel;
+using E_Retalling_Portal.Models.Query;
 using E_Retalling_Portal.Services;
 using E_Retalling_Portal.Services.ExtendService;
 using E_Retalling_Portal.Util;
@@ -11,7 +12,7 @@ using NuGet.Protocol;
 
 namespace E_Retalling_Portal.Controllers.Home
 {
-	[TypeFilter(typeof(CustomerFilter))]
+	//[TypeFilter(typeof(CustomerFilter))]
 	public class CheckOutController : Controller
     {
         private readonly IVnPayService _vnPayService;
@@ -21,6 +22,40 @@ namespace E_Retalling_Portal.Controllers.Home
             _vnPayService = vnPayService;
             _ghnService = ghnService;
         }
+		[HttpPost]
+		public async Task<IActionResult> CalculateShippingFee(int productId,int quantity,int toDistrcitId, string toWardCode)
+		{
+            Console.WriteLine($"Request: ProductID: {productId}, Quantity: {quantity}, ToDistrictId: {toDistrcitId}, ToWardCode: {toWardCode}");
+            Product p;
+            using (var context = new Context()) {
+				p = context.Products.GetProductById(productId).FirstOrDefault();
+			}
+			if (productId == null||p==null)
+			{
+                return BadRequest("Product not found or invalid");
+            }
+			int totalWeight = p.weight*quantity;
+			if (totalWeight > 50000) { 
+				return BadRequest("Your order is greater than 50kg please split your order");
+			}
+            
+            var feeRequest = new FeeRequest
+			{
+				serviceTypeId = 2,
+				weight = totalWeight,
+                fromDistrictId = p.shop.district,
+                toDistrcitId = toDistrcitId,
+				toWardCode = toWardCode,
+
+            };
+			try { 
+				var response = await _ghnService.CalulateFreeAsync(feeRequest);
+                return Json(new { fee = response.Data.Total });
+            } catch (Exception ex) {
+                return BadRequest($"Shipping route not supported");
+            }
+		}
+
         public async Task<IActionResult> CreatePaymentUrl(String cartItems)
         {
             var piItems = new Dictionary<int, int>();
@@ -59,9 +94,9 @@ namespace E_Retalling_Portal.Controllers.Home
 			var orderRequest = new OrderRequest
 			{
 				PaymentTypeId = 2,
-				ServiceId = 53320,
-
-                RequiredNote = "KHONGCHOXEMHANG", 
+				//ServiceId = 100039,
+				ServiceTypeId = 2,
+				RequiredNote = "KHONGCHOXEMHANG",
 				FromName = "TinTest124",
 				FromPhone = "0987654321",
 				FromAddress = "72 Thành Thái, Phường 14, Quận 10, Hồ Chí Minh, Vietnam",
@@ -70,15 +105,15 @@ namespace E_Retalling_Portal.Controllers.Home
 				FromProvinceName = "Hải Phòng",
 
 				// Required fields for the recipient
-				ToName = "TinTest124", 
-				ToPhone = "0987654321",  
+				ToName = "TinTest124",
+				ToPhone = "0987654321",
 				ToAddress = "72 Thành Thái, Phường 14, Quận 10, Hồ Chí Minh, Vietnam",
 				ToWardCode = "220714",
 				ToDistrictId = 3451,
-
+				COD = 0,
 
 				// Order details
-				Weight = 200,  
+				Weight = 200,
 				Length = 1,
 				Width = 19,
 				Height = 10,

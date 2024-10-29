@@ -88,8 +88,15 @@
                             <option value="@item.id" class="@(item.parentCategoryId == null ? "font-weight-bold" : "")">@item.name</option>
                         }
                     </select>
-                    <!--------------------------price------------------------------------------------>
+                    <!--------------------------weight------------------------------------------------>
                     <h4 class="font-weight-bold mt-6">
+                        Weight
+                    </h4>
+                    <input id="weight" class="form-control" type="number" min="0" max="50000" step="1"
+                           title="Please enter a value between 0 and 50000"
+                           placeholder="Approximately weight (gram)" required name="weight" value="@ViewBag.product.weight">
+                    <!--------------------------price------------------------------------------------>
+                    <h4 class="font-weight-bold mt-4">
                         Price
                     </h4>
                     @if (ViewBag.product.isVariation)

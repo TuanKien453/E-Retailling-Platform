@@ -128,6 +128,61 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
+function calculatefee() {
+    var selectedWardCode = $("#phuong").val();
+    var selectedDistrict = $("#quan").val();
+    var products = [];
+    var totalFee = 0.00;
 
+
+    $('input.product-checkbox:checked').each(function () {
+        var productId = $(this).val();
+        var quantity = $(this).closest('.card-body').find('input[type="number"]').val();
+
+        if (productId && quantity) {
+            products.push({
+                productId: parseInt(productId),
+                quantity: parseInt(quantity)
+            });
+        }
+    });
+
+    if (!selectedWardCode || selectedWardCode === "0" || !selectedDistrict || selectedDistrict === "0" || products.length === 0) {
+        $("#shipfee").text("0.00"); 
+        $("#serverresponse").hide();
+        return;
+    }
+    $("#serverresponse").hide();
+    var requests = products.map(function (product) {
+        return $.ajax({
+            url: '/CheckOut/CalculateShippingFee',
+            type: 'POST',
+            data: {
+                productId: product.productId,
+                quantity: product.quantity,
+                toDistrcitId: parseInt(selectedDistrict),
+                toWardCode: selectedWardCode
+            }
+        }).then(function (response) {
+            console.log("Shipping fee calculated for product ID " + product.productId + ":", response);
+            return response.fee || 0;
+        }).catch(function (xhr) {
+            var errorMessage = xhr.responseText || "An error occurred while calculating shipping fee.";
+            $("#serverresponse").text(errorMessage).show();
+            return 0; 
+        });
+    });
+
+
+    Promise.all(requests).then(function (fees) {
+        totalFee = fees.reduce(function (sum, fee) {
+            return sum + fee;
+        }, 0);
+
+        console.log(totalFee);
+        $("#shipfee").text(totalFee.toFixed(2) + ' VND'); 
+
+    });
+}
 
 

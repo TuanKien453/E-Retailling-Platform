@@ -29,8 +29,15 @@ namespace E_Retalling_Portal.Services
 			var jsonResponse = await GetJsonResponseAsync(request);
 			return _ghnLibrary.DeserializeJsonResponse<OrderResponse>(jsonResponse);
 		}
-
-		public async Task<List<Province>> GetProvincesAsync()
+        public async Task<FeeResponse> CalulateFreeAsync(FeeRequest feeRequest)
+        {
+            var requestUrl = "https://dev-online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/fee";
+            var jsonContent = JsonConvert.SerializeObject(feeRequest);
+            var request = _ghnLibrary.CreateRequest(requestUrl, HttpMethod.Post, feeRequest);
+            var jsonResponse = await GetJsonResponseAsync(request);
+            return _ghnLibrary.DeserializeJsonResponse<FeeResponse>(jsonResponse);
+        }
+        public async Task<List<Province>> GetProvincesAsync()
         {
             var requestUrl = "https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/province";
             var request = _ghnLibrary.CreateRequest(requestUrl, HttpMethod.Get);
