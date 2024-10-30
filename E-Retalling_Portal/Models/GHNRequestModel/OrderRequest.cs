@@ -38,14 +38,12 @@ namespace E_Retalling_Portal.Models.GHNRequestModel
 		[JsonProperty("from_address")]
 		public string FromAddress { get; set; }
 
-		[JsonProperty("from_ward_name")]
-		public string FromWardName { get; set; }
+		[JsonProperty("from_ward_code")]
+		public string FromWardCode { get; set; }
 
-		[JsonProperty("from_district_name")]
-		public string FromDistrictName { get; set; }
+		[JsonProperty("from_district_id")]
+		public int FromDistrictId { get; set; }
 
-		[JsonProperty("from_province_name")]
-		public string FromProvinceName { get; set; }
 		[JsonProperty("to_province_name")]
 		public string ToProvinceName { get; set; }
 

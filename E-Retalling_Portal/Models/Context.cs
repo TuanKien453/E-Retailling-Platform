@@ -237,9 +237,9 @@ namespace E_Retalling_Portal.Models
                 new User
                 {
                     id = 1,
-                    province = "BacNinh",
-                    district = "TienDu",
-                    commune = "HoanSon",
+                    province = 202,
+                    district = 1454,
+                    ward = "21211",
                     address = "",
                     birthday = "2000-05-04",
                     displayName = "kienhocgioi",
@@ -252,9 +252,9 @@ namespace E_Retalling_Portal.Models
                 new User
                 {
                     id = 2,
-                    province = "BacNinh",
-                    district = "TienDu",
-                    commune = "VietDoan",
+                    province = 202,
+                    district = 1454,
+                    ward = "21211",
                     address = "",
                     birthday = "2000-01-04",
                     displayName = "anh",
@@ -267,9 +267,9 @@ namespace E_Retalling_Portal.Models
                 new User
                 {
                     id = 3,
-                    province = "BacNinh",
-                    district = "TienDu",
-                    commune = "LacVe",
+                    province = 202,
+                    district = 1454,
+                    ward = "21211",
                     address = "",
                     birthday = "2004-01-04",
                     displayName = "phien",
