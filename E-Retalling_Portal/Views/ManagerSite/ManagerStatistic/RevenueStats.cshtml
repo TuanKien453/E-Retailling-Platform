@@ -1,0 +1,180 @@
+﻿@model List<E_Retalling_Portal.Models.ManagerStatisticModel.RevenueStats>
+
+@{
+    ViewData["Title"] = "Revenue Stats";
+    Layout = "~/Views/Shared/ManagerSideBarLayout.cshtml";
+}
+
+<div class="content m-4 pb-3">
+    <h2 class="text-center text-primary" style="margin-top: 20px; padding-top: 20px">Revenue Statistics</h2>
+    <!-- Start Date Selection -->
+    <h4>Select Start Date</h4>
+    <label for="startYearSelect">Year:</label>
+    <select id="startYearSelect">
+        @foreach (var year in Model.Select(m => m.saleYear).Distinct())
+        {
+            <option value="@year">@year</option>
+        }
+    </select>
+    <label for="startMonthSelect">Month:</label>
+    <select id="startMonthSelect">
+        @for (int month = 1; month <= 12; month++)
+        {
+            <option value="@month">@month</option>
+        }
+    </select>
+    <label for="startDaySelect">Day:</label>
+    <select id="startDaySelect">
+        @for (int day = 1; day <= 31; day++)
+        {
+            <option value="@day">@day</option>
+        }
+    </select>
+
+    <!-- End Date Selection -->
+    <h4>Select End Date</h4>
+    <label for="endYearSelect">Year:</label>
+    <select id="endYearSelect">
+        @foreach (var year in Model.Select(m => m.saleYear).Distinct())
+        {
+            <option value="@year">@year</option>
+        }
+    </select>
+    <label for="endMonthSelect">Month:</label>
+    <select id="endMonthSelect">
+        @for (int month = 1; month <= 12; month++)
+        {
+            <option value="@month">@month</option>
+        }
+    </select>
+    <label for="endDaySelect">Day:</label>
+    <select id="endDaySelect">
+        @for (int day = 1; day <= 31; day++)
+        {
+            <option value="@day">@day</option>
+        }
+    </select>
+
+    <canvas id="RevenueChart" width="400" height="250"></canvas>
+    <div style="display: flex; justify-content: flex-end; margin-bottom: 20px; margin-right: 20px;">
+        <a href="@Url.Action("Index", "ManagerStatistic")" style="text-decoration: none; color: #007bff; border: 1px solid #007bff; border-radius: 5px; padding: 10px;">Back to List Shops</a>
+    </div>
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    // Retrieve data from model
+    const revenueData = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model));
+
+    let RevenueChart; // Variable to store the chart
+
+    // Update chart function
+    function updateChart(startDate, endDate) {
+        // Filter data based on selected dates
+        const filteredData = revenueData.filter(item =>
+            new Date(item.saleYear, item.saleMonth - 1) >= startDate &&
+            new Date(item.saleYear, item.saleMonth - 1) <= endDate
+        );
+
+        // Create arrays for months and corresponding revenues
+        const months = filteredData.map(item => `${item.saleMonth}/${item.saleYear}`);
+        const revenues = filteredData.map(item => item.totalRevenue);
+
+        // Set up the chart configuration
+        const ctx = document.getElementById('RevenueChart').getContext('2d');
+
+        // Destroy old chart if it exists
+        if (RevenueChart) {
+            RevenueChart.destroy();
+        }
+
+        // Create a new bar chart
+        RevenueChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: months,
+                datasets: [{
+                    label: ' Revenue ($)',
+                    data: revenues,
+                    backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Month/Year'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Revenue ($)'
+                        },
+                        beginAtZero: true
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top'
+                    },
+
+                }
+            }
+        });
+    }
+
+    // Initialize start and end dates
+    const today = new Date();
+    document.getElementById('endYearSelect').value = today.getFullYear();
+    document.getElementById('endMonthSelect').value = today.getMonth() + 1;
+    document.getElementById('endDaySelect').value = today.getDate();
+
+    const lastYear = today.getFullYear() - 1;
+    document.getElementById('startYearSelect').value = lastYear;
+    document.getElementById('startMonthSelect').value = 1;
+    document.getElementById('startDaySelect').value = 1;
+
+    // Update chart when dates are selected
+    function onSelectionChange() {
+        const startYear = document.getElementById('startYearSelect').value;
+        const startMonth = document.getElementById('startMonthSelect').value;
+        const startDay = document.getElementById('startDaySelect').value;
+        const endYear = document.getElementById('endYearSelect').value;
+        const endMonth = document.getElementById('endMonthSelect').value;
+        const endDay = document.getElementById('endDaySelect').value;
+
+        const startDate = new Date(startYear, startMonth - 1, startDay);
+        const endDate = new Date(endYear, endMonth - 1, endDay);
+
+        if (startDate > endDate) {
+            // Reset to default values if startDate > endDate
+            document.getElementById('startYearSelect').value = lastYear;
+            document.getElementById('startMonthSelect').value = 1;
+            document.getElementById('startDaySelect').value = 1;
+            return;
+        }
+
+        updateChart(startDate, endDate);
+    }
+
+    document.getElementById('startYearSelect').addEventListener('change', onSelectionChange);
+    document.getElementById('startMonthSelect').addEventListener('change', onSelectionChange);
+    document.getElementById('startDaySelect').addEventListener('change', onSelectionChange);
+    document.getElementById('endYearSelect').addEventListener('change', onSelectionChange);
+    document.getElementById('endMonthSelect').addEventListener('change', onSelectionChange);
+    document.getElementById('endDaySelect').addEventListener('change', onSelectionChange);
+
+    // Initialize chart with default values
+    const startDate = new Date(lastYear, 0, 1); // 1 Jan of last year
+    const endDate = today;
+    updateChart(startDate, endDate);
+</script>
+

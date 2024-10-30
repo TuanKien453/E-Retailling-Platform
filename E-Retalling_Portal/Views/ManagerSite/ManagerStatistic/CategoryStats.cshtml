@@ -60,71 +60,79 @@
     let myPieChart; 
 
     function updateChart(startDate, endDate) {
-        if (new Date(startDate) > new Date(endDate)) {
-            endDate = new Date().toISOString().split('T')[0];
-            document.getElementById('endYearSelect').value = new Date().getFullYear();
-            document.getElementById('endMonthSelect').value = new Date().getMonth() + 1; 
-            document.getElementById('endDaySelect').value = new Date().getDate(); 
-        }
-
-        const filteredData = salesData.filter(item => {
-            const saleDate = new Date(item.saleYear, item.saleMonth - 1); 
-            return saleDate >= new Date(startDate) && saleDate <= new Date(endDate);
-        });
-
-        const categoryMap = {};
-
-        filteredData.forEach(item => {
-            categoryMap[item.categoryName] = (categoryMap[item.categoryName] || 0) + item.totalQuantity;
-        });
-
-        const categoryNames = Object.keys(categoryMap);
-        const quantities = Object.values(categoryMap);
-
-        const ctx = document.getElementById('myPieChart').getContext('2d');
-
-        if (myPieChart) {
-            myPieChart.destroy();
-        }
-
-        myPieChart = new Chart(ctx, {
-            type: 'pie',
-            data: {
-                labels: categoryNames,
-                datasets: [{
-                    label: 'Sales Quantity',
-                    data: quantities,
-                    backgroundColor: [
-                        'rgba(255, 99, 132, 0.2)',
-                        'rgba(54, 162, 235, 0.2)',
-                        'rgba(255, 206, 86, 0.2)',
-                        'rgba(75, 192, 192, 0.2)',
-                        'rgba(153, 102, 255, 0.2)',
-                        'rgba(255, 159, 64, 0.2)'
-                    ],
-                    borderColor: [
-                        'rgba(255, 99, 132, 1)',
-                        'rgba(54, 162, 235, 1)',
-                        'rgba(255, 206, 86, 1)',
-                        'rgba(75, 192, 192, 1)',
-                        'rgba(153, 102, 255, 1)',
-                        'rgba(255, 159, 64, 1)'
-                    ],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        display: true,
-                        position: 'top',
-                    },
-                    
-                }
-            }
-        });
+    // Check if startDate is greater than endDate
+    if (new Date(startDate) > new Date(endDate)) {
+        // Set endDate to today's date
+        endDate = new Date().toISOString().split('T')[0]; // Format: YYYY-MM-DD
+        document.getElementById('endYearSelect').value = new Date().getFullYear();
+        document.getElementById('endMonthSelect').value = new Date().getMonth() + 1; // Month is 0-indexed
+        document.getElementById('endDaySelect').value = new Date().getDate(); // Set to today
     }
+
+    // Filter data by selected start and end dates
+    const filteredData = salesData.filter(item => {
+        const saleDate = new Date(item.saleYear, item.saleMonth - 1); // Month is 0-indexed
+        return saleDate >= new Date(startDate) && saleDate <= new Date(endDate);
+    });
+
+    // Create a map to accumulate quantities by category names
+    const categoryMap = {};
+
+    filteredData.forEach(item => {
+        categoryMap[item.categoryName] = (categoryMap[item.categoryName] || 0) + item.totalQuantity;
+    });
+
+    // Convert map to arrays for chart
+    const categoryNames = Object.keys(categoryMap);
+    const quantities = Object.values(categoryMap);
+
+    // Set up chart configuration
+    const ctx = document.getElementById('myPieChart').getContext('2d');
+
+    // Destroy the old chart if it exists
+    if (myPieChart) {
+        myPieChart.destroy();
+    }
+
+    // Create a new chart
+    myPieChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: categoryNames,
+            datasets: [{
+                label: 'Sales Quantity',
+                data: quantities,
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(153, 102, 255, 0.2)',
+                    'rgba(255, 159, 64, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top',
+                },
+            }
+        }
+    });
+}
+
 
 
     function updateDays(type) {

@@ -7,8 +7,6 @@ namespace E_Retalling_portal.Models.Query
 {
     public static class ManagerStatisticQuery
     {
-
-
         public static List<CategoryStats> GetCategoryStatsByShopId(int shopId)
         {
             using (var context = new Context())
@@ -59,17 +57,17 @@ namespace E_Retalling_portal.Models.Query
             using (var context = new Context())
             {
                 var orderItems = context.OrderItems
-                    .Include(oi => oi.order) 
+                    .Include(oi => oi.order)
                     .Include(oi => oi.product.shop)
                     .Where(oi => oi.product.shopId == shopId)
-                    .ToList(); 
+                    .ToList();
 
                 var customerStats = orderItems
                     .GroupBy(oi => new
                     {
                         shopId = oi.product.shopId,
                         shopName = oi.product.shop.name,
-                        saleYear = Convert.ToInt32(oi.order.createTime.Substring(0, 4)), 
+                        saleYear = Convert.ToInt32(oi.order.createTime.Substring(0, 4)),
                         saleMonth = Convert.ToInt32(oi.order.createTime.Substring(5, 2)),
                         saleDay = int.Parse(oi.order.createTime.Substring(8, 2))
                     })
@@ -77,10 +75,10 @@ namespace E_Retalling_portal.Models.Query
                     {
                         shopId = g.Key.shopId,
                         shopName = g.Key.shopName,
-                        saleYear = g.Key.saleYear, 
-                        saleMonth = g.Key.saleMonth, 
+                        saleYear = g.Key.saleYear,
+                        saleMonth = g.Key.saleMonth,
                         saleDay = g.Key.saleDay,
-                        totalCustomers = g.Select(oi => oi.order.userId).Distinct().Count() 
+                        totalCustomers = g.Select(oi => oi.order.userId).Distinct().Count()
                     })
                     .OrderBy(s => s.shopId)
                     .ThenBy(s => s.saleYear)
@@ -96,18 +94,18 @@ namespace E_Retalling_portal.Models.Query
             using (var context = new Context())
             {
                 var orderItems = context.OrderItems
-                    .Include(oi => oi.order) 
-                    .Include(oi => oi.product.shop) 
-                    .Include(oi => oi.product.productItems) 
+                    .Include(oi => oi.order)
+                    .Include(oi => oi.product.shop)
+                    .Include(oi => oi.product.productItems)
                     .Where(oi => oi.product.shopId == shopId)
-                    .ToList(); 
+                    .ToList();
 
                 var RevenueStats = orderItems
                     .GroupBy(oi => new
                     {
                         shopId = oi.product.shopId,
                         shopName = oi.product.shop.name,
-                        saleYear = int.Parse(oi.order.createTime.Substring(0, 4)), 
+                        saleYear = int.Parse(oi.order.createTime.Substring(0, 4)),
                         saleMonth = int.Parse(oi.order.createTime.Substring(5, 2)),
                         saleDay = int.Parse(oi.order.createTime.Substring(8, 2))
                     })
@@ -119,9 +117,9 @@ namespace E_Retalling_portal.Models.Query
                         saleMonth = g.Key.saleMonth,
                         saleDay = g.Key.saleDay,
                         totalRevenue = (decimal)g.Sum(oi =>
-                            oi.productItemId.HasValue ? 
-                                oi.quanity * oi.product.productItems.FirstOrDefault(pi => pi.id == oi.productItemId)?.price : 
-                                oi.quanity * oi.product.price) 
+                            oi.productItemId.HasValue ?
+                                oi.quanity * oi.product.productItems.FirstOrDefault(pi => pi.id == oi.productItemId)?.price :
+                                oi.quanity * oi.product.price)
                     })
                     .OrderBy(s => s.shopId)
                     .ThenBy(s => s.saleYear)
@@ -139,17 +137,17 @@ namespace E_Retalling_portal.Models.Query
             using (var context = new Context())
             {
                 var orderItems = context.OrderItems
-                    .Include(oi => oi.order) 
+                    .Include(oi => oi.order)
                     .Include(oi => oi.product.shop)
                     .Where(oi => oi.product.shopId == shopId)
-                    .ToList(); 
+                    .ToList();
 
                 var OrderStats = orderItems
                     .GroupBy(oi => new
                     {
                         shopId = oi.product.shopId,
                         shopName = oi.product.shop.name,
-                        saleYear = int.Parse(oi.order.createTime.Substring(0, 4)), 
+                        saleYear = int.Parse(oi.order.createTime.Substring(0, 4)),
                         saleMonth = int.Parse(oi.order.createTime.Substring(5, 2)),
                         saleDay = int.Parse(oi.order.createTime.Substring(8, 2))
                     })
@@ -160,7 +158,7 @@ namespace E_Retalling_portal.Models.Query
                         saleYear = g.Key.saleYear,
                         saleMonth = g.Key.saleMonth,
                         saleDay = g.Key.saleDay,
-                        totalOrders = g.Select(oi => oi.orderId).Distinct().Count() 
+                        totalOrders = g.Select(oi => oi.orderId).Distinct().Count()
                     })
                     .OrderBy(s => s.shopId)
                     .ThenBy(s => s.saleYear)
@@ -190,9 +188,9 @@ namespace E_Retalling_portal.Models.Query
                         ProductId = oi.productId,
                         ProductName = oi.product.name,
                         ProductItemId = oi.productItemId,
-                        ProductItemName = oi.productItemId.HasValue
-                            ? oi.product.productItems.FirstOrDefault(pi => pi.id == oi.productItemId)?.product.name
-                            : oi.product.name,
+                        ProductItem = oi.productItemId.HasValue
+                    ? oi.product.productItems.FirstOrDefault(pi => pi.id == oi.productItemId)
+                    : null,
                         ShopId = oi.product.shopId,
                         ShopName = oi.product.shop.name,
                         SaleYear = int.Parse(oi.order.createTime.Substring(0, 4)),
@@ -204,7 +202,9 @@ namespace E_Retalling_portal.Models.Query
                         productId = g.Key.ProductId,
                         productItemId = g.Key.ProductItemId,
                         productName = g.Key.ProductName,
-                        productItemName = g.Key.ProductItemName ?? g.Key.ProductName,
+                        productItemName = g.Key.ProductItem != null
+                    ? $"{g.Key.ProductItem.product.name} - {g.Key.ProductItem.attribute}"
+                    : g.Key.ProductName,
                         shopId = g.Key.ShopId,
                         shopName = g.Key.ShopName,
                         saleYear = g.Key.SaleYear,

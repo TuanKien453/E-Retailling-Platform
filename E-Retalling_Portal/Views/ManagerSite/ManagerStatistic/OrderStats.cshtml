@@ -1,0 +1,221 @@
+﻿@model List<E_Retalling_Portal.Models.ManagerStatisticModel.OrderStats>
+
+@{
+    ViewData["Title"] = "Order Stats";
+    Layout = "~/Views/Shared/ManagerSideBarLayout.cshtml";
+}
+
+<div class="content m-4 pb-3">
+
+    <h2 class="text-center text-primary" style="margin-top: 20px; padding-top: 20px">Order Statistics</h2>
+
+    <!-- Start Date Dropdown -->
+    <label for="startDay">Start Day:</label>
+    <select id="startDay"></select>
+
+    <label for="startMonth">Start Month:</label>
+    <select id="startMonth"></select>
+
+    <label for="startYear">Start Year:</label>
+    <select id="startYear"></select>
+
+    <br /><br />
+
+    <!-- End Date Dropdown -->
+    <label for="endDay">End Day:</label>
+    <select id="endDay"></select>
+
+    <label for="endMonth">End Month:</label>
+    <select id="endMonth"></select>
+
+    <label for="endYear">End Year:</label>
+    <select id="endYear"></select>
+
+    <canvas id="monthlyOrderChart" width="400" height="250"></canvas>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        // Get data from the model
+        const orderData = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model));
+
+        let monthlyOrderChart; // Variable to store the chart
+
+        // Populate the date dropdowns
+        function populateDateDropdowns() {
+            const today = new Date();
+            const startYear = today.getFullYear() - 1; // One year ago
+            const endYear = today.getFullYear();
+
+            // Populate start date dropdowns
+            for (let day = 1; day <= 31; day++) {
+                document.getElementById('startDay').innerHTML += `<option value="${day}">${day}</option>`;
+            }
+            for (let month = 1; month <= 12; month++) {
+                document.getElementById('startMonth').innerHTML += `<option value="${month}">${month}</option>`;
+            }
+            for (let year = startYear; year <= endYear; year++) {
+                document.getElementById('startYear').innerHTML += `<option value="${year}">${year}</option>`;
+            }
+
+            // Populate end date dropdowns
+            for (let day = 1; day <= 31; day++) {
+                document.getElementById('endDay').innerHTML += `<option value="${day}">${day}</option>`;
+            }
+            for (let month = 1; month <= 12; month++) {
+                document.getElementById('endMonth').innerHTML += `<option value="${month}">${month}</option>`;
+            }
+            for (let year = startYear; year <= endYear; year++) {
+                document.getElementById('endYear').innerHTML += `<option value="${year}">${year}</option>`;
+            }
+
+            // Set default values for start date (1 year ago) and end date (today)
+            document.getElementById('startDay').value = "1"; // Set to the 1st day
+            document.getElementById('startMonth').value = "1"; // Set to January
+            document.getElementById('startYear').value = startYear; // Set to one year ago
+
+            document.getElementById('endDay').value = today.getDate(); // Set to today
+            document.getElementById('endMonth').value = today.getMonth() + 1; // Set to current month
+            document.getElementById('endYear').value = endYear; // Set to current year
+        }
+
+        // Function to update the chart
+        function updateChart(startDate, endDate) {
+            // Filter data based on start and end dates
+            const filteredData = orderData.filter(item => {
+                const saleDate = new Date(item.saleYear, item.saleMonth - 1); // month is zero-based
+                return saleDate >= new Date(startDate) && saleDate <= new Date(endDate);
+            });
+
+            // Create a list of formatted labels (Month/Year) and corresponding orders
+            const labels = filteredData.map(item => `${item.saleMonth}/${item.saleYear}`);
+            const orders = filteredData.map(item => item.totalOrders);
+
+            // Set up the chart configuration
+            const ctx = document.getElementById('monthlyOrderChart').getContext('2d');
+
+            // Destroy the old chart if it exists
+            if (monthlyOrderChart) {
+                monthlyOrderChart.destroy();
+            }
+
+            // Create a new bar chart
+            monthlyOrderChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Total Orders',
+                        data: orders,
+                        backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Month/Year' // Set the title for x-axis
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Total Orders'
+                            },
+                            beginAtZero: true
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top'
+                        },
+                    }
+                }
+            });
+        }
+
+        // Get start and end dates from dropdowns
+        function getStartDate() {
+            const startDay = document.getElementById('startDay').value;
+            const startMonth = document.getElementById('startMonth').value;
+            const startYear = document.getElementById('startYear').value;
+            return `${startYear}-${startMonth}-${startDay}`;
+        }
+
+        function getEndDate() {
+            const endDay = document.getElementById('endDay').value;
+            const endMonth = document.getElementById('endMonth').value;
+            const endYear = document.getElementById('endYear').value;
+            return `${endYear}-${endMonth}-${endDay}`;
+        }
+
+        // Check and adjust the dates if necessary
+        function checkAndAdjustDates() {
+            const startDate = new Date(getStartDate());
+            const endDate = new Date(getEndDate());
+
+            if (startDate > endDate) {
+                // Reset start date to the first day of the current year
+                document.getElementById('startDay').value = "1";
+                document.getElementById('startMonth').value = "1";
+                document.getElementById('startYear').value = new Date().getFullYear(); // Set to current year
+                alert("Start date cannot be later than end date. Resetting to default values.");
+            }
+        }
+
+        // Event listeners for changing start or end dates
+        document.getElementById('startDay').addEventListener('change', function () {
+            checkAndAdjustDates();
+            const startDate = getStartDate();
+            const endDate = getEndDate();
+            updateChart(startDate, endDate);
+        });
+
+        document.getElementById('startMonth').addEventListener('change', function () {
+            checkAndAdjustDates();
+            const startDate = getStartDate();
+            const endDate = getEndDate();
+            updateChart(startDate, endDate);
+        });
+
+        document.getElementById('startYear').addEventListener('change', function () {
+            checkAndAdjustDates();
+            const startDate = getStartDate();
+            const endDate = getEndDate();
+            updateChart(startDate, endDate);
+        });
+
+        document.getElementById('endDay').addEventListener('change', function () {
+            const startDate = getStartDate();
+            const endDate = getEndDate();
+            updateChart(startDate, endDate);
+        });
+
+        document.getElementById('endMonth').addEventListener('change', function () {
+            const startDate = getStartDate();
+            const endDate = getEndDate();
+            updateChart(startDate, endDate);
+        });
+
+        document.getElementById('endYear').addEventListener('change', function () {
+            const startDate = getStartDate();
+            const endDate = getEndDate();
+            updateChart(startDate, endDate);
+        });
+
+        // Call the function to populate the dropdowns and display the chart for the initial date when the page loads
+        populateDateDropdowns();
+        const startDate = getStartDate();
+        const endDate = getEndDate();
+        updateChart(startDate, endDate);
+    </script>
+
+    <div style="display: flex; justify-content: flex-end; margin-bottom: 20px; margin-right: 20px;">
+        <a href="@Url.Action("Index", "ManagerStatistic")" style="text-decoration: none; color: #007bff; border: 1px solid #007bff; border-radius: 5px; padding: 10px;">Back to List Shops</a>
+    </div>
+</div>

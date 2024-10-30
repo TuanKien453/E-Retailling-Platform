@@ -5,6 +5,34 @@
     Layout = "~/Views/Shared/ManagerSideBarLayout.cshtml";
 }
 <link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.css" />
+<style>
+    .dropdown-menu {
+        border: 1px solid #007bff; 
+        border-radius: 0.25rem; 
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15); 
+    }
+
+    .dropdown-item {
+        padding: 10px 15px; 
+        color: #343a40; 
+        border-bottom: 1px solid #007bff; 
+    }
+
+        .dropdown-item:last-child {
+            border-bottom: none; 
+        }
+
+        .dropdown-item:hover {
+            background-color: #007bff; 
+            color: white; 
+        }
+
+        .dropdown-item:focus {
+            outline: none; 
+            background-color: #0056b3; 
+            color: white; 
+        }
+</style>
 <div class="content m-4 pb-3">
 
     <div class="row p-4">
@@ -17,7 +45,7 @@
                         <th>Province</th>
                         <th>District</th>
                         <th>Commune</th>
-                        <th style="text-align: left;>Created At</th>
+                        <th style="text-align: left;">Created At</th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -25,13 +53,25 @@
                     @foreach (var item in Model)
                     {
                         <tr>
-                            <td >@item.id</td>
+                            <td style="text-align: left;">@item.id</td>
                             <td>@item.name</td>
                             <td>@item.province</td>
                             <td>@item.district</td>
                             <td>@item.ward</td>
-                            <td>@item.createdAt</td>
-                            <td><a href="@Url.Action("Top10SellingProducts", "ManagerStatistic", new { shopId = @item.id })">View statistic</a></td>
+                            <td style="text-align: left;">@item.createdAt</td>
+                            <td>
+                                <div class="dropdown">
+                                    <a href="#" class="text-decoration-none" data-bs-toggle="dropdown" aria-expanded="false">View statistic</a>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" href="@Url.Action("Top10SellingProducts", "ManagerStatistic", new { shopId = @item.id })">Top 10 Selling Products</a></li>
+                                        <li><a class="dropdown-item" href="@Url.Action("CategoryStats", "ManagerStatistic", new { shopId = @item.id })">Category Stats</a></li>
+                                        <li><a class="dropdown-item" href="@Url.Action("RevenueStats", "ManagerStatistic", new { shopId = @item.id })">Revenue Stats</a></li>
+                                        <li><a class="dropdown-item" href="@Url.Action("OrderStats", "ManagerStatistic", new { shopId = @item.id })">Order Stats</a></li>
+                                        <li><a class="dropdown-item" href="@Url.Action("CustomerStats", "ManagerStatistic", new { shopId = @item.id })">Customer Stats</a></li>
+                                    </ul>
+                                </div>
+                            </td>
+
                         </tr>
                     }
                 </tbody>
@@ -42,9 +82,6 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.datatables.net/2.1.8/js/dataTables.js"></script>
 <script>
-    function sendDataToModal(id) {
-        $('#delete-product-id').val(id);
-    }
 
     $(document).ready(function () {
         $(document).ready(function () {

@@ -40,7 +40,7 @@ namespace E_Retalling_Portal.Controllers.ManagerSite
             return View("/Views/ManagerSite/ManagerStatistic/RevenueStats.cshtml", RevenueStats);
         }
 
-        public IActionResult Top10SellingProduct(int shopId)
+        public IActionResult Top10SellingProducts(int shopId)
         {
             var Top10SellingProduct = ManagerStatisticQuery.GetTop10BestSellingProductsByShopId(shopId);
             return View("/Views/ManagerSite/ManagerStatistic/Top10SellingProduct.cshtml", Top10SellingProduct);
