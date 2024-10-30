@@ -8,9 +8,13 @@ namespace E_Retalling_Portal.Models.Query
         {
             return dbpd.Include("product").Include("productItem").Where(pi => pi.discountId == discountId);
         }
+        public static IQueryable<ProductDiscount> GetProductDiscount(this DbSet<ProductDiscount> dbpd)
+        {
+            return dbpd.Include("product").Include("productItem").Include("discount");
+        }
         public static IQueryable<ProductDiscount> GetProductDiscountByProductId(this DbSet<ProductDiscount> dbpd, int productId)
         {
-            return dbpd.Where(pd => pd.productId == productId);
+            return dbpd.Include("product").Include("productItem").Include("discount").Where(pd => pd.productId == productId);
         }
         public static IQueryable<ProductDiscount> GetProductDiscountByProductIdAndProductItemId(this DbSet<ProductDiscount> dbpd, int productId, int? productItemId)
         {
@@ -21,7 +25,7 @@ namespace E_Retalling_Portal.Models.Query
         {
             using (var context = new Context())
             {
-                ProductDiscount pd = context.ProductDiscount.GetProductDiscountByProductIdAndProductItemId(productId, productItemId).FirstOrDefault();
+                ProductDiscount pd = context.ProductDiscounts.GetProductDiscountByProductIdAndProductItemId(productId, productItemId).FirstOrDefault();
                 if (pd != null)
                 {
                     context.Remove(pd);

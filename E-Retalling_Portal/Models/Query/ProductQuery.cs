@@ -26,7 +26,7 @@ namespace E_Retalling_Portal.Models.Query
             var product = dbProduct.GetProductById(productId).FirstOrDefault();
             if (product != null)
             {
-                context.ProductDiscount.DeleteProductDiscount(productId, null);
+                context.ProductDiscounts.DeleteProductDiscount(productId, null);
                 context.SaveChanges();
                 product.deleteAt = DateTime.Now.ToString();
                 context.Entry(product).State = EntityState.Modified;
@@ -52,7 +52,7 @@ namespace E_Retalling_Portal.Models.Query
         {
             using (var context = new Context())
             {
-                ProductDiscount productDiscount = context.ProductDiscount.GetProductDiscountByProductIdAndProductItemId(product.id, null).FirstOrDefault();
+                ProductDiscount productDiscount = context.ProductDiscounts.GetProductDiscountByProductIdAndProductItemId(product.id, null).FirstOrDefault();
                 if (productDiscount == null)
                 {
                     return product.price;

@@ -27,7 +27,10 @@ namespace E_Retalling_Portal.Controllers.Home
                 {
                     item.price = (float)context.ProductItems.GetProductItemDiscountPrice(item);
                 }
+                
                 List<Product> products = GetProductsIsNotDelete(similarProducts).Take(6).ToList();
+                var productDiscounts = context.ProductDiscounts.GetProductDiscountByProductId(productId.Value).ToList();
+                ViewBag.productDiscounts = productDiscounts;
                 ViewBag.productImageList = product.images;
                 ViewBag.product = product;
                 Console.WriteLine(product.quantity+","+product.price);

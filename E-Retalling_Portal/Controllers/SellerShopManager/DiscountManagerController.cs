@@ -39,7 +39,7 @@ namespace E_Retalling_Portal.Controllers.SellerShopManager
                     foreach (var discount in discounts)
                     {
 
-                        var items = context.ProductDiscount.GetProductDiscountByDiscountId(discount.id).ToList();
+                        var items = context.ProductDiscounts.GetProductDiscountByDiscountId(discount.id).ToList();
                         foreach (var item in items)
                         {
                             productDiscount.Add(item);
@@ -115,7 +115,7 @@ namespace E_Retalling_Portal.Controllers.SellerShopManager
                 {
                     return View("Views/Shared/ErrorPage/Error500.cshtml");
                 }
-                List<ProductDiscount> productDiscounts = context.ProductDiscount.GetProductDiscountByProductId(productId).ToList();
+                List<ProductDiscount> productDiscounts = context.ProductDiscounts.GetProductDiscountByProductId(productId).ToList();
                 List<ProductItem> productItemsDiscount = new List<ProductItem>();
                 foreach (var discount in productDiscounts)
                 {
@@ -168,7 +168,7 @@ namespace E_Retalling_Portal.Controllers.SellerShopManager
                     foreach (var discount in discounts)
                     {
 
-                        var items = context.ProductDiscount.GetProductDiscountByDiscountId(discount.id).ToList();
+                        var items = context.ProductDiscounts.GetProductDiscountByDiscountId(discount.id).ToList();
                         foreach (var item in items)
                         {
                             productDiscount.Add(item);
@@ -188,7 +188,7 @@ namespace E_Retalling_Portal.Controllers.SellerShopManager
                 {
                     if (!product.isVariation)
                     {
-                        ProductDiscount pd = context.ProductDiscount.GetProductDiscountByProductIdAndProductItemId(product.id, null).FirstOrDefault();
+                        ProductDiscount pd = context.ProductDiscounts.GetProductDiscountByProductIdAndProductItemId(product.id, null).FirstOrDefault();
                         var discount = context.Discounts.GetDiscountByDiscountId(pd.discountId).FirstOrDefault();
                         discountItem.Add(discount);
                     }
@@ -218,7 +218,7 @@ namespace E_Retalling_Portal.Controllers.SellerShopManager
                 {
                     return View("Views/Shared/ErrorPage/Error500.cshtml");
                 }
-                List<ProductDiscount> productDiscounts = context.ProductDiscount.GetProductDiscountByProductId(productId).ToList();
+                List<ProductDiscount> productDiscounts = context.ProductDiscounts.GetProductDiscountByProductId(productId).ToList();
                 List<ProductItem> productItemsDiscount = new List<ProductItem>();
                 foreach (var discount in productDiscounts)
                 {
@@ -234,7 +234,7 @@ namespace E_Retalling_Portal.Controllers.SellerShopManager
                 List<Discount> discountItem = new List<Discount>();
                 foreach (var productItem in productItemsDiscount)
                 {
-                    ProductDiscount pd = context.ProductDiscount.GetProductDiscountByProductIdAndProductItemId(productId, productItem.id).FirstOrDefault();
+                    ProductDiscount pd = context.ProductDiscounts.GetProductDiscountByProductIdAndProductItemId(productId, productItem.id).FirstOrDefault();
                     var discount = context.Discounts.GetDiscountByDiscountId(pd.discountId).FirstOrDefault();
                     discountItem.Add(discount);
                 }
@@ -379,7 +379,7 @@ namespace E_Retalling_Portal.Controllers.SellerShopManager
                 productDiscount.productId = (int)TempData.Peek("productId");
                 productDiscount.productItemId = TempData.Peek("productItemId") as int?;
                 productDiscount.discountId = discountId;
-                context.ProductDiscount.Add(productDiscount);
+                context.ProductDiscounts.Add(productDiscount);
                 context.SaveChanges();
                 return RedirectToAction("ViewProductOnDiscount");
             }
@@ -389,7 +389,7 @@ namespace E_Retalling_Portal.Controllers.SellerShopManager
         {
             using (var context = new Context())
             {
-                ProductDiscount productDiscount = context.ProductDiscount.GetProductDiscountByProductIdAndProductItemId(productId, productItemId).FirstOrDefault();
+                ProductDiscount productDiscount = context.ProductDiscounts.GetProductDiscountByProductIdAndProductItemId(productId, productItemId).FirstOrDefault();
                 var discount = context.Discounts.GetDiscountByDiscountId(productDiscount.discountId).FirstOrDefault();
                 ViewBag.discount = discount;    
             }
@@ -400,8 +400,8 @@ namespace E_Retalling_Portal.Controllers.SellerShopManager
         {
             using (var context = new Context())
             {
-                ProductDiscount productDiscount = context.ProductDiscount.GetProductDiscountByProductIdAndProductItemId(productId, productItemId).FirstOrDefault();
-                context.ProductDiscount.Remove(productDiscount);
+                ProductDiscount productDiscount = context.ProductDiscounts.GetProductDiscountByProductIdAndProductItemId(productId, productItemId).FirstOrDefault();
+                context.ProductDiscounts.Remove(productDiscount);
                 context.SaveChanges();
             }
             return RedirectToAction("ViewProductOnDiscount");

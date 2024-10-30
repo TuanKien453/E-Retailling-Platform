@@ -20,7 +20,7 @@ namespace E_Retalling_Portal.Models
         public DbSet<ProductItem> ProductItems { get; set; }
         public DbSet<Shop> Shops { get; set; }
         public DbSet<Status> Statuses { get; set; }
-        public DbSet<ProductDiscount> ProductDiscount { get; set; }
+        public DbSet<ProductDiscount> ProductDiscounts { get; set; }
         public DbSet<Discount> Discounts { get; set; }
         public DbSet<Setting> Settings { get; set; }
 
@@ -158,11 +158,34 @@ namespace E_Retalling_Portal.Models
             SeedingImage(modelBuilder);
             SeedingProductItem(modelBuilder);
             SeedingSetting(modelBuilder);
+            SeedingDiscount(modelBuilder);
+            SeedingProductDiscount(modelBuilder);
+        }
+        private static void SeedingProductDiscount(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<ProductDiscount>().HasData(
+                new ProductDiscount { id = 1, discountId = 4, productId = 2},
+                new ProductDiscount { id = 2, discountId = 4, productId = 4},
+                new ProductDiscount { id = 5, discountId = 4, productId = 3, productItemId = 3 },
+                new ProductDiscount { id = 6, discountId = 4, productId = 3, productItemId = 4 },
+                new ProductDiscount { id = 7, discountId = 4, productId = 3, productItemId = 5 },
+                new ProductDiscount { id = 8, discountId = 4, productId = 3, productItemId = 6 }
+            );
+        }
+        private static void SeedingDiscount(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Discount>().HasData(
+                new Discount { id = 1, name = "Summer Sale", startDate = "2024-06-01", endDate = "2024-06-30", value = 15, shopId = 1 },
+            new Discount { id = 2, name = "Birthday Discount", startDate = "2024-07-01", endDate = "2024-07-15", value = 20, shopId = 1 },
+            new Discount { id = 3, name = "Buy One Get One Free", startDate = "2024-08-01", endDate = "2024-08-31", value = 50, shopId = 1},
+            new Discount { id = 4, name = "Holiday Discount", startDate = "2024-09-01", endDate = "2024-09-10", value = 10, shopId = 1},
+            new Discount { id = 5, name = "End of Year Sale", startDate = "2024-12-01", endDate = "2024-12-31", value = 25, shopId = 1}
+            );
         }
         private static void SeedingProductItem(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<ProductItem>().HasData(
-                new ProductItem { id = 1, productId = 1, quantity = 5, price = 15, imageId = 1, attribute = "L", deleteAt = "afad" },
+                new ProductItem { id = 1, productId = 1, quantity = 5, price = 15, imageId = 1, attribute = "L" },
                 new ProductItem { id = 2, productId = 1, quantity = 7, price = 13, imageId = 3, attribute = "S" },
                 new ProductItem { id = 3, productId = 3, quantity = 10, price = 20, imageId = 8, attribute = "X" },
                 new ProductItem { id = 4, productId = 3, quantity = 10, price = 14, imageId = 9, attribute = "X" },
