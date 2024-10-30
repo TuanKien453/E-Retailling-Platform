@@ -11,6 +11,7 @@ using System.ComponentModel.DataAnnotations;
 using Microsoft.Build.Evaluation;
 namespace E_Retalling_Portal.Controllers.SellerShopManager
 {
+    [TypeFilter(typeof(DiscountFilter))]
     public class DiscountManagerController : Controller
     {
         public IActionResult Index()

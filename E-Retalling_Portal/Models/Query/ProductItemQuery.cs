@@ -49,7 +49,7 @@ namespace E_Retalling_Portal.Models.Query
         {
             using (var context = new Context())
             {
-                ProductDiscount productDiscount = context.ProductDiscount.GetProductDiscountByProductIdAndProductItemId(productItem.productId, productItem.id).FirstOrDefault();
+                ProductDiscount? productDiscount = context.ProductDiscount.GetProductDiscountByProductIdAndProductItemId(productItem.productId, productItem.id).FirstOrDefault();
                 if (productDiscount == null)
                 {
                     return productItem.price;

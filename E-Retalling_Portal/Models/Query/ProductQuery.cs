@@ -48,11 +48,36 @@ namespace E_Retalling_Portal.Models.Query
             return p.shopId == shopId;
         }
 
+        public static bool IsNotMatch(this DbSet<Product> dbProduct, int? productId, int? productItemId)
+        {
+            if (productItemId == null || productId == null)
+            {
+                return false;
+            }
+            else
+            {
+                var p = dbProduct.Where(p => p.id == productId).FirstOrDefault();
+                if (p.isVariation)
+                {
+                    foreach (var pi in p.productItems)
+                    {
+                        if (pi.id == (int)productItemId)
+                        {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+                else return false;
+            }
+        }
+
+
         public static double GetProductDiscountPrice (this DbSet<Product> dbProduct, Product product)
         {
             using (var context = new Context())
             {
-                ProductDiscount productDiscount = context.ProductDiscount.GetProductDiscountByProductIdAndProductItemId(product.id, null).FirstOrDefault();
+                ProductDiscount? productDiscount = context.ProductDiscount.GetProductDiscountByProductIdAndProductItemId(product.id, null).FirstOrDefault();
                 if (productDiscount == null)
                 {
                     return product.price;
