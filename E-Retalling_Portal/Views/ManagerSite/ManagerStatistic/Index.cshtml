@@ -1,0 +1,56 @@
+﻿@model List<Shop>
+
+@{
+    ViewData["Title"] = "List Shops";
+    Layout = "~/Views/Shared/ManagerSideBarLayout.cshtml";
+}
+<link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.css" />
+<div class="content m-4 pb-3">
+
+    <div class="row p-4">
+        <div class="col-12">
+            <table id="myTable" class="display">
+                <thead>
+                    <tr>
+                        <th style="text-align: left;">ShopId</th>
+                        <th>Shop Name</th>
+                        <th>Province</th>
+                        <th>District</th>
+                        <th>Commune</th>
+                        <th style="text-align: left;>Created At</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td >@item.id</td>
+                            <td>@item.name</td>
+                            <td>@item.province</td>
+                            <td>@item.district</td>
+                            <td>@item.ward</td>
+                            <td>@item.createdAt</td>
+                            <td><a href="@Url.Action("Top10SellingProducts", "ManagerStatistic", new { shopId = @item.id })">View statistic</a></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/2.1.8/js/dataTables.js"></script>
+<script>
+    function sendDataToModal(id) {
+        $('#delete-product-id').val(id);
+    }
+
+    $(document).ready(function () {
+        $(document).ready(function () {
+            $('#myTable').DataTable({
+                lengthMenu: [[5, 10, 15], [5, 10, 15]]
+            });
+        });
+    });
+</script> 

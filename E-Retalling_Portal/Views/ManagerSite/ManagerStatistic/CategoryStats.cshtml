@@ -1,0 +1,202 @@
+﻿@model List<E_Retalling_Portal.Models.ManagerStatisticModel.CategoryStats>
+
+@{
+    ViewData["Title"] = "Category Sale Statisic";
+    Layout = "~/Views/Shared/ManagerSideBarLayout.cshtml";
+}
+
+<div class="content m-4 pb-3">
+    <h2 class="text-center text-primary" style="margin-top: 20px; padding-top: 20px">Category Statistics</h2>
+
+<h4>Select Start Date</h4>
+<label for="startYearSelect">Year:</label>
+<select id="startYearSelect" onchange="updateDays('start')">
+    @foreach (var year in Model.Select(m => m.saleYear).Distinct())
+    {
+        <option value="@year">@year</option>
+    }
+</select>
+
+<label for="startMonthSelect">Month:</label>
+<select id="startMonthSelect" onchange="updateDays('start')">
+    @for (int month = 1; month <= 12; month++)
+    {
+        <option value="@month">@month</option>
+    }
+</select>
+
+<label for="startDaySelect">Day:</label>
+<select id="startDaySelect">
+</select>
+
+<h4>Select End Date</h4>
+<label for="endYearSelect">Year:</label>
+<select id="endYearSelect" onchange="updateDays('end')">
+    @foreach (var year in Model.Select(m => m.saleYear).Distinct())
+    {
+        <option value="@year">@year</option>
+    }
+</select>
+
+<label for="endMonthSelect">Month:</label>
+<select id="endMonthSelect" onchange="updateDays('end')">
+    @for (int month = 1; month <= 12; month++)
+    {
+        <option value="@month">@month</option>
+    }
+</select>
+
+<label for="endDaySelect">Day:</label>
+<select id="endDaySelect">
+</select>
+
+<canvas id="myPieChart" width="400" height="250"></canvas>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    const salesData = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model));
+
+    let myPieChart; 
+
+    function updateChart(startDate, endDate) {
+        if (new Date(startDate) > new Date(endDate)) {
+            endDate = new Date().toISOString().split('T')[0];
+            document.getElementById('endYearSelect').value = new Date().getFullYear();
+            document.getElementById('endMonthSelect').value = new Date().getMonth() + 1; 
+            document.getElementById('endDaySelect').value = new Date().getDate(); 
+        }
+
+        const filteredData = salesData.filter(item => {
+            const saleDate = new Date(item.saleYear, item.saleMonth - 1); 
+            return saleDate >= new Date(startDate) && saleDate <= new Date(endDate);
+        });
+
+        const categoryMap = {};
+
+        filteredData.forEach(item => {
+            categoryMap[item.categoryName] = (categoryMap[item.categoryName] || 0) + item.totalQuantity;
+        });
+
+        const categoryNames = Object.keys(categoryMap);
+        const quantities = Object.values(categoryMap);
+
+        const ctx = document.getElementById('myPieChart').getContext('2d');
+
+        if (myPieChart) {
+            myPieChart.destroy();
+        }
+
+        myPieChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: categoryNames,
+                datasets: [{
+                    label: 'Sales Quantity',
+                    data: quantities,
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                    },
+                    
+                }
+            }
+        });
+    }
+
+
+    function updateDays(type) {
+        const year = document.getElementById(`${type}YearSelect`).value;
+        const month = document.getElementById(`${type}MonthSelect`).value;
+        const daySelect = document.getElementById(`${type}DaySelect`);
+
+        daySelect.innerHTML = '';
+
+        const daysInMonth = new Date(year, month, 0).getDate();
+
+        for (let day = 1; day <= daysInMonth; day++) {
+            const option = document.createElement('option');
+            option.value = day;
+            option.text = day;
+            daySelect.appendChild(option);
+        }
+    }
+
+    document.getElementById('startYearSelect').addEventListener('change', function () {
+        updateDays('start');
+        updateChart(getSelectedStartDate(), getSelectedEndDate());
+    });
+
+    document.getElementById('startMonthSelect').addEventListener('change', function () {
+        updateDays('start');
+        updateChart(getSelectedStartDate(), getSelectedEndDate());
+    });
+
+    document.getElementById('startDaySelect').addEventListener('change', function () {
+        updateChart(getSelectedStartDate(), getSelectedEndDate());
+    });
+
+    document.getElementById('endYearSelect').addEventListener('change', function () {
+        updateDays('end');
+        updateChart(getSelectedStartDate(), getSelectedEndDate());
+    });
+
+    document.getElementById('endMonthSelect').addEventListener('change', function () {
+        updateDays('end');
+        updateChart(getSelectedStartDate(), getSelectedEndDate());
+    });
+
+    document.getElementById('endDaySelect').addEventListener('change', function () {
+        updateChart(getSelectedStartDate(), getSelectedEndDate());
+    });
+
+    function getSelectedStartDate() {
+        return `${document.getElementById('startYearSelect').value}-${document.getElementById('startMonthSelect').value}-${document.getElementById('startDaySelect').value}`;
+    }
+
+    function getSelectedEndDate() {
+        return `${document.getElementById('endYearSelect').value}-${document.getElementById('endMonthSelect').value}-${document.getElementById('endDaySelect').value}`;
+    }
+
+    const today = new Date();
+    const lastYear = new Date(today);
+    lastYear.setFullYear(today.getFullYear() - 1);
+
+    document.getElementById('startYearSelect').value = lastYear.getFullYear();
+    document.getElementById('startMonthSelect').value = lastYear.getMonth() + 1;
+    updateDays('start');
+    document.getElementById('startDaySelect').value = 1; 
+
+    document.getElementById('endYearSelect').value = today.getFullYear();
+    document.getElementById('endMonthSelect').value = today.getMonth() + 1; 
+    updateDays('end');
+    document.getElementById('endDaySelect').value = today.getDate(); 
+
+    updateChart(getSelectedStartDate(), getSelectedEndDate());
+</script>
+    <div style="display: flex; justify-content: flex-end; margin-bottom: 20px; margin-right: 20px;">
+        <a href="@Url.Action("Index", "ManagerStatistic")" style="text-decoration: none; color: #007bff; border: 1px solid #007bff; border-radius: 5px; padding: 10px;">Back to List Shops</a>
+    </div>
+</div>

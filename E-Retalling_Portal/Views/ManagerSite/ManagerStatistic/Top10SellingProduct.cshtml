@@ -1,0 +1,203 @@
+﻿@model List<E_Retalling_Portal.Models.ManagerStatisticModel.Top10SellingProduct>
+
+@{
+    ViewData["Title"] = "Top 10 Selling Products";
+    Layout = "~/Views/Shared/ManagerSideBarLayout.cshtml";
+}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+        }
+
+        .chart-title {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 24px;
+            font-weight: bold;
+        }
+    </style>
+<body>
+    <div class="content m-4 pb-3">
+        <h2 class="text-center text-primary" style="margin-top: 20px; padding-top: 20px">Top 10 Selling Products</h2>
+
+        <h4>Select Start Date</h4>
+        <label for="startYearSelect">Year:</label>
+        <select id="startYearSelect">
+            @foreach (var year in Model.Select(m => m.saleYear).Distinct())
+            {
+                <option value="@year">@year</option>
+            }
+        </select>
+        <label for="startMonthSelect">Month:</label>
+        <select id="startMonthSelect" onchange="updateDays('start')">
+            @for (int month = 1; month <= 12; month++)
+            {
+                <option value="@month">@month</option>
+            }
+        </select>
+        <label for="startDaySelect">Day:</label>
+        <select id="startDaySelect">
+        </select>
+
+        <h4>Select End Date</h4>
+        <label for="endYearSelect">Year:</label>
+        <select id="endYearSelect">
+            @foreach (var year in Model.Select(m => m.saleYear).Distinct())
+            {
+                <option value="@year">@year</option>
+            }
+        </select>
+        <label for="endMonthSelect">Month:</label>
+        <select id="endMonthSelect" onchange="updateDays('end')">
+            @for (int month = 1; month <= 12; month++)
+            {
+                <option value="@month">@month</option>
+            }
+        </select>
+        <label for="endDaySelect">Day:</label>
+        <select id="endDaySelect">
+        </select>
+
+        <canvas id="topSellingChart" width="400" height="250"></canvas>
+
+        <script>
+                     const data = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model));
+
+                     const ctx = document.getElementById('topSellingChart').getContext('2d');
+                  let topSellingChart = new Chart(ctx, {
+                   type: 'bar',
+                   data: {
+                          labels: [],
+                          datasets: [{
+                                 label: 'Quantity Sold',
+                                    data: [],
+                                 backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                              borderColor: 'rgba(54, 162, 235, 1)',
+                           borderWidth: 1
+                    }]
+                   },
+                options: {
+                    responsive: true,
+                       scales: {
+                           y: {
+                               beginAtZero: true
+                           }
+                       }
+                   }
+               });
+
+               const initialStartDate = {
+                   year: new Date().getFullYear() - 1,
+                   month: 1,
+                   day: 1
+                  };
+                  const initialEndDate = {
+                   year: new Date().getFullYear(),
+                   month: new Date().getMonth() + 1,
+                   day: new Date().getDate()
+               };
+
+               function updateDays(type) {
+                      const monthSelectId = type === 'start' ? 'startMonthSelect' : 'endMonthSelect';
+                      const daySelectId = type === 'start' ? 'startDaySelect' : 'endDaySelect';
+
+                         const month = document.getElementById(monthSelectId).value;
+                            const year = type === 'start' ? document.getElementById('startYearSelect').value : document.getElementById('endYearSelect').value;
+
+                         let daysInMonth;
+                      if (month == 2) {
+                       daysInMonth = (new Date(year, 2, 0)).getDate(); 
+                   } else {
+                       daysInMonth = new Date(year, month, 0).getDate(); 
+                   }
+
+                   const daySelect = document.getElementById(daySelectId);
+                daySelect.innerHTML = ''; 
+
+                for (let day = 1; day <= daysInMonth; day++) {
+                    const option = document.createElement('option');
+                    option.value = day;
+                    option.textContent = day;
+                    daySelect.appendChild(option);
+                   }
+
+                daySelect.value = 1;
+            }
+
+            function updateChart() {
+                const startYear = document.getElementById('startYearSelect').value;
+                const startMonth = document.getElementById('startMonthSelect').value;
+                const startDay = document.getElementById('startDaySelect').value;
+                const endYear = document.getElementById('endYearSelect').value;
+                const endMonth = document.getElementById('endMonthSelect').value;
+                const endDay = document.getElementById('endDaySelect').value;
+
+                const startDate = new Date(startYear, startMonth - 1, startDay);
+                 const endDate = new Date(endYear, endMonth - 1, endDay);
+
+                   if (startDate > endDate) {
+                       alert("Start date must be before end date.");
+                       document.getElementById('startYearSelect').value = initialStartDate.year;
+                       document.getElementById('startMonthSelect').value = initialStartDate.month;
+                       document.getElementById('startDaySelect').value = initialStartDate.day;
+                       return;
+                   }
+
+                   const aggregatedData = {};
+
+                   data.forEach(d => {
+                       const saleDate = new Date(d.saleYear, d.saleMonth - 1);
+                       if ((!isNaN(startDate) && !isNaN(endDate) && saleDate >= startDate && saleDate <= endDate) || (isNaN(startDate) || isNaN(endDate))) {
+                           const productName = d.productItemName || d.productName;
+                           if (!aggregatedData[productName]) {
+                               aggregatedData[productName] = 0;
+                           }
+                           aggregatedData[productName] += d.quantitySold;
+                       }
+                   });
+
+                   topSellingChart.data.labels = Object.keys(aggregatedData);
+                   topSellingChart.data.datasets[0].data = Object.values(aggregatedData);
+
+                   topSellingChart.update();
+               }
+
+               document.getElementById('startYearSelect').value = initialStartDate.year;
+               document.getElementById('startMonthSelect').value = initialStartDate.month;
+               document.getElementById('startDaySelect').value = initialStartDate.day;
+
+               document.getElementById('endYearSelect').value = initialEndDate.year;
+               document.getElementById('endMonthSelect').value = initialEndDate.month;
+               document.getElementById('endDaySelect').value = initialEndDate.day;
+
+               document.getElementById('startYearSelect').addEventListener('change', () => {
+                   updateDays('start');
+                   updateChart();
+               });
+               document.getElementById('startMonthSelect').addEventListener('change', () => {
+                   updateDays('start');
+                   updateChart();
+               });
+               document.getElementById('startDaySelect').addEventListener('change', updateChart);
+               document.getElementById('endYearSelect').addEventListener('change', () => {
+                   updateDays('end');
+                   updateChart();
+               });
+               document.getElementById('endMonthSelect').addEventListener('change', () => {
+                   updateDays('end');
+                   updateChart();
+               });
+               document.getElementById('endDaySelect').addEventListener('change', updateChart);
+
+               updateDays('start');
+               updateDays('end');
+               updateChart();
+        </script>
+
+        <div style="display: flex; justify-content: flex-end; margin-bottom: 20px; margin-right: 20px;">
+            <a href="@Url.Action("Index", "ManagerStatistic")" style="text-decoration: none; color: #007bff; border: 1px solid #007bff; border-radius: 5px; padding: 10px;">Back to List Shops</a>
+        </div>
+    </div>
+</body>
+</html>
