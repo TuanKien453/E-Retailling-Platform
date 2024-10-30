@@ -212,10 +212,10 @@ namespace E_Retalling_Portal.Models
         private static void SeedingProduct(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Product>().HasData(
-                new Product { id = 1, categoryId = 3, name = "Sport Shoe", shopId = 1, desc = "<p>this is a good product<p/>", price = 11, quantity = 10, isVariation = true, status = 1 },
-                new Product { id = 2, categoryId = 4, name = "T-shirt", shopId = 1, desc = "<p>this is a good product<p/>", price = 12, quantity = 5, isVariation = false, status = 1 },
-                new Product { id = 3, categoryId = 4, name = "Jacket", shopId = 1, desc = "<p>this is a good product<p/>", price = 13, quantity = 6, isVariation = true, status = 1 },
-                 new Product { id = 4, categoryId = 6, name = "Jacketooo", shopId = 1, desc = "<p>this is a good product<p/>", price = 14, quantity = 6, isVariation = false, status = 1 }
+                new Product { id = 1, categoryId = 3, name = "Sport Shoe", shopId = 1, desc = "<p>this is a good product<p/>", price = 11, quantity = 10, isVariation = true, status = 1,weight=1000 },
+                new Product { id = 2, categoryId = 4, name = "T-shirt", shopId = 1, desc = "<p>this is a good product<p/>", price = 12, quantity = 5, isVariation = false, status = 1, weight = 1000 },
+                new Product { id = 3, categoryId = 4, name = "Jacket", shopId = 1, desc = "<p>this is a good product<p/>", price = 13, quantity = 6, isVariation = true, status = 1, weight = 1000 },
+                 new Product { id = 4, categoryId = 6, name = "Jacketooo", shopId = 1, desc = "<p>this is a good product<p/>", price = 14, quantity = 6, isVariation = false, status = 1, weight = 1000 }
 );
         }
         private static void SeedingCategory(ModelBuilder modelBuilder)
@@ -233,8 +233,8 @@ namespace E_Retalling_Portal.Models
         private static void SeedingShop(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Shop>().HasData(
-                new Shop { id = 1, accountId = 1, address = "address", province = "adf", name = "shopname", createdAt = "2000-05-04", shopDescription = "sd", statusId = 1 },
-                new Shop { id = 2, accountId = 3, address = "address", province = "asdf", name = "shopname", createdAt = "2000-05-04", shopDescription = "sd", statusId = 1 }
+                new Shop { id = 1, accountId = 1, address = "address", province = 249, district= 1644, ward = "190116", name = "shopname", createdAt = "2000-05-04", shopDescription = "sd", statusId = 1 },
+                new Shop { id = 2, accountId = 3, address = "address", province = 249, district= 1644,ward= "190116", name = "shopname", createdAt = "2000-05-04", shopDescription = "sd", statusId = 1 }
              );
         }
         private static void SeedingStatus(ModelBuilder modelBuilder)
@@ -260,9 +260,9 @@ namespace E_Retalling_Portal.Models
                 new User
                 {
                     id = 1,
-                    province = "BacNinh",
-                    district = "TienDu",
-                    commune = "HoanSon",
+                    province = 202,
+                    district = 1454,
+                    ward = "21211",
                     address = "",
                     birthday = "2000-05-04",
                     displayName = "kienhocgioi",
@@ -275,9 +275,9 @@ namespace E_Retalling_Portal.Models
                 new User
                 {
                     id = 2,
-                    province = "BacNinh",
-                    district = "TienDu",
-                    commune = "VietDoan",
+                    province = 202,
+                    district = 1454,
+                    ward = "21211",
                     address = "",
                     birthday = "2000-01-04",
                     displayName = "anh",
@@ -290,9 +290,9 @@ namespace E_Retalling_Portal.Models
                 new User
                 {
                     id = 3,
-                    province = "BacNinh",
-                    district = "TienDu",
-                    commune = "LacVe",
+                    province = 202,
+                    district = 1454,
+                    ward = "21211",
                     address = "",
                     birthday = "2004-01-04",
                     displayName = "phien",

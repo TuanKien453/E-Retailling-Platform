@@ -9,9 +9,9 @@ namespace E_Retalling_Portal.Models
         public int id { get; set; }
 
         public int userId { get; set; }
-        [MaxLength(100), Required]
+        [MaxLength(100)]
         public string? username { get; set; }
-        [DataType(DataType.Password), MaxLength(100), Required]
+        [DataType(DataType.Password), MaxLength(100)]
         public string? password { get; set; }
 
         public int roleId { get; set; }

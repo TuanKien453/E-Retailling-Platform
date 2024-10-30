@@ -47,7 +47,7 @@ namespace E_Retalling_Portal.Controllers.SellerShopManager
                 ViewBag.Name = shop.name;
                 ViewBag.Provine = shop.province;
                 ViewBag.District = shop.district;
-                ViewBag.Commune = shop.commune;
+                ViewBag.ward = shop.ward;
                 ViewBag.Address = shop.address;
                 ViewBag.ShopDescription = shop.shopDescription;
                 return View("Views/SellerShopManager/ShopInformation/UpdateShop.cshtml");

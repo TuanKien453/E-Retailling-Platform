@@ -321,9 +321,9 @@ namespace E_Retalling_Portal.Controllers.AccountController
                                                           [MaxLength(15)] String gender,
                                                           [MaxLength(100)] String firstName,
                                                           [MaxLength(100)] String lastName,
-                                                          [MaxLength(100)] String province,
-                                                          [MaxLength(100)] String district,
-                                                          [MaxLength(100)] String commune,
+                                                          [MaxLength(100)] int province,
+                                                          [MaxLength(100)] int district,
+                                                          [MaxLength(100)] String ward,
                                                           [MaxLength(100)] String address,
                                                           [MaxLength(100)] String username,
                                                           [DataType(DataType.Password), MaxLength(100)] String password,
@@ -337,7 +337,7 @@ namespace E_Retalling_Portal.Controllers.AccountController
             {
                 using (var context = new Context())
                 {
-                    User newUser = new User { email = email, phoneNumber = phoneNumber, displayName = displayName, birthday = birthday, gender = gender, firstName = firstName, lastName = lastName, province = province, district = district, commune = commune, address = address };
+                    User newUser = new User { email = email, phoneNumber = phoneNumber, displayName = displayName, birthday = birthday, gender = gender, firstName = firstName, lastName = lastName, province = province, district = district, ward = ward, address = address };
                     context.Add(newUser);
                     context.SaveChanges();
 

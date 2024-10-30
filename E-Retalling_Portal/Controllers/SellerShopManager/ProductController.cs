@@ -278,6 +278,7 @@ namespace E_Retalling_Portal.Controllers.ShopManager
                 product.name = p.name;
                 product.price = p.price;
                 product.quantity = p.quantity;
+                product.weight = p.weight;
                 product.categoryId = p.categoryId;
                 product.desc = p.desc;
                 var response = await task;

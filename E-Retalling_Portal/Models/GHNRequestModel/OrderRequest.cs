@@ -13,7 +13,9 @@ namespace E_Retalling_Portal.Models.GHNRequestModel
 		[JsonProperty("weight")]
 		public int Weight { get; set; }
 
-		[JsonProperty("length")]
+        [JsonProperty("cod_amount")]
+        public int COD { get; set; }
+        [JsonProperty("length")]
 		public int Length { get; set; } = 30;
 
 		[JsonProperty("width")]
@@ -24,8 +26,8 @@ namespace E_Retalling_Portal.Models.GHNRequestModel
 
 		[JsonProperty("service_type_id")]
 		public int ServiceTypeId { get; set; }
-		[JsonProperty("service_id")]
-		public int ServiceId { get; set; }
+		//[JsonProperty("service_id")]
+		//public int ServiceId { get; set; }
 
 		[JsonProperty("from_name")]
 		public string FromName { get; set; }
@@ -36,14 +38,12 @@ namespace E_Retalling_Portal.Models.GHNRequestModel
 		[JsonProperty("from_address")]
 		public string FromAddress { get; set; }
 
-		[JsonProperty("from_ward_name")]
-		public string FromWardName { get; set; }
+		[JsonProperty("from_ward_code")]
+		public string FromWardCode { get; set; }
 
-		[JsonProperty("from_district_name")]
-		public string FromDistrictName { get; set; }
+		[JsonProperty("from_district_id")]
+		public int FromDistrictId { get; set; }
 
-		[JsonProperty("from_province_name")]
-		public string FromProvinceName { get; set; }
 		[JsonProperty("to_province_name")]
 		public string ToProvinceName { get; set; }
 

@@ -91,7 +91,7 @@ namespace E_Retalling_Portal.Controllers.UserProfile
                     newUser.lastName = user.lastName;
                     newUser.province = user.province;
                     newUser.district = user.district;
-                    newUser.commune = user.commune;
+                    newUser.ward = user.ward;
                     newUser.address = user.address;
                     if (testUser.email == user.email)
                     {
@@ -120,11 +120,11 @@ namespace E_Retalling_Portal.Controllers.UserProfile
                     newUser.lastName = user.lastName;
                     newUser.province = user.province;
                     newUser.district = user.district;
-                    newUser.commune = user.commune;
+                    newUser.ward = user.ward;
                     newUser.address = user.address;
                     newUser.province = user.province;
                     newUser.district = user.district;
-                    newUser.commune = user.commune;
+                    newUser.ward = user.ward;
                     if (newUser.email != user.email)
                     {
                         newUser.email = user.email;
@@ -176,7 +176,7 @@ namespace E_Retalling_Portal.Controllers.UserProfile
                                 newUser.address = userToUpdate.address;
                                 newUser.province = userToUpdate.province;
                                 newUser.district = userToUpdate.district;
-                                newUser.commune = userToUpdate.commune;
+                                newUser.ward = userToUpdate.ward;
                                 context.SaveChanges(); 
                             }
 
