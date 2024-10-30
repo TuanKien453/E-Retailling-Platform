@@ -18,22 +18,50 @@ namespace E_Retalling_Portal.Controllers.Home
                 var similarProducts = context.Products.GetSimilarProductByProductCategory(product.category, product.id).ToList();
                 if (product.isVariation == true)
                 {
-                    double minPrice = productItemList.Min(pi => pi.price);
-                    double maxPrice = productItemList.Max(pi => pi.price);
-                    ViewBag.minPrice = minPrice; ViewBag.maxPrice = maxPrice;
+                    double maxPrice = productItemList.Min(pi => pi.price);
+                    double minPrice = productItemList.Max(pi => pi.price);
+
+                    var productDiscounts = context.ProductDiscounts.GetProductDiscountByProductId(productId.Value).ToList();
+                    ViewBag.productDiscounts = productDiscounts;
+
+                    Dictionary<int, double> discountPrices = new Dictionary<int, double>();
+
+                    foreach (var item in productItemList)
+                    {
+                        var discount = context.ProductDiscounts
+                            .GetProductDiscountByProductIdAndProductItemId(productId.Value, item.id)
+                            .FirstOrDefault();
+
+                        if (discount != null)  
+                        {
+                            double discountedPrice = Math.Round(item.price * (1 - (discount.discount.value / 100.0)), 2);
+                            discountPrices[item.id] = discountedPrice;
+                            if (discountedPrice < minPrice)
+                            {
+                                minPrice = discountedPrice;
+                            }
+                            if (discountedPrice > maxPrice)
+                            {
+                                maxPrice = discountedPrice;
+                            }
+                        }
+
+                    }
+                    ViewBag.discountPrices = discountPrices;
+                    ViewBag.minPrice = minPrice;
+                    ViewBag.maxPrice = maxPrice;
                 }
+
                 product.price = context.Products.GetProductDiscountPrice(product);
                 foreach (var item in productItemList)
                 {
                     item.price = (float)context.ProductItems.GetProductItemDiscountPrice(item);
                 }
-                
+                var productDiscount = context.ProductDiscounts.GetProductDiscountByProductId(productId.Value).FirstOrDefault();
                 List<Product> products = GetProductsIsNotDelete(similarProducts).Take(6).ToList();
-                var productDiscounts = context.ProductDiscounts.GetProductDiscountByProductId(productId.Value).ToList();
-                ViewBag.productDiscounts = productDiscounts;
+                ViewBag.productDiscount = productDiscount;
                 ViewBag.productImageList = product.images;
                 ViewBag.product = product;
-                Console.WriteLine(product.quantity+","+product.price);
                 ViewBag.productItemList = productItemList;
                 ViewBag.similarProducts = products;
             }

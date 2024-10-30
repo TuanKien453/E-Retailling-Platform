@@ -187,8 +187,8 @@ namespace E_Retalling_Portal.Models
             modelBuilder.Entity<ProductItem>().HasData(
                 new ProductItem { id = 1, productId = 1, quantity = 5, price = 15, imageId = 1, attribute = "L" },
                 new ProductItem { id = 2, productId = 1, quantity = 7, price = 13, imageId = 3, attribute = "S" },
-                new ProductItem { id = 3, productId = 3, quantity = 10, price = 20, imageId = 8, attribute = "X" },
-                new ProductItem { id = 4, productId = 3, quantity = 10, price = 14, imageId = 9, attribute = "X" },
+                new ProductItem { id = 3, productId = 3, quantity = 10, price = 26, imageId = 8, attribute = "X" },
+                new ProductItem { id = 4, productId = 3, quantity = 10, price = 15, imageId = 9, attribute = "X" },
                 new ProductItem { id = 5, productId = 3, quantity = 10, price = 20, imageId = 8, attribute = "M" },
                 new ProductItem { id = 6, productId = 3, quantity = 13, price = 14, imageId = 9, attribute = "L" }
             );
