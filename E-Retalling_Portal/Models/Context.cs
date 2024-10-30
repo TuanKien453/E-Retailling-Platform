@@ -255,7 +255,7 @@ namespace E_Retalling_Portal.Models
                     province = 202,
                     district = 1454,
                     ward = "21211",
-                    address = "",
+                    address = "mhjyy",
                     birthday = "2000-01-04",
                     displayName = "anh",
                     email = "quynxhe186459@fpt.edu.vn",

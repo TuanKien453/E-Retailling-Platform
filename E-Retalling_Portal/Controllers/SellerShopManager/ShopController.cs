@@ -45,9 +45,9 @@ namespace E_Retalling_Portal.Controllers.SellerShopManager
                 int? accId = HttpContext.Session.GetInt32(SessionKeys.AccountId.ToString());
                 Shop shop = context.Shops.GetShopbyAccId(accId.Value).FirstOrDefault();
                 ViewBag.Name = shop.name;
-                ViewBag.Provine = shop.province;
+                ViewBag.Province = shop.province;
                 ViewBag.District = shop.district;
-                ViewBag.ward = shop.ward;
+                ViewBag.Ward = shop.ward;
                 ViewBag.Address = shop.address;
                 ViewBag.ShopDescription = shop.shopDescription;
                 return View("Views/SellerShopManager/ShopInformation/UpdateShop.cshtml");
@@ -56,7 +56,7 @@ namespace E_Retalling_Portal.Controllers.SellerShopManager
         }
 
         [HttpPost]
-        public IActionResult UpdateShopProcess([MaxLength(100)] String name, [MaxLength(100)] String address, [MaxLength(2000)] String shopDescription)
+        public IActionResult UpdateShopProcess([MaxLength(100)] String name, [MaxLength(100)] String address, [MaxLength(2000)] String shopDescription, [Range(1, int.MaxValue)] int province,[Range(1, int.MaxValue)] int district,[MaxLength(100)] String ward)
         {
             if (ModelState.IsValid)
             {
@@ -68,6 +68,9 @@ namespace E_Retalling_Portal.Controllers.SellerShopManager
                     {
                         Shop shop = context.Shops.GetShopbyAccId(accId.Value).FirstOrDefault();
                         shop.name = name;
+                        shop.province = province;
+                        shop.district = district;
+                        shop.ward = ward;   
                         shop.address = address;
                         shop.shopDescription = shopDescription;
                         context.Shops.Update(shop);
