@@ -26,8 +26,13 @@ namespace E_Retalling_Portal.Controllers
 		}
 		public async Task<IActionResult> getWards(int districtId)
 		{
-			var result = await _ghnService.GetWardsAsync(districtId);
-			return Json(result);
+			try { 
+				var result = await _ghnService.GetWardsAsync(districtId);
+                return Json(result);
+            }
+			catch (Exception ex) {
+				return BadRequest(ex.Message);
+			}
 		}
 	}
 }

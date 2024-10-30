@@ -73,8 +73,9 @@ builder.Services.AddSingleton<GeminiClient>(sp =>
 });
 builder.Services.AddScoped<IVnPayService, VnPayService>();
 builder.Services.AddScoped<GHNService, GHNService>();
-var app = builder.Build();
+builder.Services.AddHostedService<TransactionCleanupService>();
 
+var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

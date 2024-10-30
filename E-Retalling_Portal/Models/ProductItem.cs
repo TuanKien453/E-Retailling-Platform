@@ -20,6 +20,7 @@ namespace E_Retalling_Portal.Models
         public List<ProductDiscount>? productDiscounts { get; set; }
 
 
-
+        [Timestamp]
+        public byte[]? RowVersion { get; set; }
     }
 }

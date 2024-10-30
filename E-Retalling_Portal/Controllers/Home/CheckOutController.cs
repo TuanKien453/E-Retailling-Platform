@@ -8,6 +8,7 @@ using E_Retalling_Portal.Services;
 using E_Retalling_Portal.Services.ExtendService;
 using E_Retalling_Portal.Util;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
 using NuGet.Protocol;
@@ -198,14 +199,14 @@ namespace E_Retalling_Portal.Controllers.Home
                         Height = 20,
 
                         Items = new List<OrderItemRequest>
-                    {
-                        new OrderItemRequest
                         {
+                        new OrderItemRequest
+                            {
                             Name = item.Key.product.name,
                             Weight = item.Key.product.weight,
                             Quantity =item.Value,
+                            }
                         }
-                    }
                     };
                     try
                     {
@@ -295,13 +296,14 @@ namespace E_Retalling_Portal.Controllers.Home
                     foreach (var item in piItems)
                     {
                         var price = context.ProductItems.GetProductItemDiscountPrice(item.Key);
+                        var fromAcc = context.Accounts.GetAccountByAccountId(item.Key.product.shop.accountId).FirstOrDefault();
                         var orderRequestItem = new OrderRequest
                         {
                             PaymentTypeId = payment_type_id,
                             ServiceTypeId = 2,
                             RequiredNote = "CHOXEMHANGKHONGTHU",
-                            FromName = user.displayName,
-                            FromPhone = user.phoneNumber,
+                            FromName = fromAcc.shop.name,
+                            FromPhone = fromAcc.user.phoneNumber,
                             FromAddress = item.Key.product.shop.address,
                             FromWardCode = item.Key.product.shop.ward,
                             FromDistrictId = item.Key.product.shop.district,
@@ -343,7 +345,6 @@ namespace E_Retalling_Portal.Controllers.Home
                             shippingStatus = "wait to take"
                         };
                         item.Key.quantity -= item.Value;
-                        context.Update(item.Key);
                         context.Add(orderItem);
                         context.SaveChanges();
                     }
@@ -351,14 +352,14 @@ namespace E_Retalling_Portal.Controllers.Home
                     foreach (var item in pItems)
                     {
                         var price = context.Products.GetProductDiscountPrice(item.Key);
-
+                        var fromAcc = context.Accounts.GetAccountByAccountId(item.Key.shop.accountId).FirstOrDefault();
                         var orderRequestItem = new OrderRequest
                         {
                             PaymentTypeId = payment_type_id,
                             ServiceTypeId = 2,
                             RequiredNote = "CHOXEMHANGKHONGTHU",
-                            FromName = user.displayName,
-                            FromPhone = user.phoneNumber,
+                            FromName = fromAcc.shop.name,
+                            FromPhone = fromAcc.user.phoneNumber,
                             FromAddress = item.Key.shop.address,
                             FromWardCode = item.Key.shop.ward,
                             FromDistrictId = item.Key.shop.district,
@@ -399,7 +400,6 @@ namespace E_Retalling_Portal.Controllers.Home
                             shippingStatus = "wait to take"
                         };
                         item.Key.quantity -= item.Value;
-                        context.Update(item.Key);
                         context.Add(orderItem);
                         context.SaveChanges();
                     }
@@ -418,14 +418,15 @@ namespace E_Retalling_Portal.Controllers.Home
                     foreach (var item in piItems)
                     {
                         var price = context.ProductItems.GetProductItemDiscountPrice(item.Key);
+                        var fromAcc = context.Accounts.GetAccountByAccountId(item.Key.product.shop.accountId).FirstOrDefault();
                         totalProductFee += price;
                         var orderRequestItem = new OrderRequest
                         {
                             PaymentTypeId = payment_type_id,
                             ServiceTypeId = 2,
                             RequiredNote = "CHOXEMHANGKHONGTHU",
-                            FromName = user.displayName,
-                            FromPhone = user.phoneNumber,
+                            FromName = fromAcc.shop.name,
+                            FromPhone = fromAcc.user.phoneNumber,
                             FromAddress = item.Key.product.shop.address,
                             FromWardCode = item.Key.product.shop.ward,
                             FromDistrictId = item.Key.product.shop.district,
@@ -468,7 +469,6 @@ namespace E_Retalling_Portal.Controllers.Home
                             shippingStatus = "wait to take"
                         };
                         item.Key.quantity -= item.Value;
-                        context.Update(item.Key);
                         context.Add(orderItem);
                         context.SaveChanges();
                     }
@@ -476,14 +476,15 @@ namespace E_Retalling_Portal.Controllers.Home
                     foreach (var item in pItems)
                     {
                         var price = context.Products.GetProductDiscountPrice(item.Key);
+                        var fromAcc = context.Accounts.GetAccountByAccountId(item.Key.shop.accountId).FirstOrDefault();
                         totalProductFee += price;
                         var orderRequestItem = new OrderRequest
                         {
                             PaymentTypeId = payment_type_id,
                             ServiceTypeId = 2,
                             RequiredNote = "CHOXEMHANGKHONGTHU",
-                            FromName = user.displayName,
-                            FromPhone = user.phoneNumber,
+                            FromName = fromAcc.shop.name,
+                            FromPhone = fromAcc.user.phoneNumber,
                             FromAddress = item.Key.shop.address,
                             FromWardCode = item.Key.shop.ward,
                             FromDistrictId = item.Key.shop.district,
@@ -501,14 +502,14 @@ namespace E_Retalling_Portal.Controllers.Home
                             Height = 20,
 
                             Items = new List<OrderItemRequest>
-                    {
-                        new OrderItemRequest
-                        {
-                            Name = item.Key.name,
-                            Weight = item.Key.weight,
-                            Quantity =item.Value,
-                        }
-                    }
+                            {
+                                new OrderItemRequest
+                                {
+                                    Name = item.Key.name,
+                                    Weight = item.Key.weight,
+                                    Quantity =item.Value,
+                                }
+                            }
                         };
                         var orderResponse = await _ghnService.CreateShippingOrderPreviewAsync(orderRequestItem);
                         int shipFee = Int32.Parse(orderResponse.Data.TotalFee);
@@ -526,7 +527,6 @@ namespace E_Retalling_Portal.Controllers.Home
                             shippingStatus = "wait to take"
                         };
                         item.Key.quantity -= item.Value;
-                        context.Update(item.Key);
                         context.Add(orderItem);
                         context.SaveChanges();
                     }
@@ -549,15 +549,93 @@ namespace E_Retalling_Portal.Controllers.Home
             //var url = _vnPayService.CreatePaymentUrl(HttpContext, "test","12346789");
         }
 
-        public IActionResult PaymentCallback()
+        public async Task<IActionResult> PaymentCallback()
         {
             var response = _vnPayService.PaymentExecute(Request.Query);
             //payment success
             if (response.Success == true && response.VnPayResponseCode.Equals("00"))
             {
+                int orderId = Int32.Parse(response.OrderDescription);
+                using (var context = new Context())
+                {
+                    Order o = context.Orders
+                        .Include(o => o.user)
+                        .Include(o => o.orderItems)
+                        .FirstOrDefault(o => o.id == orderId);
+                    List<OrderItem> oi = o.orderItems;
+
+                    foreach (var item in oi)
+                    {
+                        string fromName = "";
+                        string fromPhone = "";
+                        string fromAddress = "";
+                        string fromWardCode = "";
+                        int fromDistrictId = 0;
+                        int weight = 0;
+                        string name = "";
+
+                        var p = context.Products.GetProductById(item.productId).FirstOrDefault();
+
+                        var fromAcc = context.Accounts.GetAccountByAccountId(p.shop.accountId).FirstOrDefault();
+                        fromName = fromAcc.shop.name;
+                        fromPhone = fromAcc.user.phoneNumber;
+                        fromAddress = o.address;
+                        fromWardCode = fromAcc.user.ward;
+                        fromDistrictId = fromAcc.user.district;
+                        weight = p.weight;
+                        name = p.name;
+                        var orderRequestItem = new OrderRequest
+                        {
+                            PaymentTypeId = 1,
+                            ServiceTypeId = 2,
+                            RequiredNote = "CHOXEMHANGKHONGTHU",
+                            FromName = fromName,
+                            FromPhone = fromPhone,
+                            FromAddress = fromAddress,
+                            FromWardCode = fromWardCode,
+                            FromDistrictId = fromDistrictId,
+
+                            ToName = o.user.firstName + " " + o.user.lastName,
+                            ToPhone = o.user.phoneNumber,
+                            ToAddress = o.address,
+                            ToWardCode = o.ward,
+                            ToDistrictId = o.district,
+                            COD = 0,
+
+                            Weight = weight * item.quanity,
+                            Length = 20,
+                            Width = 20,
+                            Height = 20,
+
+                            Items = new List<OrderItemRequest>
+                            {
+                                new OrderItemRequest
+                                {
+                                    Name = name,
+                                    Weight = weight,
+                                    Quantity =item.quanity,
+                                }
+                            }
+                        };
+                        try
+                        {
+                            var orderResponse = await _ghnService.CreateShippingOrderAsync(orderRequestItem);
+                            item.externalOrderCode = orderResponse.Data.OrderCode;
+                            context.Update(item);
+                        }
+                        catch (Exception ex)
+                        {
+                            return BadRequest(ex.Message);
+                        }
+
+                    }
+                    o.paymentStatus = "done";
+                    context.Update(o);
+                    context.SaveChanges();
+                }
                 return Json(response);
             }
-            return Json(response);
+            return Ok("transaction fail");
         }
     }
 }

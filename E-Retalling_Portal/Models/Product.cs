@@ -37,5 +37,9 @@ namespace E_Retalling_Portal.Models
         public List<ProductItem>? productItems { get; set; }
         public List<ProductDiscount>? productDiscounts { get; set; }
         public List<OrderItem>? orderItems { get; set; }
+
+
+        [Timestamp] 
+        public byte[]? RowVersion { get; set; }
     }
 }
