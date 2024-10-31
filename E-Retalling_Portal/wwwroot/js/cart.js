@@ -108,6 +108,11 @@ function deleteFromCart(itemId, isProduct) {
 }
 document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("checkoutButton").addEventListener("click", function () {
+        const loginStatus = document.getElementById("loginStatus").value;
+        if (loginStatus === '') {
+            location.href = 'Login';
+            return;
+        }
         const serverResponseDiv = document.getElementById("serverresponse");
         if (serverResponseDiv.style.display !== "none") {
             $('#noItemsModal .modal-title').text('Error while checkout');
