@@ -419,7 +419,7 @@ namespace E_Retalling_Portal.Controllers.Home
                     {
                         var price = context.ProductItems.GetProductItemDiscountPrice(item.Key);
                         var fromAcc = context.Accounts.GetAccountByAccountId(item.Key.product.shop.accountId).FirstOrDefault();
-                        totalProductFee += price;
+                        totalProductFee += price * item.Value;
                         var orderRequestItem = new OrderRequest
                         {
                             PaymentTypeId = payment_type_id,
@@ -477,7 +477,7 @@ namespace E_Retalling_Portal.Controllers.Home
                     {
                         var price = context.Products.GetProductDiscountPrice(item.Key);
                         var fromAcc = context.Accounts.GetAccountByAccountId(item.Key.shop.accountId).FirstOrDefault();
-                        totalProductFee += price;
+                        totalProductFee += price * item.Value;
                         var orderRequestItem = new OrderRequest
                         {
                             PaymentTypeId = payment_type_id,
