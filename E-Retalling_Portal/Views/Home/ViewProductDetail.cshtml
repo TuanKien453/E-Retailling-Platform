@@ -64,9 +64,9 @@
                                 }
                                 else
                                 {
-                                    <span id="newPrice">@($"{ViewBag.minPrice} VND ")-</span>
-                                    <span id="oldPrice">@($"{ViewBag.maxPrice} VND")</span>
-                                    <s><span id="discount"></span></s>
+                                    <span id="newPrice">@($"{ViewBag.minPrice} VND") -</span>
+                                    <span id="oldPrice" style="display: inline;">@($"{ViewBag.maxPrice} VND")</span>
+                                    <s><span id="discount" style="display: inline;"></span></s>
                                 }
                             }
                             else
@@ -190,7 +190,7 @@
             document.getElementById('quantityInput').value = 1;
             document.getElementById('quantityDisplay').innerText = @ViewBag.product.quantity;
             selectedProductId = null;
-
+            document.getElementById('discount').style.display = 'none';
             resetMainImage('/productImages/@ViewBag.product.coverImage.imageName');
 
             if (isVariation === false) {
@@ -202,8 +202,9 @@
                 if (minPrice === maxPrice) {
                     document.getElementById('productPrice').innerText = 'VND' + minPrice;
                 } else {
-                    document.getElementById('oldPrice').innerText = maxPrice + 'VND';
-                    document.getElementById('newPrice').innerText = minPrice + 'VND-';
+                    document.getElementById('oldPrice').innerText = maxPrice + ' VND';
+                    document.getElementById('oldPrice').style.display = 'inline';
+                    document.getElementById('newPrice').innerText = minPrice + ' VND -';
                 }
             }
 
@@ -222,10 +223,13 @@
             updateMainImage(imagePath);
 
             const oldPriceText = productPrice + " VND";
-            const newPriceText = discountPrice > 0 ? discountPrice + " VND" : "0 VND";
+            const newPriceText = discountPrice > 0 ? discountPrice + " VND -" : "0 VND";
 
             document.getElementById('discount').innerText = oldPriceText;
             document.getElementById('newPrice').innerText = newPriceText;
+            document.getElementById('oldPrice').style.display = 'none';
+            document.getElementById('discount').style.display = 'inline';
+
         }
     }
 
