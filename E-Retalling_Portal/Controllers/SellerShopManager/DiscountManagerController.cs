@@ -111,10 +111,6 @@ namespace E_Retalling_Portal.Controllers.SellerShopManager
             using (var context = new Context())
             {
                 List<ProductItem> products = context.ProductItems.GetProductItem(productId).ToList();
-                if (products.IsNullOrEmpty())
-                {
-                    return View("Views/Shared/ErrorPage/Error500.cshtml");
-                }
                 List<ProductDiscount> productDiscounts = context.ProductDiscount.GetProductDiscountByProductId(productId).ToList();
                 List<ProductItem> productItemsDiscount = new List<ProductItem>();
                 foreach (var discount in productDiscounts)
