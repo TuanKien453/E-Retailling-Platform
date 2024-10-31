@@ -174,14 +174,14 @@ namespace E_Retalling_Portal.Controllers.Home
                 foreach (var item in piItems)
                 {
                     var price = context.ProductItems.GetProductItemDiscountPrice(item.Key);
-
+                    var fromAcc = context.Accounts.GetAccountByAccountId(item.Key.product.shop.accountId).FirstOrDefault();
                     var orderRequestItem = new OrderRequest
                     {
                         PaymentTypeId = payment_type_id,
                         ServiceTypeId = 2,
                         RequiredNote = "CHOXEMHANGKHONGTHU",
-                        FromName = user.displayName,
-                        FromPhone = user.phoneNumber,
+                        FromName = fromAcc.shop.name,
+                        FromPhone = fromAcc.user.phoneNumber,
                         FromAddress = item.Key.product.shop.address,
                         FromWardCode = item.Key.product.shop.ward,
                         FromDistrictId = item.Key.product.shop.district,
@@ -222,13 +222,14 @@ namespace E_Retalling_Portal.Controllers.Home
                 foreach (var item in pItems)
                 {
                     var price = context.Products.GetProductDiscountPrice(item.Key);
+                    var fromAcc = context.Accounts.GetAccountByAccountId(item.Key.shop.accountId).FirstOrDefault();
                     var orderRequestItem = new OrderRequest
                     {
                         PaymentTypeId = payment_type_id,
                         ServiceTypeId = 2,
                         RequiredNote = "CHOXEMHANGKHONGTHU",
-                        FromName = user.displayName,
-                        FromPhone = user.phoneNumber,
+                        FromName = fromAcc.shop.name,
+                        FromPhone = fromAcc.user.phoneNumber,
                         FromAddress = item.Key.shop.address,
                         FromWardCode = item.Key.shop.ward,
                         FromDistrictId = item.Key.shop.district,
