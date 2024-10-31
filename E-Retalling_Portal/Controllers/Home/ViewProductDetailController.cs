@@ -16,50 +16,51 @@ namespace E_Retalling_Portal.Controllers.Home
                 var product = context.Products.GetProductById(productId.Value).FirstOrDefault();
                 var productItemList = context.ProductItems.GetProductItem(productId.Value).ToList();
                 var similarProducts = context.Products.GetSimilarProductByProductCategory(product.category, product.id).ToList();
+                int totalQuantityOfProductItems = 0;
+
                 if (product.isVariation == true)
                 {
-                    double maxPrice = productItemList.Min(pi => pi.price);
-                    double minPrice = productItemList.Max(pi => pi.price);
-
-                    var productDiscounts = context.ProductDiscounts.GetProductDiscountByProductId(productId.Value).ToList();
-                    ViewBag.productDiscounts = productDiscounts;
-
+                    
+                    
                     Dictionary<int, double> discountPrices = new Dictionary<int, double>();
-
                     foreach (var item in productItemList)
                     {
-                        var discount = context.ProductDiscounts
-                            .GetProductDiscountByProductIdAndProductItemId(productId.Value, item.id)
-                            .FirstOrDefault();
-
-                        if (discount != null)  
-                        {
-                            double discountedPrice = Math.Round(item.price * (1 - (discount.discount.value / 100.0)), 2);
+                        totalQuantityOfProductItems += item.quantity;
+                            var discountedPrice = context.ProductItems.GetProductItemDiscountPrice(item);
                             discountPrices[item.id] = discountedPrice;
-                            if (discountedPrice < minPrice)
-                            {
-                                minPrice = discountedPrice;
-                            }
-                            if (discountedPrice > maxPrice)
-                            {
-                                maxPrice = discountedPrice;
-                            }
-                        }
-
                     }
+                    var maxPrice = discountPrices.Min(pd => pd.Value);
+                    var minPrice = discountPrices.Max(pd => pd.Value);
+                    foreach (var item in discountPrices)
+                    {
+                        if (item.Value < minPrice)
+                        {
+                            minPrice = item.Value;
+                        }
+                        if (item.Value > maxPrice)
+                        {
+                            maxPrice = item.Value;
+                        }
+                    }
+                    
+
+
                     ViewBag.discountPrices = discountPrices;
                     ViewBag.minPrice = minPrice;
                     ViewBag.maxPrice = maxPrice;
                 }
-
-                product.price = context.Products.GetProductDiscountPrice(product);
-                foreach (var item in productItemList)
-                {
-                    item.price = (float)context.ProductItems.GetProductItemDiscountPrice(item);
-                }
-                var productDiscount = context.ProductDiscounts.GetProductDiscountByProductId(productId.Value).FirstOrDefault();
                 List<Product> products = GetProductsIsNotDelete(similarProducts).Take(6).ToList();
-                ViewBag.productDiscount = productDiscount;
+
+                Dictionary<int, double> discountProductSimilar = new Dictionary<int, double>();
+                foreach(var item in products)
+                {
+                    var discountPrice = context.Products.GetProductDiscountPrice(item);
+                    discountProductSimilar[item.id] = discountPrice;
+                }
+
+                ViewBag.discountProductSimilar = discountProductSimilar;
+                ViewBag.quantityProduct = totalQuantityOfProductItems;
+                ViewBag.productPrice = context.Products.GetProductDiscountPrice(product);
                 ViewBag.productImageList = product.images;
                 ViewBag.product = product;
                 ViewBag.productItemList = productItemList;
