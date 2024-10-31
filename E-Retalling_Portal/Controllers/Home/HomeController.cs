@@ -86,7 +86,8 @@ namespace E_Retalling_Portal.Controllers.Home
                 var pageSize = 24;
                 List<Product> products = GetProductsIsNotDelete(productList);
                 var paginatedProducts = products.ToPagedList(pageNumber, pageSize);
-
+                var productDiscounts = context.ProductDiscounts.GetProductDiscount().ToList();
+                ViewBag.productDiscounts = productDiscounts;
                 ViewBag.searchQuery = searchQuery;
                 ViewBag.imageList = imageList;
                 ViewBag.categoryId = categoryId;
