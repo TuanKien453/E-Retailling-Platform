@@ -50,7 +50,7 @@
                             <span class="ms-1">
                                 4.5
                         </div>
-                        <span class="text-muted"><i class="fas fa-shopping-basket fa-sm mx-1"></i>@ViewBag.product.quantity</span>
+                        <span class="text-muted"><i class="fas fa-shopping-basket fa-sm mx-1"></i>@ViewBag.quantityProduct</span>
                         <span class="text-success ms-2">In stock</span>
                     </div>
 
@@ -71,9 +71,12 @@
                             }
                             else
                             {
-                                var discountedPrice = Math.Round(ViewBag.product.price * (1 - (ViewBag.productDiscount.discount.value / 100.0)), 2);
-
-                                @($"{discountedPrice}VND")     <s>@($"{ViewBag.product.price}VND")</s>
+                                @if(ViewBag.productPrice != ViewBag.product.price)
+                                {
+                                    @($"{ViewBag.productPrice}VND")     <s>@($"{ViewBag.product.price}VND")</s>
+                                }else{
+                                    @($"{ViewBag.product.price}VND")
+                                }
                             }
 
 
@@ -153,6 +156,7 @@
             <h5 class="card-title">Similar</h5>
             @foreach (var product in ViewBag.similarProducts)
             {
+                var discountPrice = ViewBag.discountProductSimilar != null && ViewBag.discountProductSimilar.ContainsKey(product.id)? ViewBag.discountProductSimilar[product.id]: 0;
                 <div class="col-md-2 col-sm-6">
                     <div class="product-grid">
                         <div class="product-image">
@@ -163,7 +167,11 @@
                         </div>
                         <div class="product-content">
                             <h3 class="title"><a href="@Url.Action("Index", "ViewProductDetail", new { area = "Home", productId = product.id })">@product.name</a></h3>
-                            <div class="price">$@product.price</div>
+                            @if(discountPrice == @product.price){
+                            <div class="price">@($"{product.price}VND")</div>
+                            }else{
+                                <div class="price">@($"{discountPrice}VND")- <s>@($"{product.price}VND")</s></div>
+                            }
                         </div>
                     </div>
                 </div>
@@ -188,7 +196,7 @@
             button.classList.remove('selected');
             selectedButton = null;
             document.getElementById('quantityInput').value = 1;
-            document.getElementById('quantityDisplay').innerText = @ViewBag.product.quantity;
+            document.getElementById('quantityDisplay').innerText = @ViewBag.quantityProduct;
             selectedProductId = null;
             document.getElementById('discount').style.display = 'none';
             resetMainImage('/productImages/@ViewBag.product.coverImage.imageName');
@@ -200,7 +208,7 @@
                 const maxPrice = '@ViewBag.maxPrice';
 
                 if (minPrice === maxPrice) {
-                    document.getElementById('productPrice').innerText = 'VND' + minPrice;
+                    document.getElementById('productPrice').innerText = minPrice + 'VND';
                 } else {
                     document.getElementById('oldPrice').innerText = maxPrice + ' VND';
                     document.getElementById('oldPrice').style.display = 'inline';
@@ -223,12 +231,16 @@
             updateMainImage(imagePath);
 
             const oldPriceText = productPrice + " VND";
-            const newPriceText = discountPrice > 0 ? discountPrice + " VND -" : "0 VND";
+            const newPriceText = discountPrice > 0 ? discountPrice + " VND " : "0 VND";
 
             document.getElementById('discount').innerText = oldPriceText;
             document.getElementById('newPrice').innerText = newPriceText;
             document.getElementById('oldPrice').style.display = 'none';
-            document.getElementById('discount').style.display = 'inline';
+            if (productPrice != discountPrice) {
+                document.getElementById('discount').style.display = 'inline';
+            } else {
+                document.getElementById('discount').style.display = 'none';
+            }
 
         }
     }

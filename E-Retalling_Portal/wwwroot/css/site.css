@@ -453,7 +453,6 @@ body {
     font-size: 1.2em;
     color: #333;
     align-items: center;
-    padding-left: 20px;
 }
 
 
@@ -463,6 +462,5 @@ body {
     font-weight: bold;
     padding: 2px 8px;
     border-radius: 5px;
-    margin-left: 10px;
     font-size: 0.9em;
 }
