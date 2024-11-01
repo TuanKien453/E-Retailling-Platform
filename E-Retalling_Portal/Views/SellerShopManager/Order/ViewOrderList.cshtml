@@ -1,0 +1,102 @@
+﻿@{
+    ViewData["Title"] = "Order List";
+
+}
+<link href="~/css/OrderList.css" rel="stylesheet">
+<div class="container">
+    <!-- Tabs -->
+    <div class="tabs">
+        <div class="tab active">Tất cả</div>
+        <div class="tab">Chờ thanh toán</div>
+        <div class="tab">Vận chuyển</div>
+        <div class="tab">Chờ giao hàng</div>
+        <div class="tab">Hoàn thành</div>
+        <div class="tab">Đã hủy</div>
+        <div class="tab">Trả hàng/Hoàn tiền</div>
+    </div>
+
+    <!-- Search bar -->
+    <input type="text" class="search-bar" placeholder="">
+
+    @foreach (var item in ViewBag.OrderList)
+    {
+        @if (item.productItemId == null)
+        {
+            <div class="order-card">
+                <div class="order-header">
+                    <div class="shop-name">@item.product.shop.name</div>
+                    <div class="shop-actions">
+                        <a href="/Home/ViewShop?id=@item.product.shop.id">
+                            <button>Xem Shop</button>
+                        </a>
+                    </div>
+                </div>
+                <div class="order-content">
+                    <img src="~/productImages/@item.product.coverImage.imageName" alt="Product Image">
+                    <div class="order-details">
+                        <p>@item.product.name</p>
+                        <p>@item.quantity</p>
+                        <p>
+                            @if (((item.product.price ?? 0) * (item.quantity ?? 0)) != item.price)
+                            {
+                                <span style="text-decoration: line-through; color: #999;">
+                                    @((item.productItem.price ?? 0) * (item.quantity ?? 0))
+                                </span>
+                            }
+                            <span style="color: #e84118;">@item.price</span>
+                        </p>
+                    </div>
+                </div>
+                <div class="order-footer">
+                    <div class="total-price">Thành tiền: @(item.price + item.shippingFee)</div>
+                    <div class="actions">
+                        <a href="/ViewProductDetail?area=Home&productId=@item.product.id">
+                            <button>Mua Lại</button>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        }
+        else
+        {
+            <div class="order-card">
+                <div class="order-header">
+                    <div class="shop-name">@item.product.shop.name</div>
+                    <div class="shop-actions">
+                        <a href="/Home/ViewShop?id=@item.product.shop.id">
+                            <button>Xem Shop</button>
+                        </a>
+                    </div>
+                </div>
+                <div class="order-content">
+                    <img src="~/productImages/@item.productItem.image.imageName" alt="Product Image">
+                    <div class="order-details">
+                        <p>@item.product.name-@item.productItem.attribute</p>
+                        <p>@item.quantity</p>
+                        <p>
+                            @if (((item.productItem.price ?? 0) * (item.quantity ?? 0)) != item.price)
+                            {
+                                <span style="text-decoration: line-through; color: #999;">
+                                    @((item.productItem.price ?? 0) * (item.quantity ?? 0))
+                                </span>
+                            }
+                            <span style="color: #e84118;">@item.price</span>
+                        </p>
+                    </div>
+                </div>
+                <div class="order-footer">
+                    <div class="total-price">Thành tiền: @(item.price + item.shippingFee)</div>
+                    <div class="actions">
+                        <a href="/ViewProductDetail?area=Home&productId=@item.product.id">
+                            <button>Mua Lại</button>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        }
+    }
+
+
+</div>

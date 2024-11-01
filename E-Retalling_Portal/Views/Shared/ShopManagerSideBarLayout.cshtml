@@ -74,7 +74,20 @@
                                 </ul>
                             </div>
                         </li>
-
+                        <li class="mb-1">
+                            <div class="sidebar-parent">
+                                <button class="btn btn-toggle align-items-center rounded collapsed no-shadow text-white" data-bs-toggle="collapse" data-bs-target="#order-collapse" aria-expanded="false">
+                                    <i class="fa-solid fa-tag">&nbsp;</i>
+                                    Order
+                                    <i class="fa-solid fa-chevron-down dropdown-icon"></i>
+                                </button>
+                            </div>
+                            <div class="collapse" id="order-collapse">
+                                <ul class="btn-toggle-nav list-unstyled fw-normal pb-2 small">
+                                    <li class="activeable"><a href="@Url.Action("OrderInfo","Order")" class="">Order Information</a></li>
+                                </ul>
+                            </div>
+                        </li>
                         <li class="mb-1 single-item activeable">
                             <button class="btn btn-toggle align-items-center rounded collapsed no-shadow text-white" onclick="showLogoutModal()">
                                 <i class="fa-solid fa-right-from-bracket">&nbsp;</i>

@@ -73,6 +73,15 @@ namespace E_Retalling_Portal.Services
             var jsonResponse = await GetJsonResponseAsync(request);
             return _ghnLibrary.DeserializeJsonResponse<WardResponse>(jsonResponse).Data;
         }
+        public async Task<OrderInfoResponse> GetOrderInfoAsync(string orderCode)
+        {
+            var requestUrl = "https://dev-online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/detail";
+            var requestBody = new { order_code = orderCode};
+            var request = _ghnLibrary.CreateRequest(requestUrl, HttpMethod.Post, requestBody);
+
+            var jsonResponse = await GetJsonResponseAsync(request);
+            return _ghnLibrary.DeserializeJsonResponse<OrderInfoResponse>(jsonResponse);
+        }
 
         private async Task<string> GetJsonResponseAsync(HttpRequestMessage request)
         {

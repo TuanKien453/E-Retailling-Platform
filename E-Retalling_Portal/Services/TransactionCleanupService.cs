@@ -34,14 +34,14 @@ namespace E_Retalling_Portal.Services
                             // Update quantity of ProductItem (if exists)
                             if (orderItem.productItem != null)
                             {
-                                orderItem.productItem.quantity += orderItem.quanity;
+                                orderItem.productItem.quantity += orderItem.quantity;
                                 context.ProductItems.Update(orderItem.productItem);
                             }
 
                             // Update quantity of Product (if exists)
                             else if (orderItem.product != null)
                             {
-                                orderItem.product.quantity += orderItem.quanity;
+                                orderItem.product.quantity += orderItem.quantity;
                                 context.Products.Update(orderItem.product);
                             }
                         }
