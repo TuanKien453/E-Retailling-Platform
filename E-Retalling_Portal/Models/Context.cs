@@ -179,8 +179,8 @@ namespace E_Retalling_Portal.Models
                 new Discount { id = 1, name = "Summer Sale", startDate = "2024-10-31", endDate = "2024-06-30", value = 15, shopId = 1 },
             new Discount { id = 2, name = "Birthday Discount", startDate = "2024-07-01", endDate = "2024-07-15", value = 20, shopId = 1 },
             new Discount { id = 3, name = "Buy One Get One Free", startDate = "2024-08-01", endDate = "2024-08-31", value = 50, shopId = 1 },
-            new Discount { id = 4, name = "Holiday Discount", startDate = "2024-10-31", endDate = "2024-11-01", value = 50, shopId = 1 },
-            new Discount { id = 5, name = "End of Year Sale", startDate = "2024-10-31", endDate = "2024-11-01", value = 80, shopId = 1 }
+            new Discount { id = 4, name = "Holiday Discount", startDate = "2024-10-31", endDate = "2024-11-09", value = 50, shopId = 1 },
+            new Discount { id = 5, name = "End of Year Sale", startDate = "2024-10-31", endDate = "2024-11-09", value = 80, shopId = 1 }
             );
         }
         private static void SeedingProductItem(ModelBuilder modelBuilder)

@@ -37,13 +37,18 @@
                         <p>@item.product.name</p>
                         <p>@item.quantity</p>
                         <p>
-                            @if (((item.product.price ?? 0) * (item.quantity ?? 0)) != item.price)
+                            @if (item != null && item.product != null && item.productItem != null)
                             {
-                                <span style="text-decoration: line-through; color: #999;">
-                                    @((item.productItem.price ?? 0) * (item.quantity ?? 0))
-                                </span>
+                                var totalPrice = (item.product.price ?? 0) * (item.quantity ?? 0);
+                                if (totalPrice != item.price)
+                                {
+                                    <span style="text-decoration: line-through; color: #999;">
+                                        @totalPrice
+                                    </span>
+                                }
                             }
                             <span style="color: #e84118;">@item.price</span>
+
                         </p>
                     </div>
                 </div>
@@ -75,13 +80,18 @@
                         <p>@item.product.name-@item.productItem.attribute</p>
                         <p>@item.quantity</p>
                         <p>
-                            @if (((item.productItem.price ?? 0) * (item.quantity ?? 0)) != item.price)
+                            @if (item != null && item.product != null && item.productItem != null)
                             {
-                                <span style="text-decoration: line-through; color: #999;">
-                                    @((item.productItem.price ?? 0) * (item.quantity ?? 0))
-                                </span>
+                                var totalPrice = (item.productItem.price ?? 0) * (item.quantity ?? 0);
+                                if (totalPrice != item.price)
+                                {
+                                    <span style="text-decoration: line-through; color: #999;">
+                                        @totalPrice
+                                    </span>
+                                }
                             }
                             <span style="color: #e84118;">@item.price</span>
+
                         </p>
                     </div>
                 </div>
