@@ -337,7 +337,7 @@ namespace E_Retalling_Portal.Controllers.Home
                         {
                             orderId = order.id,
                             price = price * item.Value,
-                            quanity = item.Value,
+                            quantity = item.Value,
                             productId = item.Key.product.id,
                             productItemId = item.Key.id,
                             shippingFee = Int32.Parse(orderResponse.Data.TotalFee),
@@ -392,7 +392,7 @@ namespace E_Retalling_Portal.Controllers.Home
                         {
                             orderId = order.id,
                             price = price * item.Value,
-                            quanity = item.Value,
+                            quantity = item.Value,
                             productId = item.Key.id,
                             productItemId = null,
                             shippingFee = Int32.Parse(orderResponse.Data.TotalFee),
@@ -461,7 +461,7 @@ namespace E_Retalling_Portal.Controllers.Home
                         {
                             orderId = order.id,
                             price = price * item.Value,
-                            quanity = item.Value,
+                            quantity = item.Value,
                             productId = item.Key.product.id,
                             productItemId = item.Key.id,
                             shippingFee = shipFee,
@@ -519,7 +519,7 @@ namespace E_Retalling_Portal.Controllers.Home
                         {
                             orderId = order.id,
                             price = price * item.Value,
-                            quanity = item.Value,
+                            quantity = item.Value,
                             productId = item.Key.id,
                             productItemId = null,
                             shippingFee = shipFee,
@@ -603,7 +603,7 @@ namespace E_Retalling_Portal.Controllers.Home
                             ToDistrictId = o.district,
                             COD = 0,
 
-                            Weight = weight * item.quanity,
+                            Weight = weight * item.quantity,
                             Length = 20,
                             Width = 20,
                             Height = 20,
@@ -614,7 +614,7 @@ namespace E_Retalling_Portal.Controllers.Home
                                 {
                                     Name = name,
                                     Weight = weight,
-                                    Quantity =item.quanity,
+                                    Quantity =item.quantity,
                                 }
                             }
                         };

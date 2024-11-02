@@ -9,7 +9,7 @@ namespace E_Retalling_Portal.Models
         public int orderId { get; set; }
         public int productId { get; set; }
         public int? productItemId { get; set; }
-        public int quanity {  get; set; }
+        public int quantity {  get; set; }
         [MaxLength(50)]
 		public string? shippingStatus { get; set; }
         public double price { get; set; }
