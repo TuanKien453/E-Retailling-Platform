@@ -8,5 +8,6 @@
         public int saleMonth { get; set; }
         public int saleDay { get; set; }
         public decimal totalRevenue { get; set; }
+        public decimal totalTransactionFee { get; set; }
     }
 }

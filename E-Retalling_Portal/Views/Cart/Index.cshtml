@@ -361,8 +361,8 @@
                 url: '/address/getProvinces',
                 type: 'GET',
                 success: function (data_tinh) {
+                    data_tinh.sort((a, b) => a.provinceName.localeCompare(b.provinceName));
                     console.log("Provinces loaded:", data_tinh);
-
                     // Populate provinces dropdown
                     $.each(data_tinh, function (key_tinh, val_tinh) {
                         $("#tinh").append('<option value="' + val_tinh.provinceID + '">' + val_tinh.provinceName + '</option>');
@@ -392,6 +392,7 @@
                     url: '/address/getDistricts?provinceId=' + idtinh,
                     type: 'GET',
                     success: function (data_quan) {
+                        data_quan.sort((a, b) => a.districtName.localeCompare(b.districtName));
                         console.log("Districts loaded:", data_quan);
                         $.each(data_quan, function (key_quan, val_quan) {
                             $("#quan").append('<option value="' + val_quan.districtID + '">' + val_quan.districtName + '</option>');
@@ -417,6 +418,7 @@
                     url: '/address/getWards?districtId=' + idquan,
                     type: 'GET',
                     success: function (data_phuong) {
+                        data_phuong.sort((a, b) => a.wardName.localeCompare(b.wardName));
                         console.log("Wards loaded:", data_phuong);
                         $.each(data_phuong, function (key_phuong, val_phuong) {
                             $("#phuong").append('<option value="' + val_phuong.wardCode + '">' + val_phuong.wardName + '</option>');

@@ -1,80 +1,36 @@
 ﻿@model List<E_Retalling_Portal.Models.ManagerStatisticModel.Top10SellingProduct>
 
 @{
-	ViewData["Title"] = "Top 10 Selling Products";
-	Layout = "~/Views/Shared/ManagerSideBarLayout.cshtml";
+    ViewData["Title"] = "Top 10 Selling Products";
+    Layout = "~/Views/Shared/ManagerSideBarLayout.cshtml";
 }
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<title>Top Selling Products</title>
-	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-	<style>
-		body {
-			font-family: 'Arial', sans-serif;
-		}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+    body {
+        font-family: 'Arial', sans-serif;
+    }
 
-		.chart-title {
-			text-align: center;
-			margin: 20px 0;
-			font-size: 24px;
-			font-weight: bold;
-		}
-	</style>
-</head>
+    .chart-title {
+        text-align: center;
+        margin: 20px 0;
+        font-size: 24px;
+        font-weight: bold;
+    }
+</style>
 <body>
-	<div class="content m-4 pb-3">
-		<h2 class="text-center text-primary" style="margin-top: 20px; padding-top: 20px">Top 10 Selling Products</h2>
+    <div class="content m-4 pb-3">
+        <h2 class="text-center text-primary" style="margin-top: 20px; padding-top: 40px">Top 10 Selling Products</h2>
 
-		<h4>Select Start Date</h4>
-		<label for="startYearSelect">Year:</label>
-		<select id="startYearSelect">
-			@foreach (var year in Model.Select(m => m.saleYear).Distinct())
-			{
-				<option value="@year">@year</option>
-			}
-		</select>
-		<label for="startMonthSelect">Month:</label>
-		<select id="startMonthSelect">
-			@for (int month = 1; month <= 12; month++)
-			{
-				<option value="@month">@month</option>
-			}
-		</select>
-		<label for="startDaySelect">Day:</label>
-		<select id="startDaySelect">
-			@for (int day = 1; day <= 31; day++)
-			{
-				<option value="@day">@day</option>
-			}
-		</select>
+        &nbsp;From:
+        <input type="date" id="startDatePicker" value="@DateTime.Now.AddYears(-1).ToString("yyyy-MM-dd")" />
 
-		<h4>Select End Date</h4>
-		<label for="endYearSelect">Year:</label>
-		<select id="endYearSelect">
-			@foreach (var year in Model.Select(m => m.saleYear).Distinct())
-			{
-				<option value="@year">@year</option>
-			}
-		</select>
-		<label for="endMonthSelect">Month:</label>
-		<select id="endMonthSelect">
-			@for (int month = 1; month <= 12; month++)
-			{
-				<option value="@month">@month</option>
-			}
-		</select>
-		<label for="endDaySelect">Day:</label>
-		<select id="endDaySelect">
-			@for (int day = 1; day <= 31; day++)
-			{
-				<option value="@day">@day</option>
-			}
-		</select>
+        &nbsp;To:
+        <input type="date" id="endDatePicker" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
 
-		<canvas id="topSellingChart" width="400" height="250"></canvas>
+        <div class="p-5">
+        <canvas id="topSellingChart" width="100" height="50"></canvas>
+        </div>
 
         <script>
             const data = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model));
@@ -96,51 +52,31 @@
                     responsive: true,
                     scales: {
                         y: {
-                            beginAtZero: true
+                            beginAtZero: true, 
+                            title: {
+                                display: true,
+                                text: 'Quantity Sold',
+                                padding: { bottom: 10 },
+                            }
                         }
                     }
                 }
             });
 
-            // Lưu trữ giá trị ngày tháng ban đầu
-            const initialStartDate = {
-                year: new Date().getFullYear() - 1,
-                month: 1,
-                day: 1
-            };
-            const initialEndDate = {
-                year: new Date().getFullYear(),
-                month: new Date().getMonth() + 1,
-                day: new Date().getDate()
-            };
-
             function updateChart() {
-                const startYear = document.getElementById('startYearSelect').value;
-                const startMonth = document.getElementById('startMonthSelect').value;
-                const startDay = document.getElementById('startDaySelect').value;
-                const endYear = document.getElementById('endYearSelect').value;
-                const endMonth = document.getElementById('endMonthSelect').value;
-                const endDay = document.getElementById('endDaySelect').value;
-
-                const startDate = new Date(startYear, startMonth - 1, startDay);
-                const endDate = new Date(endYear, endMonth - 1, endDay);
+                const startDate = new Date(document.getElementById('startDatePicker').value);
+                const endDate = new Date(document.getElementById('endDatePicker').value);
 
                 if (startDate > endDate) {
                     alert("Start date must be before end date.");
-                    // Đặt lại ngày tháng về giá trị ban đầu
-                    document.getElementById('startYearSelect').value = initialStartDate.year;
-                    document.getElementById('startMonthSelect').value = initialStartDate.month;
-                    document.getElementById('startDaySelect').value = initialStartDate.day;
-
-                    // Cập nhật lại biểu đồ
                     return;
                 }
 
                 const aggregatedData = {};
 
                 data.forEach(d => {
-                    const saleDate = new Date(d.saleYear, d.saleMonth - 1);
-                    if ((!isNaN(startDate) && !isNaN(endDate) && saleDate >= startDate && saleDate <= endDate) || (isNaN(startDate) || isNaN(endDate))) {
+                    const saleDate = new Date(d.saleYear, d.saleMonth - 1, d.saleDay || 1);
+                    if (saleDate >= startDate && saleDate <= endDate) {
                         const productName = d.productItemName || d.productName;
                         if (!aggregatedData[productName]) {
                             aggregatedData[productName] = 0;
@@ -155,28 +91,16 @@
                 topSellingChart.update();
             }
 
-            // Thiết lập giá trị ngày tháng ban đầu
-            document.getElementById('startYearSelect').value = initialStartDate.year;
-            document.getElementById('startMonthSelect').value = initialStartDate.month;
-            document.getElementById('startDaySelect').value = initialStartDate.day;
+            document.getElementById('startDatePicker').addEventListener('change', updateChart);
+            document.getElementById('endDatePicker').addEventListener('change', updateChart);
 
-            document.getElementById('endYearSelect').value = initialEndDate.year;
-            document.getElementById('endMonthSelect').value = initialEndDate.month;
-            document.getElementById('endDaySelect').value = initialEndDate.day;
-
-            // Gắn sự kiện thay đổi cho các lựa chọn
-            document.getElementById('startYearSelect').addEventListener('change', updateChart);
-            document.getElementById('startMonthSelect').addEventListener('change', updateChart);
-            document.getElementById('startDaySelect').addEventListener('change', updateChart);
-            document.getElementById('endYearSelect').addEventListener('change', updateChart);
-            document.getElementById('endMonthSelect').addEventListener('change', updateChart);
-            document.getElementById('endDaySelect').addEventListener('change', updateChart);
-
+            // Initialize chart with default date range
             updateChart();
         </script>
-		<div style="display: flex; justify-content: flex-end; margin-bottom: 20px; margin-right: 20px;">
-			<a href="@Url.Action("Index", "ManagerStatistic")" style="text-decoration: none; color: #007bff; border: 1px solid #007bff; border-radius: 5px; padding: 10px;">Back to List Shops</a>
-		</div>
-	</div>
+
+        <div style="display: flex; justify-content: flex-end; margin-bottom: 20px; margin-right: 20px;">
+            <a href="@Url.Action("Index", "ManagerStatistic")" style="text-decoration: none; color: #007bff; border: 1px solid #007bff; border-radius: 5px; padding: 10px;">Back to List Shops</a>
+        </div>
+    </div>
 </body>
 </html>

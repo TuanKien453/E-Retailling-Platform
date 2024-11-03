@@ -16,7 +16,7 @@ namespace E_Retalling_portal.Models.Query
                             .ThenInclude(p => p.category)
                     .Include(oi => oi.order)
                     .Include(oi => oi.product.shop)
-                    .Where(oi => oi.product.shopId == shopId)
+                    .Where(oi => oi.product.shopId == shopId && oi.shippingStatus == "delivered")
                     .ToList();
 
                 var groupedData = salesData
@@ -27,8 +27,8 @@ namespace E_Retalling_portal.Models.Query
                         CategoryId = oi.product.categoryId,
                         CategoryName = oi.product.category.name,
                         saleYear = int.Parse(oi.order.createTime.Substring(0, 4)),
-                        saleMonth = int.Parse(oi.order.createTime.Substring(5, 2)),
-                        saleDay = int.Parse(oi.order.createTime.Substring(8, 2))
+                        saleMonth = int.Parse(oi.order.createTime.Substring(4, 2)),
+                        saleDay = int.Parse(oi.order.createTime.Substring(6, 2))
                     })
                     .Select(g => new CategoryStats
                     {
@@ -59,7 +59,7 @@ namespace E_Retalling_portal.Models.Query
                 var orderItems = context.OrderItems
                     .Include(oi => oi.order)
                     .Include(oi => oi.product.shop)
-                    .Where(oi => oi.product.shopId == shopId)
+                    .Where(oi => oi.product.shopId == shopId && oi.shippingStatus == "delivered")
                     .ToList();
 
                 var customerStats = orderItems
@@ -68,8 +68,8 @@ namespace E_Retalling_portal.Models.Query
                         shopId = oi.product.shopId,
                         shopName = oi.product.shop.name,
                         saleYear = Convert.ToInt32(oi.order.createTime.Substring(0, 4)),
-                        saleMonth = Convert.ToInt32(oi.order.createTime.Substring(5, 2)),
-                        saleDay = int.Parse(oi.order.createTime.Substring(8, 2))
+                        saleMonth = Convert.ToInt32(oi.order.createTime.Substring(4, 2)),
+                        saleDay = int.Parse(oi.order.createTime.Substring(6, 2))
                     })
                     .Select(g => new CustomerStats
                     {
@@ -97,7 +97,7 @@ namespace E_Retalling_portal.Models.Query
                     .Include(oi => oi.order)
                     .Include(oi => oi.product.shop)
                     .Include(oi => oi.product.productItems)
-                    .Where(oi => oi.product.shopId == shopId)
+                    .Where(oi => oi.product.shopId == shopId && oi.shippingStatus == "delivered")
                     .ToList();
 
                 var RevenueStats = orderItems
@@ -106,8 +106,8 @@ namespace E_Retalling_portal.Models.Query
                         shopId = oi.product.shopId,
                         shopName = oi.product.shop.name,
                         saleYear = int.Parse(oi.order.createTime.Substring(0, 4)),
-                        saleMonth = int.Parse(oi.order.createTime.Substring(5, 2)),
-                        saleDay = int.Parse(oi.order.createTime.Substring(8, 2))
+                        saleMonth = int.Parse(oi.order.createTime.Substring(4, 2)),
+                        saleDay = int.Parse(oi.order.createTime.Substring(6, 2))
                     })
                     .Select(g => new RevenueStats
                     {
@@ -119,7 +119,8 @@ namespace E_Retalling_portal.Models.Query
                         totalRevenue = (decimal)g.Sum(oi =>
                             oi.productItemId.HasValue ?
                                 oi.quanity * oi.product.productItems.FirstOrDefault(pi => pi.id == oi.productItemId)?.price :
-                                oi.quanity * oi.product.price)
+                                oi.quanity * oi.product.price),
+                        totalTransactionFee = (decimal)g.Sum(oi => oi.transactionFee)
                     })
                     .OrderBy(s => s.shopId)
                     .ThenBy(s => s.saleYear)
@@ -131,7 +132,6 @@ namespace E_Retalling_portal.Models.Query
             }
         }
 
-
         public static List<OrderStats> GetOrderStatsByShopId(int shopId)
         {
             using (var context = new Context())
@@ -139,7 +139,7 @@ namespace E_Retalling_portal.Models.Query
                 var orderItems = context.OrderItems
                     .Include(oi => oi.order)
                     .Include(oi => oi.product.shop)
-                    .Where(oi => oi.product.shopId == shopId)
+                    .Where(oi => oi.product.shopId == shopId && oi.shippingStatus == "delivered")
                     .ToList();
 
                 var OrderStats = orderItems
@@ -148,8 +148,8 @@ namespace E_Retalling_portal.Models.Query
                         shopId = oi.product.shopId,
                         shopName = oi.product.shop.name,
                         saleYear = int.Parse(oi.order.createTime.Substring(0, 4)),
-                        saleMonth = int.Parse(oi.order.createTime.Substring(5, 2)),
-                        saleDay = int.Parse(oi.order.createTime.Substring(8, 2))
+                        saleMonth = int.Parse(oi.order.createTime.Substring(4, 2)),
+                        saleDay = int.Parse(oi.order.createTime.Substring(6, 2))
                     })
                     .Select(g => new OrderStats
                     {
@@ -158,7 +158,7 @@ namespace E_Retalling_portal.Models.Query
                         saleYear = g.Key.saleYear,
                         saleMonth = g.Key.saleMonth,
                         saleDay = g.Key.saleDay,
-                        totalOrders = g.Select(oi => oi.orderId).Distinct().Count()
+                        totalOrders = g.Select(oi => oi.id).Distinct().Count()
                     })
                     .OrderBy(s => s.shopId)
                     .ThenBy(s => s.saleYear)
@@ -179,7 +179,7 @@ namespace E_Retalling_portal.Models.Query
                     .Include(oi => oi.order)
                     .Include(oi => oi.product.shop)
                     .Include(oi => oi.product.productItems)
-                    .Where(oi => oi.product.shopId == shopId)
+                    .Where(oi => oi.product.shopId == shopId && oi.shippingStatus == "delivered")
                     .ToList();
 
                 var bestSellingProducts = orderItems
@@ -194,8 +194,8 @@ namespace E_Retalling_portal.Models.Query
                         ShopId = oi.product.shopId,
                         ShopName = oi.product.shop.name,
                         SaleYear = int.Parse(oi.order.createTime.Substring(0, 4)),
-                        SaleMonth = int.Parse(oi.order.createTime.Substring(5, 2)),
-                        SaleDay = int.Parse(oi.order.createTime.Substring(8, 2))
+                        SaleMonth = int.Parse(oi.order.createTime.Substring(4, 2)),
+                        SaleDay = int.Parse(oi.order.createTime.Substring(6, 2))
                     })
                     .Select(g => new Top10SellingProduct
                     {

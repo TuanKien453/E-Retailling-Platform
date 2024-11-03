@@ -42,9 +42,9 @@
                     <tr>
                         <th style="text-align: left;">ShopId</th>
                         <th>Shop Name</th>
-                        <th>Province</th>
-                        <th>District</th>
-                        <th>Commune</th>
+                        <th style="text-align: left;">Province</th>
+                        <th style="text-align: left;">District</th>
+                        <th style="text-align: left;">Ward</th>
                         <th style="text-align: left;">Created At</th>
                         <th>Action</th>
                     </tr>
@@ -55,9 +55,9 @@
                         <tr>
                             <td style="text-align: left;">@item.id</td>
                             <td>@item.name</td>
-                            <td>@item.province</td>
-                            <td>@item.district</td>
-                            <td>@item.ward</td>
+                            <td class="province-cell" data-provinceid="@item.province" style="text-align: left;">@item.province</td>
+                            <td class="district-cell" data-districtid="@item.district" style="text-align: left;">@item.district</td>
+                            <td class="ward-cell" data-wardid="@item.ward" style="text-align: left;">@item.ward</td>
                             <td style="text-align: left;">@item.createdAt</td>
                             <td>
                                 <div class="dropdown">
@@ -79,6 +79,7 @@
         </div>
     </div>
 </div>
+<script src="~/js/detailAddress.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.datatables.net/2.1.8/js/dataTables.js"></script>
 <script>
@@ -90,4 +91,5 @@
             });
         });
     });
+
 </script> 

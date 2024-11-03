@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 using Microsoft.IdentityModel.Tokens;
 using X.PagedList;
 using E_Retalling_Portal.Util;
+using Microsoft.CodeAnalysis.Operations;
 
 namespace E_Retalling_Portal.Controllers.Cart
 {
@@ -122,6 +123,23 @@ namespace E_Retalling_Portal.Controllers.Cart
 
 		public IActionResult AddToCart(int itemId, int quantity, bool isProduct)
 		{
+			using (var context = new Context())
+			{
+				if (isProduct)
+				{
+					if(context.Products.GetProductById(itemId).FirstOrDefault() == null)
+					{
+						return RedirectToAction("Error505", "Home");			    
+					}
+				}	
+				else
+				{
+					if(context.ProductItems.GetProductItemByProductItemId(itemId).FirstOrDefault() == null)
+					{
+                        return RedirectToAction("Error505", "Home");
+                    }
+				}
+			}
 			var cartItems = CookiesUtils.GetCartItems(Request);
 			string cartKey = isProduct ? $"{itemId}P" : $"{itemId}PI";
 
