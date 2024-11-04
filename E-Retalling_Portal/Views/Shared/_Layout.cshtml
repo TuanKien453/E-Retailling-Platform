@@ -79,7 +79,7 @@
                         </a>
                     </li>
                 </ul>
-                <a class="navbar-brand position-relative" href="@Url.Action("Index","Cart")" target="_blank">
+                <a class="navbar-brand position-relative" href="@Url.Action("Index","Cart")">
                     <i class="fas fa-shopping-cart" style="font-size: 20px;"></i>
                     <span id="cartQuantity" class="badge bg-dark position-absolute top-10 start-100 translate-middle rounded-pill" style="padding: 0.1em 0.3em; height: 1.2rem; min-width: 1.2rem; line-height: 1.2rem;"></span>
                 </a>
@@ -103,6 +103,7 @@
                                     <li><a class="dropdown-item border-radius-md" href="@Url.Action("ViewProfile","UserProfile")">Profile</a></li>
                                     <li><a class="dropdown-item border-radius-md" href="javascript:;">Change password</a></li>
                                     <li><a class="dropdown-item border-radius-md" href="javascript:;">Become Seller</a></li>
+                                    <li><a class="dropdown-item border-radius-md" href="@Url.Action("ViewOrderList","Order")">OrderList</a></li>
                                     <li><a class="dropdown-item border-radius-md" href="@Url.Action("logout","login")">Logout</a></li>
                                 </ul>
                             </div>

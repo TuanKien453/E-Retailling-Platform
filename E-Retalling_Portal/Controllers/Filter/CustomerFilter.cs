@@ -10,6 +10,11 @@ namespace E_Retalling_Portal.Controllers.Filter
     {
         public void OnActionExecuted(ActionExecutedContext context)
         {
+
+        }
+
+        public void OnActionExecuting(ActionExecutingContext context)
+        {
             Boolean haveAccess = false;
             var session = context.HttpContext.Session;
             var accId = session.GetInt32(SessionKeys.AccountId.ToString());
@@ -29,11 +34,6 @@ namespace E_Retalling_Portal.Controllers.Filter
             {
                 context.Result = new RedirectResult("/Login");
             }
-        }
-
-        public void OnActionExecuting(ActionExecutingContext context)
-        {
-
         }
     }
 }

@@ -145,8 +145,15 @@
                         }">@item.name</option>
                         }
                     </select>
-                    <!--------------------------price------------------------------------------------>
+                    <!--------------------------weight------------------------------------------------>
                     <h4 class="font-weight-bold mt-6">
+                        Weight
+                    </h4>
+                    <input id="weight" class="form-control" type="number" min="0" max="50000" step="1"
+                           title="Please enter a value between 0 and 50000"
+                           placeholder="Approximately weight (gram)" required name="weight">
+                    <!--------------------------price------------------------------------------------>
+                    <h4 class="font-weight-bold mt-4">
                         Price
                     </h4>
                     <input id="price" class="form-control disabled" type="text" pattern="^\d+(\.\d{1,2})?$" title="Please enter a valid decimal number up to 2 decimal places."

@@ -12,7 +12,11 @@ namespace E_Retalling_Portal.Models.Query
 
 		public static IQueryable<ProductItem> GetProductItemByProductItemId(this DbSet<ProductItem> dbProductItem, int productItemId)
 		{
-			return dbProductItem.Include("image").Where(pi => pi.id == productItemId && pi.deleteAt == null);
+			return dbProductItem
+                .Include(pi=>pi.image)
+                .Include(pi=>pi.product)
+                    .ThenInclude(p=>p.shop)
+                .Where(pi => pi.id == productItemId && pi.deleteAt == null);
 		}
 
 		public static IQueryable<ProductItem> GetAllProductItem(this DbSet<ProductItem> dbProductItem)
@@ -26,7 +30,7 @@ namespace E_Retalling_Portal.Models.Query
             if (pi != null)
             {
                 Console.WriteLine($"pi = {pi.productId}, pi.id = {pi.id}");
-                context.ProductDiscount.DeleteProductDiscount(pi.productId, pi.id);
+                context.ProductDiscounts.DeleteProductDiscount(pi.productId, pi.id);
                 context.SaveChanges();
                 pi.deleteAt = DateTime.Now.ToString();
                 context.Entry(pi).State = EntityState.Modified;
@@ -49,7 +53,7 @@ namespace E_Retalling_Portal.Models.Query
         {
             using (var context = new Context())
             {
-                ProductDiscount? productDiscount = context.ProductDiscount.GetProductDiscountByProductIdAndProductItemId(productItem.productId, productItem.id).FirstOrDefault();
+                ProductDiscount productDiscount = context.ProductDiscounts.GetProductDiscountByProductIdAndProductItemId(productItem.productId, productItem.id).FirstOrDefault();
                 if (productDiscount == null)
                 {
                     return productItem.price;

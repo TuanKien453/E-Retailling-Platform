@@ -24,7 +24,7 @@ namespace E_Retalling_Portal.Models.Query
         {
             double price = 0;
             using (var context = new Context())
-            {
+        
                 foreach (var item in orders)
                 {
                     price += item.price * item.quanity;
@@ -32,6 +32,17 @@ namespace E_Retalling_Portal.Models.Query
             }
             return price;
         }
-
+    public static IQueryable<OrderItem> GetOrderItemByUserId(this DbSet<OrderItem> dbAccount, int userId)
+    {
+        return dbAccount
+                .Include(oi => oi.order)
+                .Include(oi => oi.productItem)
+                .Include(oi => oi.product)
+                    .ThenInclude(p => p.shop)
+                .Include(oi => oi.product)
+                    .ThenInclude(p => p.coverImage)
+                .Include(oi => oi.productItem)
+                    .ThenInclude(pi => pi.image)
+                .Where(oi => oi.order.userId == userId);
     }
 }

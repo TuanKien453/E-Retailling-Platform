@@ -20,7 +20,7 @@ namespace E_Retalling_Portal.Models
         public DbSet<ProductItem> ProductItems { get; set; }
         public DbSet<Shop> Shops { get; set; }
         public DbSet<Status> Statuses { get; set; }
-        public DbSet<ProductDiscount> ProductDiscount { get; set; }
+        public DbSet<ProductDiscount> ProductDiscounts { get; set; }
         public DbSet<Discount> Discounts { get; set; }
         public DbSet<Setting> Settings { get; set; }
 
@@ -142,13 +142,13 @@ namespace E_Retalling_Portal.Models
                 .HasForeignKey(pd => pd.productItemId)
                  .OnDelete(DeleteBehavior.Restrict);
 
-			modelBuilder.Entity<ProductDiscount>()
+            modelBuilder.Entity<ProductDiscount>()
                 .HasOne(p => p.product)
                 .WithMany(p => p.productDiscounts)
                 .HasForeignKey(pd => pd.productId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-			SeedingCategory(modelBuilder);
+            SeedingCategory(modelBuilder);
             SeedingRole(modelBuilder);
             SeedingUser(modelBuilder);
             SeedingAccount(modelBuilder);
@@ -158,14 +158,38 @@ namespace E_Retalling_Portal.Models
             SeedingImage(modelBuilder);
             SeedingProductItem(modelBuilder);
             SeedingSetting(modelBuilder);
+            SeedingDiscount(modelBuilder);
+            SeedingProductDiscount(modelBuilder);
+        }
+        
+        private static void SeedingProductDiscount(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<ProductDiscount>().HasData(
+                new ProductDiscount { id = 1, discountId = 4, productId = 2 },
+                new ProductDiscount { id = 2, discountId = 4, productId = 4 },
+                new ProductDiscount { id = 5, discountId = 4, productId = 3, productItemId = 3 },
+                new ProductDiscount { id = 6, discountId = 5, productId = 3, productItemId = 4 },
+                new ProductDiscount { id = 7, discountId = 4, productId = 3, productItemId = 5 },
+                new ProductDiscount { id = 8, discountId = 4, productId = 3, productItemId = 6 }
+            );
+        }
+        private static void SeedingDiscount(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Discount>().HasData(
+                new Discount { id = 1, name = "Summer Sale", startDate = "2024-10-31", endDate = "2024-06-30", value = 15, shopId = 1 },
+            new Discount { id = 2, name = "Birthday Discount", startDate = "2024-07-01", endDate = "2024-07-15", value = 20, shopId = 1 },
+            new Discount { id = 3, name = "Buy One Get One Free", startDate = "2024-08-01", endDate = "2024-08-31", value = 50, shopId = 1 },
+            new Discount { id = 4, name = "Holiday Discount", startDate = "2024-10-31", endDate = "2024-11-09", value = 50, shopId = 1 },
+            new Discount { id = 5, name = "End of Year Sale", startDate = "2024-10-31", endDate = "2024-11-09", value = 80, shopId = 1 }
+            );
         }
         private static void SeedingProductItem(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<ProductItem>().HasData(
-                new ProductItem { id = 1, productId = 1, quantity = 5, price = 15, imageId = 1, attribute = "L", deleteAt = "afad" },
+                new ProductItem { id = 1, productId = 1, quantity = 5, price = 15, imageId = 1, attribute = "L" },
                 new ProductItem { id = 2, productId = 1, quantity = 7, price = 13, imageId = 3, attribute = "S" },
-                new ProductItem { id = 3, productId = 3, quantity = 10, price = 20, imageId = 8, attribute = "X" },
-                new ProductItem { id = 4, productId = 3, quantity = 10, price = 14, imageId = 9, attribute = "X" },
+                new ProductItem { id = 3, productId = 3, quantity = 10, price = 26, imageId = 8, attribute = "X" },
+                new ProductItem { id = 4, productId = 3, quantity = 10, price = 15, imageId = 9, attribute = "X" },
                 new ProductItem { id = 5, productId = 3, quantity = 10, price = 20, imageId = 8, attribute = "M" },
                 new ProductItem { id = 6, productId = 3, quantity = 13, price = 14, imageId = 9, attribute = "L" }
             );
@@ -189,10 +213,10 @@ namespace E_Retalling_Portal.Models
         private static void SeedingProduct(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Product>().HasData(
-                new Product { id = 1, categoryId = 3, name = "Sport Shoe", shopId = 1, desc = "<p>this is a good product<p/>", price = 11, quantity = 10, isVariation = true, status = 1 },
-                new Product { id = 2, categoryId = 4, name = "T-shirt", shopId = 1, desc = "<p>this is a good product<p/>", price = 12, quantity = 5, isVariation = false, status = 1 },
-                new Product { id = 3, categoryId = 4, name = "Jacket", shopId = 1, desc = "<p>this is a good product<p/>", price = 13, quantity = 6, isVariation = true, status = 1 },
-                 new Product { id = 4, categoryId = 6, name = "Jacketooo", shopId = 1, desc = "<p>this is a good product<p/>", price = 14, quantity = 6, isVariation = false, status = 1 }
+                new Product { id = 1, categoryId = 3, name = "Sport Shoe", shopId = 1, desc = "<p>this is a good product<p/>", price = 11, quantity = 10, isVariation = true, status = 1, weight = 1000 },
+                new Product { id = 2, categoryId = 4, name = "T-shirt", shopId = 1, desc = "<p>this is a good product<p/>", price = 12, quantity = 5, isVariation = false, status = 1, weight = 1000 },
+                new Product { id = 3, categoryId = 4, name = "Jacket", shopId = 1, desc = "<p>this is a good product<p/>", price = 13, quantity = 6, isVariation = true, status = 1, weight = 1000 },
+                 new Product { id = 4, categoryId = 6, name = "Jacketooo", shopId = 1, desc = "<p>this is a good product<p/>", price = 14, quantity = 6, isVariation = false, status = 1, weight = 1000 }
 );
         }
         private static void SeedingCategory(ModelBuilder modelBuilder)
@@ -210,8 +234,8 @@ namespace E_Retalling_Portal.Models
         private static void SeedingShop(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Shop>().HasData(
-                new Shop { id = 1, accountId = 1, address = "address", province = "adf", name = "shopname", createdAt = "2000-05-04", shopDescription = "sd", statusId = 1 },
-                new Shop { id = 2, accountId = 3, address = "address", province = "asdf", name = "shopname", createdAt = "2000-05-04", shopDescription = "sd", statusId = 1 }
+                new Shop { id = 1, accountId = 1, address = "address", province = 249, district = 1644, ward = "190116", name = "shopname", createdAt = "2000-05-04", shopDescription = "sd", statusId = 1 },
+                new Shop { id = 2, accountId = 3, address = "address", province = 249, district = 1644, ward = "190116", name = "shopname", createdAt = "2000-05-04", shopDescription = "sd", statusId = 1 }
              );
         }
         private static void SeedingStatus(ModelBuilder modelBuilder)
@@ -237,25 +261,25 @@ namespace E_Retalling_Portal.Models
                 new User
                 {
                     id = 1,
-                    province = "BacNinh",
-                    district = "TienDu",
-                    commune = "HoanSon",
+                    province = 202,
+                    district = 1454,
+                    ward = "21211",
                     address = "",
                     birthday = "2000-05-04",
                     displayName = "kienhocgioi",
                     email = "abc@gmail.com",
                     firstName = "first",
                     lastName = "last",
-                    phoneNumber = "0123456789",
+                    phoneNumber = "0326075641",
                     gender = "Female"
                 },
                 new User
                 {
                     id = 2,
-                    province = "BacNinh",
-                    district = "TienDu",
-                    commune = "VietDoan",
-                    address = "",
+                    province = 202,
+                    district = 1454,
+                    ward = "21211",
+                    address = "mhjyy",
                     birthday = "2000-01-04",
                     displayName = "anh",
                     email = "quynxhe186459@fpt.edu.vn",
@@ -267,9 +291,9 @@ namespace E_Retalling_Portal.Models
                 new User
                 {
                     id = 3,
-                    province = "BacNinh",
-                    district = "TienDu",
-                    commune = "LacVe",
+                    province = 202,
+                    district = 1454,
+                    ward = "21211",
                     address = "",
                     birthday = "2004-01-04",
                     displayName = "phien",
@@ -279,7 +303,7 @@ namespace E_Retalling_Portal.Models
                     phoneNumber = "0968059984",
                     gender = "Male"
                 }
-			);
+            );
         }
 
         private static void SeedingAccount(ModelBuilder modelBuilder)
@@ -288,9 +312,11 @@ namespace E_Retalling_Portal.Models
                 new Account { id = 1, username = "admin", password = "123", roleId = 2, externalId = null, externalType = null, userId = 1 },
                 new Account { id = 2, username = "anh", password = "123", roleId = 1, externalId = null, externalType = null, userId = 2 },
                 new Account { id = 3, username = "seller", password = "123", roleId = 2, externalId = null, externalType = null, userId = 2 },
-                new Account { id = 4, username = "phien47", password = "123", roleId = 2, externalId = null, externalType = null, userId = 3 },
-				new Account { id = 5, username = "manager", password = "123", roleId = 3, externalId = null, externalType = null, userId = 3 }
-			);
+                new Account { id = 4, username = "phien47", password = "123", roleId = 1, externalId = null, externalType = null, userId = 3 },
+                new Account { id = 5, username = "manager", password = "123", roleId = 3, externalId = null, externalType = null, userId = 3 },
+                new Account { id = 6, username = "admin", password = "123", roleId = 1, externalId = null, externalType = null, userId = 1 }
+
+            );
         }
 
         public static void SeedingSetting(ModelBuilder modelBuilder)

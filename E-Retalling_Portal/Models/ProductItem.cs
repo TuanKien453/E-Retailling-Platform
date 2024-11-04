@@ -8,7 +8,7 @@ namespace E_Retalling_Portal.Models
         public int id { get; set; }
         public int  productId { get; set; }
         public int quantity { get; set; }
-        public float price { get; set; }
+        public double price { get; set; }
         public int imageId { get; set; }
         [Required,MaxLength(100)]
         public String attribute { get; set; }
@@ -20,6 +20,7 @@ namespace E_Retalling_Portal.Models
         public List<ProductDiscount>? productDiscounts { get; set; }
 
 
-
+        [Timestamp]
+        public byte[]? RowVersion { get; set; }
     }
 }

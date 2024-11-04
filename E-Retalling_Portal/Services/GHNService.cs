@@ -29,8 +29,23 @@ namespace E_Retalling_Portal.Services
 			var jsonResponse = await GetJsonResponseAsync(request);
 			return _ghnLibrary.DeserializeJsonResponse<OrderResponse>(jsonResponse);
 		}
-
-		public async Task<List<Province>> GetProvincesAsync()
+        public async Task<OrderResponse> CreateShippingOrderPreviewAsync(OrderRequest orderRequest)
+        {
+            var requestUrl = "https://dev-online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/preview";
+            var jsonContent = JsonConvert.SerializeObject(orderRequest);
+            var request = _ghnLibrary.CreateRequest(requestUrl, HttpMethod.Post, orderRequest);
+            var jsonResponse = await GetJsonResponseAsync(request);
+            return _ghnLibrary.DeserializeJsonResponse<OrderResponse>(jsonResponse);
+        }
+        public async Task<FeeResponse> CalulateFreeAsync(FeeRequest feeRequest)
+        {
+            var requestUrl = "https://dev-online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/fee";
+            var jsonContent = JsonConvert.SerializeObject(feeRequest);
+            var request = _ghnLibrary.CreateRequest(requestUrl, HttpMethod.Post, feeRequest);
+            var jsonResponse = await GetJsonResponseAsync(request);
+            return _ghnLibrary.DeserializeJsonResponse<FeeResponse>(jsonResponse);
+        }
+        public async Task<List<Province>> GetProvincesAsync()
         {
             var requestUrl = "https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/province";
             var request = _ghnLibrary.CreateRequest(requestUrl, HttpMethod.Get);
@@ -39,10 +54,10 @@ namespace E_Retalling_Portal.Services
             return _ghnLibrary.DeserializeJsonResponse<ProvinceResponse>(jsonResponse).Data;
         }
 
-        public async Task<List<District>> GetDistrictsAsync()
+        public async Task<List<District>> GetDistrictsAsync(int provinceId)
         {
             var requestUrl = "https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/district";
-            var requestBody = new {};
+            var requestBody = new { province_id = provinceId };
             var request = _ghnLibrary.CreateRequest(requestUrl, HttpMethod.Post, requestBody);
 
             var jsonResponse = await GetJsonResponseAsync(request);
@@ -57,6 +72,15 @@ namespace E_Retalling_Portal.Services
 
             var jsonResponse = await GetJsonResponseAsync(request);
             return _ghnLibrary.DeserializeJsonResponse<WardResponse>(jsonResponse).Data;
+        }
+        public async Task<OrderInfoResponse> GetOrderInfoAsync(string orderCode)
+        {
+            var requestUrl = "https://dev-online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/detail";
+            var requestBody = new { order_code = orderCode};
+            var request = _ghnLibrary.CreateRequest(requestUrl, HttpMethod.Post, requestBody);
+
+            var jsonResponse = await GetJsonResponseAsync(request);
+            return _ghnLibrary.DeserializeJsonResponse<OrderInfoResponse>(jsonResponse);
         }
 
         private async Task<string> GetJsonResponseAsync(HttpRequestMessage request)

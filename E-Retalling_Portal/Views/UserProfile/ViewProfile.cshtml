@@ -80,7 +80,7 @@
                                     <label for="phoneNumber" class="form-label">Phone Number</label>
                                 </div>
                                 <div class="col-sm-9">
-                                    <input type="text" id="phoneNumber" name="phoneNumber" pattern="0\d{9}" title="Please enter a valid phone number" class="form-control" required
+                                    <input type="text" id="phoneNumber" name="phoneNumber" pattern="^0\d{9}$" title="Please enter a valid phone number" class="form-control" required
                                            value="@(ViewBag.User?.phoneNumber ?? "")" />
                                     @if (TempData["ErrorPhone"] != null)
                                     {
@@ -175,10 +175,10 @@
                             </div>
                             <div class="row mb-3">
                                 <div class="col-sm-3">
-                                    <label for="commune" class="form-label">Commune</label>
+                                    <label for="ward" class="form-label">Ward</label>
                                 </div>
                                 <div class="col-sm-9">
-                                    <select class="css_select" id="phuong" name="commune" title="Chọn Phường Xã">
+                                    <select class="css_select" id="phuong" name="ward" title="Chọn Phường Xã">
                                         <option value="0">Phường Xã</option>
                                     </select>
                                 </div>
@@ -256,8 +256,8 @@
         </div>
     </div>
 </div>
-
 @section Scripts {
+    <script src="~/js/address.js"></script>
     <script>
         window.onload = function () {
             var errorMessage = '@TempData["ErrorMessage"]';
@@ -280,84 +280,93 @@
                 successModal.show();
             }
         }
+        var userProvince = "@(ViewBag.User?.province)";
+        var userDistrict = "@(ViewBag.User?.district)";
+        var userWard = "@(ViewBag.User?.ward)";
+        
         $(document).ready(function () {
-            // Lấy danh sách tỉnh thành
+            console.log("Document is ready");
+
+            // Load provinces
             $.ajax({
-                url: 'https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/province',
+                url: '/address/getProvinces',
                 type: 'GET',
-                headers: {
-                    'Token': '38a65a5a-90f7-11ef-8e53-0a00184fe694' // Đảm bảo token là hợp lệ
-                },
                 success: function (data_tinh) {
-                    console.log(data_tinh); // Xem dữ liệu trả về để kiểm tra cấu trúc
-                    if (data_tinh.code === 200) { // Kiểm tra mã thành công
-                        $.each(data_tinh.data, function (key_tinh, val_tinh) {
-                            $("#tinh").append('<option value="' + val_tinh.ProvinceID + '">' + val_tinh.ProvinceName + '</option>');
-                        });
+                    console.log("Provinces loaded:", data_tinh);
 
-                        // Xử lý sự kiện thay đổi tỉnh
-                        $("#tinh").change(function () {
-                            var idtinh = $(this).val();
-                            $("#quan").html('<option value="0">Quận Huyện</option>');
-                            $("#phuong").html('<option value="0">Phường Xã</option>');
-                            $('#address').val(""); // Xóa trường địa chỉ
+                    // Populate provinces dropdown
+                    $.each(data_tinh, function (key_tinh, val_tinh) {
+                        $("#tinh").append('<option value="' + val_tinh.provinceID + '">' + val_tinh.provinceName + '</option>');
+                    });
 
-                            // Lấy danh sách quận huyện
-                            $.ajax({
-                                url: 'https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/district?province_id=' + idtinh,
-                                type: 'GET',
-                                headers: {
-                                    'Token': '38a65a5a-90f7-11ef-8e53-0a00184fe694'
-                                },
-                                success: function (data_quan) {
-                                    if (data_quan.code === 200) {
-                                        $.each(data_quan.data, function (key_quan, val_quan) {
-                                            $("#quan").append('<option value="' + val_quan.DistrictID + '">' + val_quan.DistrictName + '</option>');
-                                        });
-                                    }
-                                }
-                            });
-                        });
-
-                        // Xử lý sự kiện thay đổi quận huyện
-                        $("#quan").change(function () {
-                            var idquan = $(this).val();
-                            var selectedProvince = $("#tinh option:selected").text();
-                            $("#phuong").html('<option value="0">Phường Xã</option>');
-                            $('#address').val(selectedProvince); // Đặt địa chỉ chỉ bằng tên tỉnh
-
-                            // Lấy danh sách phường xã
-                            $.ajax({
-                                url: 'https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/ward?district_id=' + idquan,
-                                type: 'GET',
-                                headers: {
-                                    'Token': '38a65a5a-90f7-11ef-8e53-0a00184fe694'
-                                },
-                                success: function (data_phuong) {
-                                    if (data_phuong.code === 200) {
-                                        $.each(data_phuong.data, function (key_phuong, val_phuong) {
-                                            $("#phuong").append('<option value="' + val_phuong.WardCode + '">' + val_phuong.WardName + '</option>');
-                                        });
-                                    }
-                                }
-                            });
-                        });
-
-                        // Xử lý sự kiện thay đổi phường xã
-                        $("#phuong").change(function () {
-                            var selectedCommune = $(this).find("option:selected").text();
-                            var selectedDistrict = $("#quan option:selected").text();
-                            var selectedProvince = $("#tinh option:selected").text();
-                            $('#address').val(selectedProvince + ', ' + selectedDistrict + ', ' + selectedCommune);
-                        });
-                    } else {
-                        console.error("Lỗi khi lấy tỉnh thành:", data_tinh.message);
+                    // Set userProvince if available after provinces are loaded
+                    if (userProvince) {
+                        console.log("Setting province to:", userProvince);
+                        $("#tinh").val(userProvince).trigger('change');
                     }
                 },
                 error: function (xhr, status, error) {
-                    console.error("Có lỗi xảy ra:", error);
-                    console.log("Mã trạng thái:", xhr.status); // Kiểm tra mã trạng thái
+                    console.error("Error loading provinces:", error);
+                    console.log("Status code:", xhr.status);
                 }
+            });
+
+            // Province change event
+            $(document).on('change', '#tinh', function () {
+                var idtinh = $(this).val();
+                $("#quan").html('<option value="0">Quận Huyện</option>');
+                $("#phuong").html('<option value="0">Phường Xã</option>');
+
+                // Load districts
+                $.ajax({
+                    url: '/address/getDistricts?provinceId=' + idtinh,
+                    type: 'GET',
+                    success: function (data_quan) {
+                        console.log("Districts loaded:", data_quan);
+                        $.each(data_quan, function (key_quan, val_quan) {
+                            $("#quan").append('<option value="' + val_quan.districtID + '">' + val_quan.districtName + '</option>');
+                        });
+
+                        // Set userDistrict if available after districts are loaded
+                        if (userDistrict) {
+                            console.log("Setting district to:", userDistrict);
+                            $("#quan").val(userDistrict).trigger('change');
+                        }
+                    }
+                });
+            });
+
+            // District change event
+            $(document).on('change', '#quan', function () {
+                var idquan = $(this).val();
+                var selectedProvince = $("#tinh option:selected").text();
+                $("#phuong").html('<option value="0">Phường Xã</option>');
+
+
+                $.ajax({
+                    url: '/address/getWards?districtId=' + idquan,
+                    type: 'GET',
+                    success: function (data_phuong) {
+                        console.log("Wards loaded:", data_phuong);
+                        $.each(data_phuong, function (key_phuong, val_phuong) {
+                            $("#phuong").append('<option value="' + val_phuong.wardCode + '">' + val_phuong.wardName + '</option>');
+                        });
+
+                        // Set userWard if available after wards are loaded
+                        if (userWard) {
+                            console.log("Setting ward to:", userWard);
+                            $("#phuong").val(userWard);
+                        }
+                    }
+                });
+            });
+
+            // Ward change event
+            $(document).on('change', '#phuong', function () {
+                var selectedCommune = $(this).find("option:selected").text();
+                var selectedDistrict = $("#quan option:selected").text();
+                var selectedProvince = $("#tinh option:selected").text();
+                $('#address').val(selectedProvince + ", " + selectedDistrict + ", " + selectedCommune);
             });
         });
 
