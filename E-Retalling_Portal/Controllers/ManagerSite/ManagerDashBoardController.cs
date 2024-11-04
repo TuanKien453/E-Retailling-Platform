@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace E_Retalling_Portal.Controllers.Manager
 {
+	[TypeFilter(typeof(ManagerFilter))]
 	public class ManagerDashBoardController : Controller
     {
         public IActionResult Index()

@@ -1,10 +1,12 @@
 ﻿using E_Retalling_portal.Models.Query;
+using E_Retalling_Portal.Controllers.Filter;
 using E_Retalling_Portal.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace E_Retalling_Portal.Controllers.ManagerSite
 {
-    public class ManagerStatisticController : Controller
+	[TypeFilter(typeof(ManagerFilter))]
+	public class ManagerStatisticController : Controller
     {
 
         public IActionResult Index()
