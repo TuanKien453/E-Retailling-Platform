@@ -11,12 +11,13 @@
         font-family: Arial, sans-serif;
     }
 
-    body {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        min-height: 100vh;
-        background-color: #f5f5f5;
+
+    .content {
+        width: 100%;
+        max-width: 1200px; /* Adjust as needed */
+        margin: 0 auto;
+        padding: 20px;
+        overflow-y: auto; /* Ensures scrolling within the content if it overflows */
     }
 
     .card-container {
@@ -119,10 +120,10 @@
     }
 </style>
 
-<div class="content m-4 pb-3" >
+<div class="content m-4 pb-3" id="ShopDashBoard">
     <div class="row p-4">
         <div class="col-12">
-            <div class="card-container" id="ShopDashBoard">
+            <div class="card-container" >
                 <div class="card">
                     <div class="card-content">
                         <div class="icon icon-yellow">📦</div>
@@ -195,10 +196,11 @@
                     </div>
                 </div>
             </div>
-            <h2>Month static</h2>
+
+            <h2 style="text-align: center; font-weight: bold; margin: 20px">Monthly static</h2>
 
             <div id = "chart" class="month-selector" >
-                <label for="monthDropdown">Select Month:</label>
+                <label style="display: block; text-align: center;" for="monthDropdown">Select Month:</label>
                 <select id="monthDropdown" onchange="updateChart()">
                     <option value="January">January</option>
                     <option value="February">February</option>

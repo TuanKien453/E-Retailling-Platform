@@ -1,18 +1,32 @@
 ﻿@{
     Layout = "~/Views/Shared/ShopManagerSideBarLayout.cshtml";
 }
+<style id="select">
+    .year-selecter {
+        margin: 20px auto;
+        display: flex;
+        justify-content: center;
+    }
+</style>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
 <div class="content m-4 pb-3">
     <div class="row p-4">
         <div class="col-12">
-            <h2>Shop Sales Chart</h2>
-            <label for="yearDropdown">Select Year:</label>
-            <select id="yearDropdown" onchange="updateChart()">
-                <option value="2023">2023</option>
-                <option value="2024">2024</option>
-                <!-- Add more years as needed -->
-            </select>
+            
+                <h2 style="text-align: center; font-weight: bold">
+                    Shop Sales Chart
+                </h2>
+            <div id="select" class="year-selecter">
+                <label style="display: block; text-align: center;" for="yearDropdown">Select Year:</label>
+                <select id="yearDropdown" onchange="updateChart()">
+                    @foreach (int item in ViewBag.years)
+                    {
+                        <option value="@item">@item</option>
+                    }
+                    <!-- Add more years as needed -->
+                </select>
+            </div>
+           
 
             <div>
                 <canvas id="salesChart" width="400" height="200"></canvas>

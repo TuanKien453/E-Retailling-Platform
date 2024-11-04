@@ -12,17 +12,19 @@ namespace E_Retalling_Portal.Models.Query
         }
         public static IQueryable<Order> GetOrderByYearMonth(this DbSet<Order> DbOrder, int year, int month)
         {
+            string yearMonthPrefix = $"{year:D4}{month:D2}"; // Format as yyyyMM
             return DbOrder.FromSqlRaw(
-                "SELECT * FROM Orders WHERE YEAR(endTime) = {0} AND MONTH(endTime) = {1}",
-                year, month
+                "SELECT * FROM Orders WHERE LEFT(createTime, 6) = {0}",
+                yearMonthPrefix
             );
         }
 
         public static IQueryable<Order> GetOrderByYearMonthDay(this DbSet<Order> DbOrder, int year, int month, int day)
         {
+            string datePrefix = $"{year:D4}{month:D2}{day:D2}"; // Format as yyyyMMdd
             return DbOrder.FromSqlRaw(
-                "SELECT * FROM Orders WHERE YEAR(endTime) = {0} AND MONTH(endTime) = {1} AND DAY(endTime) = {2}",
-                year, month, day
+                "SELECT * FROM Orders WHERE LEFT(createTime, 8) = {0}",
+                datePrefix
             );
         }
 

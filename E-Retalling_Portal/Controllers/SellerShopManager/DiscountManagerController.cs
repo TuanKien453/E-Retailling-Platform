@@ -114,7 +114,7 @@ namespace E_Retalling_Portal.Controllers.SellerShopManager
             using (var context = new Context())
             {
                 List<ProductItem> products = context.ProductItems.GetProductItem(productId).ToList();
-                List<ProductDiscount> productDiscounts = context.ProductDiscount.GetProductDiscountByProductId(productId).ToList();
+                List<ProductDiscount> productDiscounts = context.ProductDiscounts.GetProductDiscountByProductId(productId).ToList();
                 List<ProductItem> productItemsDiscount = new List<ProductItem>();
                 foreach (var discount in productDiscounts)
                 {

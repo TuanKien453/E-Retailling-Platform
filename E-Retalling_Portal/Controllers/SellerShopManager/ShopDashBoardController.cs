@@ -41,7 +41,7 @@ namespace E_Retalling_Portal.Controllers.ShopManager
                 ViewBag.Order = order;
                 ViewBag.Users = users;
 
-
+                
 
 
                 return View("/Views/SellerShopManager/ShopDashBoard/Index.cshtml");
@@ -88,27 +88,25 @@ namespace E_Retalling_Portal.Controllers.ShopManager
                     countFee = 0;
                     int day = i + 1;
                     List<Order> orderInMonth = context.Orders.GetOrderByYearMonthDay(year, month, day).ToList();
-
                     foreach (var order in orderInMonth)
-                    {
-                        
+                    {                   
                         List<OrderItem> orderItems = context.OrderItems.GetOrderItemByOrderId(order.id).ToList();
                         foreach (var item in orderItems)
                         {
-                            Console.WriteLine($"item = {item.shippingStatus}, {item.quanity}, {item.externalOrderCode} ");
                             if (item.shippingStatus.ToString().Equals("delivered", StringComparison.OrdinalIgnoreCase))
                             {                               
                                 if (products.Contains(context.Products.GetProductById(item.productId).FirstOrDefault()))
                                 {
-                                    double today = item.quanity * item.price;
+                                    double today = item.quantity * item.price;
                                     countFee += today * item.transactionFee / 100;
-                                    countBreak += today * item.transactionFee/100 + item.shippingFee;
+                                    countBreak += today * item.transactionFee/100 + (double)item.shippingFee / 1000;
                                    countSale += today;
-                                    countAverage += countSale + countBreak;
+                                    
                                 }
                             }
                             
                         }
+                        countAverage += countSale + countBreak;
                         data[i] = countSale;
                         other[i] = countFee;
                         average[i] = countAverage;

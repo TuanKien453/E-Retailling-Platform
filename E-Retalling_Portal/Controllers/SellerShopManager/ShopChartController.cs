@@ -4,13 +4,41 @@ using System.Collections.Generic;
 using E_Retalling_Portal.Models;
 using E_Retalling_Portal.Models.Enums;
 using E_Retalling_Portal.Models.Query;
+using Microsoft.IdentityModel.Tokens;
 
 namespace E_Retalling_Portal.Controllers.SellerShopManager
 {
     public class ShopChartController : Controller
     {
         public IActionResult ViewShopChart()
-        {           
+        {
+            var context = new Context();
+            int? accId = HttpContext.Session.GetInt32(SessionKeys.AccountId.ToString());
+            var shop = context.Shops.GetShopbyAccId(accId.Value).FirstOrDefault();
+            DateTime now = DateTime.Now;
+            int currentYear = now.Year;
+            DateTime createAt = DateTime.Parse(shop.createdAt);
+            int createYear = createAt.Year;
+            List<int> year = new List<int>();
+            if (currentYear - createYear >= 3)
+            {
+                for (int i = 0; i < 3; i++)
+                {
+                    year.Add(currentYear - i);
+                }
+            }
+            else
+            {
+                for (int i = 0; i < currentYear - createYear; i++)
+                {
+                    year.Add(currentYear - i);
+                }
+                if (year.IsNullOrEmpty())
+                {
+                    year.Add(createYear);
+                }
+            }
+            ViewBag.years = year;
             return View("/Views/SellerShopManager/ShopChart/ViewShopChart.cshtml");
         }
 
@@ -52,22 +80,23 @@ namespace E_Retalling_Portal.Controllers.SellerShopManager
                         List<OrderItem> orderItems = context.OrderItems.GetOrderItemByOrderId(order.id).ToList();
                         foreach (var item in orderItems)
                         {
-                            Console.WriteLine($"item = {item.shippingStatus}, {item.quanity}, {item.externalOrderCode} ");
+                            Console.WriteLine($"item = {item.shippingStatus}, {item.quantity}, {item.externalOrderCode} ");
                             if (item.shippingStatus.ToString().Equals("delivered", StringComparison.OrdinalIgnoreCase))
                             {
                                 if (products.Contains(context.Products.GetProductById(item.productId).FirstOrDefault()))
                                 {
-                                    double today = item.quanity * item.price;
+                                    double today = item.quantity * item.price;
                                     countFee += today * item.transactionFee / 100;
-                                    countBreak += today * item.transactionFee/100 + item.shippingFee;
+                                    countBreak += today * item.transactionFee/100 + (double)item.shippingFee/1000;
                                     countSale += today;
-                                    countAverage += countSale + countBreak;
+                                    
                                 }
                             }
 
                         }
+                        countAverage += countSale + countBreak;
                         data[i] = countSale;
-                        other[i] = countBreak;
+                        other[i] = countFee;
                         average[i] = countAverage;
                     }
 
