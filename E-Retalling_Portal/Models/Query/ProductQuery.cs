@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using E_Retalling_Portal.Models.Enums;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace E_Retalling_Portal.Models.Query
 {
@@ -85,9 +87,56 @@ namespace E_Retalling_Portal.Models.Query
                 Discount discount = context.Discounts.GetDiscountByDiscountId(productDiscount.discountId).FirstOrDefault();
                 var today = DateTime.Today;
                 if (today >= DateTime.Parse(discount.startDate.ToString()) && today <= DateTime.Parse(discount.endDate.ToString())) {
-                    return product.price - Math.Round(product.price * Math.Round(((double)discount.value / 100), 2), 2);
+                    return Math.Round(product.price - Math.Round(product.price * Math.Round(((double)discount.value / 100), 2), 2));
                 } else return product.price;
             }
         }
+
+        public static int GetTotalStockProduct(this DbSet<Product> dbProduct, int shopId)
+        {
+            using (var context = new Context())
+            {
+                int stockProduct = 0;
+                List<Product> products = context.Products.GetProductsByShop(shopId).ToList();
+                foreach (var product in products)
+                {
+                    
+                    if (product.isVariation)
+                    {
+                        List<ProductItem>? items = context.ProductItems.GetAllProductItem().ToList();
+                        if (!items.IsNullOrEmpty()) { stockProduct += items.Count; }
+                    } else
+                    {
+                        stockProduct += product.quantity;
+                    }
+                }
+
+                return stockProduct;
+            }
+        }
+
+        public static int GetNumberAllSalesProduct(this DbSet<Product> dbProduct, List<Product> products)
+        {
+            int salesProduct = 0;
+            using (var context = new Context())
+            {
+                    List<OrderItem> orderItems = context.OrderItems.GetAllOrderItemHasSales().ToList();
+                    if (!orderItems.IsNullOrEmpty())
+                    {
+                    foreach (var product in products)
+                    {
+                        foreach (var item in orderItems)
+                        {
+                            if (product.id == item.productId)
+                            {
+                                salesProduct++;
+                            }
+                        }
+                    }
+                    }
+                    return salesProduct;
+            }
+        }
+
     }
 }

@@ -16,10 +16,12 @@ using MimeKit;
 using MailKit.Net.Smtp;
 using MailKit;
 using MailKit.Security;
+using System.Text.RegularExpressions;
 namespace E_Retalling_Portal.Controllers.AccountController
 {
     public class RegisterController : Controller
     {
+        string pattern = @"^0[35789][0-9]{8}$";
         public IActionResult CustomerEmailRegister()
         {
             HttpContext.Session.SetInt32(SessionKeys.RoleID.ToString(), 1);
@@ -31,6 +33,16 @@ namespace E_Retalling_Portal.Controllers.AccountController
             {
                 using (var context = new Context())
                 {
+
+                    if (!Regex.IsMatch(phoneNumber, pattern))
+                    {
+                        ViewBag.Email = email;
+                        ViewBag.Phone = phoneNumber;
+                        ViewBag.ErrorPhone = "This phoneNumber is not from VietNam";
+                        return View("CustomerEmailRegister");
+                    }
+                    
+
                     HttpContext.Session.SetString(SessionKeys.Email.ToString(), email);
                     HttpContext.Session.SetString(SessionKeys.PhoneNumber.ToString(), phoneNumber);
                     User phoneUser = context.Users.GetValidUserDataByPhone(phoneNumber).FirstOrDefault();
@@ -43,7 +55,6 @@ namespace E_Retalling_Portal.Controllers.AccountController
                         {
                             ViewBag.ErrorPhone = "This Phone Number has already been register";
                         }
-                        return View("CustomerEmailRegister");
 
                     }
                     else
@@ -101,6 +112,16 @@ namespace E_Retalling_Portal.Controllers.AccountController
             {
                 using (var context = new Context())
                 {
+
+                    if (!Regex.IsMatch(phoneNumber, pattern))
+                    {
+                        ViewBag.ErrorPhone = "This phoneNumber is not from VietNam";
+                        ViewBag.Email = email;
+                        ViewBag.Phone = phoneNumber;
+                        return View("ShopOwnerEmailRegister");
+                    }
+                    
+
                     HttpContext.Session.SetString(SessionKeys.Email.ToString(), email);
                     HttpContext.Session.SetString(SessionKeys.PhoneNumber.ToString(), phoneNumber);
                     User phoneUser = context.Users.GetValidUserDataByPhone(phoneNumber).FirstOrDefault();
@@ -112,6 +133,10 @@ namespace E_Retalling_Portal.Controllers.AccountController
                         if (phoneUser != null)
                         {
                             ViewBag.ErrorPhone = "This Phone Number has already been register";
+                        }
+                        if (Regex.IsMatch(phoneNumber, pattern))
+                        {
+                            ViewBag.ErrorPhone = "This phoneNumber is not from VietNam";
                         }
                         return View("ShopOwnerEmailRegister");
 

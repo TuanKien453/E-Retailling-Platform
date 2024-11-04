@@ -55,5 +55,26 @@ namespace E_Retalling_Portal.Models.Query
                 context.Entry(childCategory).State = EntityState.Modified;
             }
         }
+
+        public static int GetAllNumberOfCategoriesByShop(this DbSet<Category> dbCate, int shopId)
+        {
+            using (var context = new Context())
+            {
+                int count = 0;
+                List<Product> products = context.Products.GetProductsByShop(shopId).ToList();
+                List<int> ints = new List<int>();
+                foreach (var product in products)
+                {
+                    if (!ints.Contains(product.categoryId))
+                    {
+                        ints.Add(product.categoryId);
+                    }
+                }
+
+                count = ints.Count;
+                return count;
+
+            }
+        }
     }
 }

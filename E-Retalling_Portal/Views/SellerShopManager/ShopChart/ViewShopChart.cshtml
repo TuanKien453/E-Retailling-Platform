@@ -1,80 +1,88 @@
 ﻿@{
     Layout = "~/Views/Shared/ShopManagerSideBarLayout.cshtml";
-    var chartData = ViewData["ChartData"] as Dictionary<string, double>;
-    var selectedYear = ViewData["SelectedYear"];
 }
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <div class="content m-4 pb-3">
     <div class="row p-4">
         <div class="col-12">
-            <label for="yearSelect">Select Year:</label>
-            <select id="yearSelect" onchange="changeYear()">
-                @if (selectedYear.Equals(2023))
-                {
-                    <option value="2023" selected="selected">2023</option>
-                }
-                else
-                {
-                    <option value="2023">2023</option>
-                }
-                @if (selectedYear.Equals(2024))
-                {
-                    <option value="2024" selected="selected">2024</option>
-                }
-                else
-                {
-                    <option value="2024">2024</option>
-                }
-                @if (selectedYear.Equals(2025))
-                {
-                    <option value="2025" selected="selected">2025</option>
-                }
-                else
-                {
-                    <option value="2025">2025</option>
-                }
+            <label for="yearSelector">Select Year:</label>
+            <select id="yearSelector" onchange="loadChartData()">
+                <option value="2023">2023</option>
+                <option value="2024">2024</option>
+                <option value="2025">2025</option>
+                <!-- Add more years as needed -->
             </select>
 
-            <div class="row">
-                <div class="col-12">
-                    <canvas id="salesChart" width="400" height="200"></canvas>
-                </div>
+            <div>
+                <canvas id="shopChart" width="400" height="200"></canvas>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    // Parse data from ViewData
-    const chartData = @Html.Raw(Json.Serialize(chartData));
-    const year = @selectedYear;
-    console.log(chartData); // Check data structure and values
-    // Initial chart render
-    renderChart(chartData, year);
+    let chart;
 
-    // Render chart
-    function renderChart(data, year) {
-        const labels = Object.keys(data);
-        const salesData = Object.values(data);
+    async function loadChartData() {
+        const year = document.getElementById("yearSelector").value;
 
+        try {
+            const response = await fetch(`/SellerShopManager/LoadChartData?yearString=${year}`);
+            const result = await response.json();
 
+            if (result.error) {
+                alert(result.error);
+                return;
+            }
 
-        const ctx = document.getElementById('salesChart').getContext('2d');
-        window.salesChart = new Chart(ctx, {
+            const labels = result.labels;
+            const sales = result.sales;
+            const others = result.others;
+            const averages = result.averages;
+
+            renderChart(labels, sales, others, averages);
+        } catch (error) {
+            console.error("Error loading chart data:", error);
+        }
+    }
+
+    function renderChart(labels, sales, others, averages) {
+        const ctx = document.getElementById('shopChart').getContext('2d');
+
+        chart = new Chart(ctx, {
             type: 'bar',
             data: {
                 labels: labels,
-                datasets: [{
-                    label: `Sales for ${year}`,
-                    data: salesData,
-                    backgroundColor: 'rgba(54, 162, 235, 0.6)',
-                    borderColor: 'rgba(54, 162, 235, 1)',
-                    borderWidth: 1
-                }]
+                datasets: [
+                    {
+                        label: 'Sales',
+                        data: sales,
+                        backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Other',
+                        data: others,
+                        backgroundColor: 'rgba(153, 102, 255, 0.6)',
+                        borderColor: 'rgba(153, 102, 255, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Average',
+                        data: averages,
+                        backgroundColor: 'rgba(255, 159, 64, 0.6)',
+                        borderColor: 'rgba(255, 159, 64, 1)',
+                        borderWidth: 1
+                    }
+                ]
             },
             options: {
                 scales: {
+                    x: {
+                        beginAtZero: true
+                    },
                     y: {
                         beginAtZero: true
                     }
@@ -83,11 +91,10 @@
         });
     }
 
-    // Year change handler to reload page with selected year
-    function changeYear() {
-        const selectedYear = document.getElementById('yearSelect').value;
-        window.location.href = `@Url.Action("ViewShopChart", "ShopChart")?year=${selectedYear}`;
-    }
+    // Load the chart data when the page first loads
+    document.addEventListener("DOMContentLoaded", loadChartData);
+
 </script>
+
 
 
