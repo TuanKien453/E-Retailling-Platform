@@ -26,7 +26,6 @@ namespace E_Retalling_Portal.Models.Query
 				dbUser.Add(user);
 				await context.SaveChangesAsync();
 		}
-
     }
 
 }

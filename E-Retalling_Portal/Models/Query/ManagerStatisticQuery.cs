@@ -120,7 +120,10 @@ namespace E_Retalling_portal.Models.Query
                             oi.productItemId.HasValue ?
                                 oi.quanity * oi.product.productItems.FirstOrDefault(pi => pi.id == oi.productItemId)?.price :
                                 oi.quanity * oi.product.price),
-                        totalTransactionFee = (decimal)g.Sum(oi => oi.transactionFee)
+                        totalTransactionFee = (decimal)g.Sum(oi =>
+                            (oi.productItemId.HasValue ?
+                                oi.quanity * oi.product.productItems.FirstOrDefault(pi => pi.id == oi.productItemId)?.price :
+                                oi.quanity * oi.product.price) * (oi.transactionFee / 100))
                     })
                     .OrderBy(s => s.shopId)
                     .ThenBy(s => s.saleYear)
@@ -131,6 +134,7 @@ namespace E_Retalling_portal.Models.Query
                 return RevenueStats;
             }
         }
+
 
         public static List<OrderStats> GetOrderStatsByShopId(int shopId)
         {
@@ -220,6 +224,74 @@ namespace E_Retalling_portal.Models.Query
             }
         }
 
+		public static List<RevenueStats> GetTotalRevenueStatsByDate()
+		{
+			using (var context = new Context())
+			{
+				var orderItems = context.OrderItems
+					.Include(oi => oi.order)
+					.Include(oi => oi.product.shop)
+					.Include(oi => oi.product.productItems)
+					.Where(oi => oi.shippingStatus == "delivered")
+					.ToList();
 
-    }
+				var revenueStats = orderItems
+					.GroupBy(oi => new
+					{
+						saleYear = int.Parse(oi.order.createTime.Substring(0, 4)),
+						saleMonth = int.Parse(oi.order.createTime.Substring(4, 2)),
+						saleDay = int.Parse(oi.order.createTime.Substring(6, 2))
+					})
+					.Select(g => new RevenueStats
+					{
+						saleYear = g.Key.saleYear,
+						saleMonth = g.Key.saleMonth,
+						saleDay = g.Key.saleDay,
+						totalRevenue = (decimal)g.Sum(oi =>
+							oi.productItemId.HasValue ?
+								oi.quanity * oi.product.productItems.FirstOrDefault(pi => pi.id == oi.productItemId)?.price :
+								oi.quanity * oi.product.price),
+						totalTransactionFee = (decimal)g.Sum(oi =>
+							(oi.productItemId.HasValue ?
+								oi.quanity * oi.product.productItems.FirstOrDefault(pi => pi.id == oi.productItemId)?.price :
+								oi.quanity * oi.product.price) * (oi.transactionFee / 100))
+					})
+					.OrderBy(s => s.saleYear)
+					.ThenBy(s => s.saleMonth)
+					.ThenBy(s => s.saleDay)
+					.ToList();
+
+				return revenueStats;
+			}
+		}
+
+		public static List<OrderStats> GetTotalOrderStatsByMonth()
+		{
+			using (var context = new Context())
+			{
+				var orderItems = context.OrderItems
+					.Include(oi => oi.order)
+					.Where(oi => oi.shippingStatus == "delivered")
+					.ToList();
+
+				var orderStats = orderItems
+					.GroupBy(oi => new
+					{
+						saleYear = int.Parse(oi.order.createTime.Substring(0, 4)),
+						saleMonth = int.Parse(oi.order.createTime.Substring(4, 2))
+					})
+					.Select(g => new OrderStats
+					{
+						saleYear = g.Key.saleYear,
+						saleMonth = g.Key.saleMonth,
+						totalOrders = g.Select(oi => oi.id).Distinct().Count()
+					})
+					.OrderBy(s => s.saleYear)
+					.ThenBy(s => s.saleMonth)
+					.ToList();
+
+				return orderStats;
+			}
+		}
+	}
 }
