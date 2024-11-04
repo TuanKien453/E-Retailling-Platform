@@ -1,7 +1,16 @@
 ﻿@{
     ViewData["Title"] = "ViewProductOnDiscount";
     Layout = "~/Views/Shared/ShopManagerSideBarLayout.cshtml";
+
 }
+
+@{
+    var products = ViewBag.products as List<Product>;  // Adjust `ProductModel` to your product model type
+    var discounts = ViewBag.discount as List<Discount>;  // Adjust `DiscountModel` to your discount model type
+    var count = Math.Min(products.Count, discounts.Count);  // Use the smaller count to avoid out-of-bounds errors
+    var today = DateTime.Today; // Today's date, without time component
+}
+
 <link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.css" />
 <style>
     .row-img {
@@ -9,6 +18,7 @@
         height: 80px;
     }
 </style>
+
 <div class="content m-4 pb-3">
 
     <div class="row p-4">
@@ -21,46 +31,65 @@
                         <th>Category</th>
                         <th>Price</th>
                         <th>Quantity</th>
+                        <th>Active</th>
                         <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var item in ViewBag.products)
-                    {
-                        <tr>
-                            <td><img class="row-img" src="~/productImages/@item.coverImage.imageName" /></td>
-                            <td>@item.name</td>
-                            <td>@item.category.name</td>
 
-                            @if (item.isVariation == true)
+                    @for (int i = 0; i < count; i++)
+                    {
+                         var product = products[i];
+                         var discount = discounts[i];
+                    
+                        <tr>
+                            <td><img class="row-img" src="~/productImages/@product.coverImage.imageName" /></td>
+                            <td>@product.name</td>
+                            <td>@product.category.name</td>
+
+                            @if (product.isVariation == true)
                             {
                                 <td class="font-weight-bold text-xs" style="color:gray;">N/A</td>
                             }
                             else
                             {
-                                <td>@item.price</td>
+                                <td>@product.price</td>
                             }
-                            @if (item.isVariation == true)
+                            @if (product.isVariation == true)
                             {
                                 <td class="font-weight-bold text-xs" style="color:gray;">N/A</td>
                             }
                             else
                             {
-                                <td>@item.quantity</td>
+                                <td>@product.quantity</td>
+                            }
+                            @if (discount != null)
+                            {
+                                @if (today >= DateTime.Parse(discount.startDate.ToString()) && today <= DateTime.Parse(discount.endDate.ToString()))
+                                {
+                                    <td class="text-primary font-weight-bold text-xs">Active</td>
+                                }
+                                else
+                                {
+                                    <td class="text-danger font-weight-bold text-xs">Not Active</td>
+                                }
+                            } else
+                            {
+                                <td class="font-weight-bold text-xs" style="color:gray;">N/A</td>
                             }
                             <td>
-                                @if (item.isVariation == true)
+                                @if (product.isVariation == true)
                                 {
-                                    <a href="DiscountVariation?productId=@item.id" class="text-primary font-weight-bold text-xs btn ">
+                                    <a href="DiscountVariation?productId=@product.id" class="text-primary font-weight-bold text-xs btn ">
                                         Variation
                                     </a>
                                 }
                                 else
                                 {
-                                    <a href="ViewDetailDiscount?productId=@item.id" class="text-primary font-weight-bold text-xs btn">
+                                    <a href="ViewDetailDiscount?productId=@product.id" class="text-primary font-weight-bold text-xs btn">
                                        Detail Discount
                                     </a>@:|
-                                    <a href="#" class="text-danger font-weight-bold text-xs" data-bs-toggle="modal" data-bs-target="#deleteModal" onclick="sendDataToModal(@item.id,null)">
+                                    <a href="#" class="text-danger font-weight-bold text-xs" data-bs-toggle="modal" data-bs-target="#deleteModal" onclick="sendDataToModal(@product.id,null)">
                                         Stop Discount
                                     </a>
                                 }

@@ -21,11 +21,13 @@ namespace E_Retalling_Portal.Models.Query
             return dbProduct.Include(p => p.coverImage).Include(p => p.images).Include(p => p.productItems).Include(p => p.category).Where(p => p.deleteAt == null && p.category.parentCategoryId == category.parentCategoryId && p.id != productId || (p.productItems.Count > 0 && p.id != productId));
         }
 
-        public static void DeleteProductById(this DbSet<Product> dbProduct, int productId, DbContext context)
+        public static void DeleteProductById(this DbSet<Product> dbProduct, int productId, Context context)
         {
             var product = dbProduct.GetProductById(productId).FirstOrDefault();
             if (product != null)
             {
+                context.ProductDiscounts.DeleteProductDiscount(productId, null);
+                context.SaveChanges();
                 product.deleteAt = DateTime.Now.ToString();
                 context.Entry(product).State = EntityState.Modified;
                 context.SaveChanges();
@@ -50,15 +52,16 @@ namespace E_Retalling_Portal.Models.Query
         {
             using (var context = new Context())
             {
-                ProductDiscount productDiscount = context.ProductDiscount.GetProductDiscountByProductIdAndProductItemId(product.id, null).FirstOrDefault();
+                ProductDiscount productDiscount = context.ProductDiscounts.GetProductDiscountByProductIdAndProductItemId(product.id, null).FirstOrDefault();
                 if (productDiscount == null)
                 {
                     return product.price;
-                }
+                } 
                 Discount discount = context.Discounts.GetDiscountByDiscountId(productDiscount.discountId).FirstOrDefault();
-                return product.price - Math.Round(product.price * Math.Round(((double)discount.value / 100), 2), 2);
-
-
+                var today = DateTime.Today;
+                if (today >= DateTime.Parse(discount.startDate.ToString()) && today <= DateTime.Parse(discount.endDate.ToString())) {
+                    return product.price - Math.Round(product.price * Math.Round(((double)discount.value / 100), 2), 2);
+                } else return product.price;
             }
         }
     }

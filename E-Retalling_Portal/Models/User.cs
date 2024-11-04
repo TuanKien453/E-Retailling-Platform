@@ -16,11 +16,15 @@ namespace E_Retalling_Portal.Models
         [DataType(DataType.Date)]
         public string? birthday { get; set; }
         public string? gender { get; set; }
+        public int province { get; set; }
+        public int district { get; set; }
+        [MaxLength(100)]
+        public string? ward { get; set; }
+        [MaxLength(300)]
         public string? address { get; set; }
-        public string? province { get; set; }
-        public string? district { get; set; }
-        public string? commune { get; set; }
+        [MaxLength(100)]
         public string? firstName { get; set; }
+        [MaxLength(100)]
         public string? lastName { get; set; }
 
         public List<Account> accounts { get; set; }

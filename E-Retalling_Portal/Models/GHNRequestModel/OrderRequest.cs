@@ -1,30 +1,68 @@
-﻿namespace E_Retalling_Portal.Models.GHNRequestModel
+﻿using Newtonsoft.Json;
+
+namespace E_Retalling_Portal.Models.GHNRequestModel
 {
     public class OrderRequest
     {
-        public string Token { get; set; }
-        public int ShopId { get; set; }
-        public int PaymentTypeId { get; set; }
-        public string RequiredNote { get; set; }
-        public int Weight { get; } = 1000;
-        public int Length { get; } = 30;
-        public int Width { get; } = 30;
-        public int Height { get; } = 30;
-        public int? DeliverStationId { get; } = null;
-        public int ServiceTypeId { get; set; }
-        public string Coupon { get; set; }
-        public string FromName { get; set; }
-        public string FromPhone { get; set; }
-        public string FromAddress { get; set; }
-        public string FromWardName { get; set; }
-        public string FromDistrictName { get; set; }
-        public string FromProvinceName { get; set; }
-        public string ToName { get; set; }
-        public string ToPhone { get; set; }
-        public string ToAddress { get; set; }
-        public int? ToDistrictId { get; set; }
-        public string ToWardCode { get; set; }
-        public List<int> PickShift { get; set; }
-        public List<OrderItemRequest> Items { get; set; }
-    }
+		[JsonProperty("payment_type_id")]
+		public int PaymentTypeId { get; set; }
+
+		[JsonProperty("required_note")]
+		public string RequiredNote { get; set; }
+
+		[JsonProperty("weight")]
+		public int Weight { get; set; }
+
+        [JsonProperty("cod_amount")]
+        public int COD { get; set; }
+        [JsonProperty("length")]
+		public int Length { get; set; } = 30;
+
+		[JsonProperty("width")]
+		public int Width { get; set; } = 30;
+
+		[JsonProperty("height")]
+		public int Height { get; set; } = 30;
+
+		[JsonProperty("service_type_id")]
+		public int ServiceTypeId { get; set; }
+		//[JsonProperty("service_id")]
+		//public int ServiceId { get; set; }
+
+		[JsonProperty("from_name")]
+		public string FromName { get; set; }
+
+		[JsonProperty("from_phone")]
+		public string FromPhone { get; set; }
+
+		[JsonProperty("from_address")]
+		public string FromAddress { get; set; }
+
+		[JsonProperty("from_ward_code")]
+		public string FromWardCode { get; set; }
+
+		[JsonProperty("from_district_id")]
+		public int FromDistrictId { get; set; }
+
+		[JsonProperty("to_province_name")]
+		public string ToProvinceName { get; set; }
+
+		[JsonProperty("to_name")]
+		public string ToName { get; set; }
+
+		[JsonProperty("to_phone")]
+		public string ToPhone { get; set; }
+
+		[JsonProperty("to_address")]
+		public string ToAddress { get; set; }
+
+		[JsonProperty("to_district_id")]
+		public int ToDistrictId { get; set; }
+
+		[JsonProperty("to_ward_code")]
+		public string ToWardCode { get; set; }
+
+		[JsonProperty("items")]
+		public List<OrderItemRequest> Items { get; set; }
+	}
 }

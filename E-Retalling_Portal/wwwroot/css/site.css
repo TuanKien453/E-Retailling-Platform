@@ -443,3 +443,24 @@ body {
 .viewshop-btn{
     width:120px;
 }
+.price-container {
+    display: flex;
+    align-items: center; /* Aligns items vertically centered */
+    gap: 10px; /* Adds space between the items */
+}
+
+.price {
+    font-size: 1.2em;
+    color: #333;
+    align-items: center;
+}
+
+
+.discount-name {
+    background-color: #ffeb3b;
+    color: #d32f2f;
+    font-weight: bold;
+    padding: 2px 8px;
+    border-radius: 5px;
+    font-size: 0.9em;
+}

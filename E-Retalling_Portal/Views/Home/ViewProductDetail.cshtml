@@ -50,7 +50,7 @@
                             <span class="ms-1">
                                 4.5
                         </div>
-                        <span class="text-muted"><i class="fas fa-shopping-basket fa-sm mx-1"></i>@ViewBag.product.quantity</span>
+                        <span class="text-muted"><i class="fas fa-shopping-basket fa-sm mx-1"></i>@ViewBag.quantityProduct</span>
                         <span class="text-success ms-2">In stock</span>
                     </div>
 
@@ -60,16 +60,23 @@
                             {
                                 if (ViewBag.minPrice == ViewBag.maxPrice)
                                 {
-                                    @($"${ViewBag.minPrice}")
+                                    @($"{ViewBag.minPrice}VND")
                                 }
                                 else
                                 {
-                                    @($"${ViewBag.minPrice} - ${ViewBag.maxPrice}")
+                                    <span id="newPrice">@($"{ViewBag.minPrice} VND") -</span>
+                                    <span id="oldPrice" style="display: inline;">@($"{ViewBag.maxPrice} VND")</span>
+                                    <s><span id="discount" style="display: inline;"></span></s>
                                 }
                             }
                             else
                             {
-                                @($"${ViewBag.product.price}")
+                                @if(ViewBag.productPrice != ViewBag.product.price)
+                                {
+                                    @($"{ViewBag.productPrice}VND")     <s>@($"{ViewBag.product.price}VND")</s>
+                                }else{
+                                    @($"{ViewBag.product.price}VND")
+                                }
                             }
 
 
@@ -84,12 +91,15 @@
                     <div class="product-grid">
                         @foreach (var productItem in ViewBag.productItemList)
                         {
-                            <button class="custom-button" onclick="toggleSelection(this, @productItem.quantity, '/productImages/@(productItem.image.imageName)', @productItem.id, @productItem.price)"
+                            <button class="custom-button"
+                                    onclick="toggleSelection(this, @productItem.quantity, '/productImages/@(productItem.image.imageName)', @productItem.id, @productItem.price, @(ViewBag.discountPrices != null && ViewBag.discountPrices.ContainsKey(productItem.id) ? ViewBag.discountPrices[productItem.id] : 0))"
                                     onmouseover="updateMainImage('/productImages/@(productItem.image.imageName)')"
                                     onmouseout="resetMainImage('/productImages/@ViewBag.product.coverImage.imageName')">
                                 <img src="~/productImages/@(productItem.image.imageName)" alt="Alternate Text" />
+                                @(ViewBag.discountPrices != null && ViewBag.discountPrices.ContainsKey(productItem.id) ? ViewBag.discountPrices[productItem.id] : 0)
                                 @ViewBag.product.name - @productItem.attribute
                             </button>
+
                         }
                     </div>
 
@@ -146,6 +156,7 @@
             <h5 class="card-title">Similar</h5>
             @foreach (var product in ViewBag.similarProducts)
             {
+                var discountPrice = ViewBag.discountProductSimilar != null && ViewBag.discountProductSimilar.ContainsKey(product.id)? ViewBag.discountProductSimilar[product.id]: 0;
                 <div class="col-md-2 col-sm-6">
                     <div class="product-grid">
                         <div class="product-image">
@@ -156,7 +167,11 @@
                         </div>
                         <div class="product-content">
                             <h3 class="title"><a href="@Url.Action("Index", "ViewProductDetail", new { area = "Home", productId = product.id })">@product.name</a></h3>
-                            <div class="price">$@product.price</div>
+                            @if(discountPrice == @product.price){
+                            <div class="price">@($"{product.price}VND")</div>
+                            }else{
+                                <div class="price">@($"{discountPrice}VND")- <s>@($"{product.price}VND")</s></div>
+                            }
                         </div>
                     </div>
                 </div>
@@ -174,28 +189,30 @@
     let selectedProductId = null;
     let productId = @ViewBag.product.id;
     var isVariation = @((ViewBag.product.isVariation == true) ? "true" : "false");
-    function toggleSelection(button, quantity, imagePath, productId, productPrice) {
+    function toggleSelection(button, quantity, imagePath, productId, productPrice, discountPrice) {
 
         if (selectedButton === button) {
 
             button.classList.remove('selected');
             selectedButton = null;
             document.getElementById('quantityInput').value = 1;
-            document.getElementById('quantityDisplay').innerText = @ViewBag.product.quantity;
+            document.getElementById('quantityDisplay').innerText = @ViewBag.quantityProduct;
             selectedProductId = null;
-
+            document.getElementById('discount').style.display = 'none';
             resetMainImage('/productImages/@ViewBag.product.coverImage.imageName');
 
             if (isVariation === false) {
-                document.getElementById('productPrice').innerText = '$' + '@ViewBag.product.price';
+                document.getElementById('productPrice').innerText = '@ViewBag.product.price' + 'VND';
             } else {
                 const minPrice = '@ViewBag.minPrice';
                 const maxPrice = '@ViewBag.maxPrice';
 
                 if (minPrice === maxPrice) {
-                    document.getElementById('productPrice').innerText = '$' + minPrice;
+                    document.getElementById('productPrice').innerText = minPrice + 'VND';
                 } else {
-                    document.getElementById('productPrice').innerText = '$' + minPrice + ' - $' + maxPrice;
+                    document.getElementById('oldPrice').innerText = maxPrice + ' VND';
+                    document.getElementById('oldPrice').style.display = 'inline';
+                    document.getElementById('newPrice').innerText = minPrice + ' VND -';
                 }
             }
 
@@ -212,7 +229,19 @@
             selectedProductId = productId;
 
             updateMainImage(imagePath);
-            document.getElementById('productPrice').innerText = '$' + productPrice;
+
+            const oldPriceText = productPrice + " VND";
+            const newPriceText = discountPrice > 0 ? discountPrice + " VND " : "0 VND";
+
+            document.getElementById('discount').innerText = oldPriceText;
+            document.getElementById('newPrice').innerText = newPriceText;
+            document.getElementById('oldPrice').style.display = 'none';
+            if (productPrice != discountPrice) {
+                document.getElementById('discount').style.display = 'inline';
+            } else {
+                document.getElementById('discount').style.display = 'none';
+            }
+
         }
     }
 

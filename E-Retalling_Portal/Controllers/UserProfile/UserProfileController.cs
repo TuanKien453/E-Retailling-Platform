@@ -16,7 +16,7 @@ namespace E_Retalling_Portal.Controllers.UserProfile
 {
     public class UserProfileController : Controller
     {
-
+        private GHNService ghNService;
 
         public IActionResult ViewProfile()
         {
@@ -76,24 +76,23 @@ namespace E_Retalling_Portal.Controllers.UserProfile
             {
 
                 int? accountId = (int)HttpContext.Session.GetInt32(SessionKeys.AccountId.ToString());
+                Account account = context.Accounts.GetAccountByAccountId(accountId.Value).FirstOrDefault();
 
-                User newUser = context.Users.GetUserByUserIdInAccount(accountId.Value).FirstOrDefault();
+                User newUser = context.Users.GetUserByUserIdInAccount(account.userId).FirstOrDefault();
 
                 User testUser = context.Users.GetValidUserData(user.email, user.phoneNumber, newUser.id).FirstOrDefault();
 
                 if (testUser != null)
                 {
                     newUser.displayName = user.displayName;
-                    
                     newUser.birthday = user.birthday;
                     newUser.gender = user.gender;
                     newUser.firstName = user.firstName;
                     newUser.lastName = user.lastName;
                     newUser.province = user.province;
                     newUser.district = user.district;
-                    newUser.commune = user.commune;
+                    newUser.ward = user.ward;
                     newUser.address = user.address;
-                    
                     if (testUser.email == user.email)
                     {
                         TempData["ErrorEmail"] = "Email is already been registered";
@@ -114,9 +113,6 @@ namespace E_Retalling_Portal.Controllers.UserProfile
                 else
                 {
                     newUser.displayName = user.displayName;
-
-                    newUser.email = user.email;
-
                     newUser.phoneNumber = user.phoneNumber;
                     newUser.birthday = user.birthday;
                     newUser.gender = user.gender;
@@ -124,11 +120,20 @@ namespace E_Retalling_Portal.Controllers.UserProfile
                     newUser.lastName = user.lastName;
                     newUser.province = user.province;
                     newUser.district = user.district;
-                    newUser.commune = user.commune;
+                    newUser.ward = user.ward;
                     newUser.address = user.address;
-					HttpContext.Session.SetString(SessionKeys.UserToUpdate.ToString(), JsonConvert.SerializeObject(user));
-					return RedirectToAction("SendOTP", new { emailTo = user.email });
-                   
+                    newUser.province = user.province;
+                    newUser.district = user.district;
+                    newUser.ward = user.ward;
+                    if (newUser.email != user.email)
+                    {
+                        newUser.email = user.email;
+                        HttpContext.Session.SetString(SessionKeys.UserToUpdate.ToString(), JsonConvert.SerializeObject(user));
+                        return RedirectToAction("SendOTP", new { emailTo = user.email });
+                    }
+                    context.SaveChanges();
+                    TempData["UpdateMessage"] = "Updated Successfully!";
+                    return RedirectToAction("ViewProfile");
                 }
                  
                 
@@ -170,7 +175,9 @@ namespace E_Retalling_Portal.Controllers.UserProfile
                                 newUser.firstName = userToUpdate.firstName;
                                 newUser.lastName = userToUpdate.lastName;
                                 newUser.address = userToUpdate.address;
-
+                                newUser.province = userToUpdate.province;
+                                newUser.district = userToUpdate.district;
+                                newUser.ward = userToUpdate.ward;
                                 context.SaveChanges(); 
                             }
 

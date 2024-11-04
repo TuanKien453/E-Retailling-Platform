@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using E_Retalling_Portal.Models;
 using E_Retalling_Portal.Models.GHNRequestModel;
 using System.Net.Http.Headers;
+using System.Text;
 namespace E_Retalling_Portal.Services
 {
     public class GHNService
@@ -11,15 +12,39 @@ namespace E_Retalling_Portal.Services
         private readonly HttpClient _httpClient;
         private readonly GHNLibrary _ghnLibrary;
         private readonly IConfiguration _configuration;
-        public GHNService(string token, GHNLibrary ghnLibrary, IConfiguration configuration)
+        public GHNService(IConfiguration configuration)
         {
             _configuration = configuration;
             _httpClient = new HttpClient();
             _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            _httpClient.DefaultRequestHeaders.Add("Token", _configuration["token"]);
-            _ghnLibrary = ghnLibrary;
+            _httpClient.DefaultRequestHeaders.Add("Token", _configuration["GHN:token"]);
+			_httpClient.DefaultRequestHeaders.Add("ShopId", _configuration["GHN:shopId"]);
+			_ghnLibrary = new GHNLibrary();
         }
-
+		public async Task<OrderResponse> CreateShippingOrderAsync(OrderRequest orderRequest)
+		{
+			var requestUrl = "https://dev-online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/create";
+			var jsonContent = JsonConvert.SerializeObject(orderRequest);
+			var request = _ghnLibrary.CreateRequest(requestUrl, HttpMethod.Post, orderRequest);
+			var jsonResponse = await GetJsonResponseAsync(request);
+			return _ghnLibrary.DeserializeJsonResponse<OrderResponse>(jsonResponse);
+		}
+        public async Task<OrderResponse> CreateShippingOrderPreviewAsync(OrderRequest orderRequest)
+        {
+            var requestUrl = "https://dev-online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/preview";
+            var jsonContent = JsonConvert.SerializeObject(orderRequest);
+            var request = _ghnLibrary.CreateRequest(requestUrl, HttpMethod.Post, orderRequest);
+            var jsonResponse = await GetJsonResponseAsync(request);
+            return _ghnLibrary.DeserializeJsonResponse<OrderResponse>(jsonResponse);
+        }
+        public async Task<FeeResponse> CalulateFreeAsync(FeeRequest feeRequest)
+        {
+            var requestUrl = "https://dev-online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/fee";
+            var jsonContent = JsonConvert.SerializeObject(feeRequest);
+            var request = _ghnLibrary.CreateRequest(requestUrl, HttpMethod.Post, feeRequest);
+            var jsonResponse = await GetJsonResponseAsync(request);
+            return _ghnLibrary.DeserializeJsonResponse<FeeResponse>(jsonResponse);
+        }
         public async Task<List<Province>> GetProvincesAsync()
         {
             var requestUrl = "https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/province";
@@ -47,6 +72,15 @@ namespace E_Retalling_Portal.Services
 
             var jsonResponse = await GetJsonResponseAsync(request);
             return _ghnLibrary.DeserializeJsonResponse<WardResponse>(jsonResponse).Data;
+        }
+        public async Task<OrderInfoResponse> GetOrderInfoAsync(string orderCode)
+        {
+            var requestUrl = "https://dev-online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/detail";
+            var requestBody = new { order_code = orderCode};
+            var request = _ghnLibrary.CreateRequest(requestUrl, HttpMethod.Post, requestBody);
+
+            var jsonResponse = await GetJsonResponseAsync(request);
+            return _ghnLibrary.DeserializeJsonResponse<OrderInfoResponse>(jsonResponse);
         }
 
         private async Task<string> GetJsonResponseAsync(HttpRequestMessage request)

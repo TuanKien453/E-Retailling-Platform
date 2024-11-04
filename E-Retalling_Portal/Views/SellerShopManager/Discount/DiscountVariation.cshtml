@@ -2,6 +2,12 @@
     ViewData["Title"] = "DiscountVariation";
     Layout = "~/Views/Shared/ShopManagerSideBarLayout.cshtml";
 }
+@{
+    var products = ViewBag.productItems as List<ProductItem>;  // Adjust `ProductModel` to your product model type
+    var discounts = ViewBag.discount as List<Discount>;  // Adjust `DiscountModel` to your discount model type
+    var count = Math.Min(products.Count, discounts.Count);  // Use the smaller count to avoid out-of-bounds errors
+    var today = DateTime.Today; // Today's date, without time component
+}
 <link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.css" />
 <style>
     .row-img {
@@ -43,22 +49,33 @@
                         <th>Attribute</th>
                         <th>Price</th>
                         <th>Quantity</th>
+                        <th>Active</th>
                         <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var item in ViewBag.productItems)
+                    @for (int i = 0; i < count; i++)
                     {
+                        var product = products[i];
+                        var discount = discounts[i];
                         <tr>
-                            <td><img class="row-img" src="~/productImages/@item.image.imageName" /></td>
-                            <td>@item.attribute</td>
-                            <td>@item.price</td>
-                            <td>@item.quantity</td>
+                            <td><img class="row-img" src="~/productImages/@product.image.imageName" /></td>
+                            <td>@product.attribute</td>
+                            <td>@product.price</td>
+                            <td>@product.quantity</td>
+                            @if (today >= DateTime.Parse(discount.startDate.ToString()) && today <= DateTime.Parse(discount.endDate.ToString()))
+                            {
+                                <td class="text-primary font-weight-bold text-xs">Active</td>
+                            }
+                            else
+                            {
+                                <td class="text-danger font-weight-bold text-xs">Not Active</td>
+                            }
                             <td>
-                                <a href="ViewDetailDiscount?productId=@ViewBag.productId&&productItemId=@item.id" class="text-primary font-weight-bold text-xs btn">
+                                <a href="ViewDetailDiscount?productId=@ViewBag.productId&&productItemId=@product.id" class="text-primary font-weight-bold text-xs btn">
                                     Detail Discount
                                 </a>|
-                                <a href="#" class="text-danger font-weight-bold text-xs" data-bs-toggle="modal" data-bs-target="#deleteModal" onclick="sendDataToModal(@ViewBag.productId,@item.id)">
+                                <a href="#" class="text-danger font-weight-bold text-xs" data-bs-toggle="modal" data-bs-target="#deleteModal" onclick="sendDataToModal(@ViewBag.productId,@product.id)">
                                     Stop Discount
                                 </a>
                             </td>

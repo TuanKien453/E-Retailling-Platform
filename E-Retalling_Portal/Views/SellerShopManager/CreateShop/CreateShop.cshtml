@@ -20,7 +20,8 @@
     </style>
     <link rel="stylesheet" href="/kit/css/material-kit.css" />
     <link rel="stylesheet" href="~/css/site.css" />
-    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 </head>
 <body>
     <section>
@@ -54,6 +55,36 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="row mb-3">
+                                <div class="col-sm-3">
+                                    <label for="province" class="form-label">Province</label>
+                                </div>
+                                <div class="col-sm-9">
+                                    <select class="css_select" id="tinh" name="province" title="Chọn Tỉnh Thành">
+                                        <option value="0">Tỉnh Thành</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-sm-3">
+                                    <label for="district" class="form-label">District</label>
+                                </div>
+                                <div class="col-sm-9">
+                                    <select class="css_select" id="quan" name="district" title="Chọn Quận Huyện">
+                                        <option value="0">Quận Huyện</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-sm-3">
+                                    <label for="ward" class="form-label">Ward</label>
+                                </div>
+                                <div class="col-sm-9">
+                                    <select class="css_select" id="phuong" name="ward" title="Chọn Phường Xã">
+                                        <option value="0">Phường Xã</option>
+                                    </select>
+                                </div>
+                            </div>
                             <div class="mb-4">
                                 <div class="input-group input-group-dynamic">
                                     <label class="form-label" for="address">Address</label>
@@ -77,6 +108,7 @@
         <script>
             document.getElementById('createdAt').value = new Date().toISOString().split('T')[0];
         </script>
+        <script src="~/js/address.js"></script>
         <script src="~/js/materialkitpro.js"></script>
         <script>
             window.addEventListener('load', function () {
@@ -101,6 +133,7 @@
                 });
             });
         </script>
+        <script src="~/js/address.js"></script>
     </section>
 </body>
 </html>

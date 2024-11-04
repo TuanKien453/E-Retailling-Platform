@@ -28,7 +28,7 @@ namespace E_Retalling_Portal.Controllers.Cart
 				var removedProductIds = new HashSet<int>();
 				var removedProductItemIds = new HashSet<int>();
 
-            //Delete deletedItem in cookie and save deletedItem to hashset
+				//Delete deletedItem in cookie and save deletedItem to hashset
 				foreach (var item in cartItems)
 				{
 					var key = item.Key;
@@ -96,13 +96,10 @@ namespace E_Retalling_Portal.Controllers.Cart
 				{
 					quantity = ci.Value,
 					product = ci.Key.EndsWith("P") ? products.FirstOrDefault(p => p.id == int.Parse(ci.Key.TrimEnd('P'))) : null,
-					productItem = ci.Key.EndsWith("PI") ? productItems.FirstOrDefault(pi => pi.id == int.Parse(ci.Key.TrimEnd("PI".ToCharArray()))) : null
+					productItem = ci.Key.EndsWith("PI") ? productItems.FirstOrDefault(pi => pi.id == int.Parse(ci.Key.TrimEnd("PI".ToCharArray()))) : null,
+					discountedPrice = ci.Key.EndsWith("P") ? (float)context.Products.GetProductDiscountPrice(products.FirstOrDefault(p => p.id == int.Parse(ci.Key.TrimEnd('P')))) :
+					ci.Key.EndsWith("PI") ? (float)context.ProductItems.GetProductItemDiscountPrice(productItems.FirstOrDefault(pi => pi.id == int.Parse(ci.Key.TrimEnd("PI".ToCharArray())))) : 0
 				}).ToList();
-
-				// Paging
-				var pageNumber = page ?? 1;
-				var pageSize = 3;
-				var pagedCartItem = cartDetails.ToPagedList(pageNumber, pageSize);
 
 				if (cartDetails == null || !cartDetails.Any())
 				{
@@ -110,14 +107,15 @@ namespace E_Retalling_Portal.Controllers.Cart
 					return View();
 				}
 
-				if (pagedCartItem.Count() == 0)
-				{
-					return RedirectToAction("Index");
+                User user = null;
+				if (HttpContext.Session.Keys.Contains(SessionKeys.AccountId.ToString())) {
+                    var accId = HttpContext.Session.GetInt32(SessionKeys.AccountId.ToString());
+                    var acc = context.Accounts.GetAccountByAccountId(accId.Value).FirstOrDefault();
+					user = acc.user;
 				}
-
 				ViewBag.IsCartEmpty = false;
-
-				return View(pagedCartItem);
+				ViewBag.User = user;
+				return View(cartDetails);
 			}
 		}
 
@@ -129,16 +127,16 @@ namespace E_Retalling_Portal.Controllers.Cart
 
 			if (cartItems.ContainsKey(cartKey))
 			{
-				cartItems[cartKey] += quantity; 
+				cartItems[cartKey] += quantity;
 			}
 			else
 			{
-				cartItems[cartKey] = quantity; 
+				cartItems[cartKey] = quantity;
 			}
 
 			TempData["CartItems"] = JsonConvert.SerializeObject(cartItems);
 
-			CookiesUtils.SetCartItems(cartItems, Response); 
+			CookiesUtils.SetCartItems(cartItems, Response);
 
 			return RedirectToAction("Index");
 		}

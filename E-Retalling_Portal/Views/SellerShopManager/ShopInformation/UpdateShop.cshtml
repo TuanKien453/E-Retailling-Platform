@@ -122,6 +122,30 @@
                             </div>
                             <div class="mb-4">
                                 <div class="input-group input-group-dynamic is-filled">
+                                    <label class="form-label" for="province">Province</label>
+                                    <select class="css_select" id="tinh" name="province" title="Chọn Tỉnh Thành">
+                                        <option value="0">Tỉnh Thành</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-4">
+                                <div class="input-group input-group-dynamic is-filled">
+                                    <label class="form-label" for="district">District</label>
+                                    <select class="css_select" id="quan" name="district" title="Chọn Quận Huyện">
+                                        <option value="0">Quận Huyện</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-4">
+                                <div class="input-group input-group-dynamic is-filled">
+                                    <label class="form-label" for="ward">Ward</label>
+                                    <select class="css_select" id="phuong" name="ward" title="Chọn Phường Xã">
+                                        <option value="0">Phường Xã</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-4">
+                                <div class="input-group input-group-dynamic is-filled">
                                     <label class="form-label" for="address">Address</label>
                                     <input class="form-control" type="text" id="address" name="address" maxlength="100" required placeholder="Enter shop address" value="@ViewBag.Address">
                                 </div>
@@ -150,7 +174,8 @@
         @section Scripts {
     <!-- External JavaScript Files -->
     <script src="@Url.Content("~/js/materialkitpro.js")"></script>
-
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+                    <script src="~/js/address.js"></script>
     <!-- Page-Specific JavaScript -->
     <script>
         window.addEventListener('load', function () {
@@ -174,5 +199,95 @@
                 });
             });
         });
+        var shopProvince = "@(ViewBag.Province)";
+        var shopDistrict = "@(ViewBag.District)";
+        var shopWard = "@(ViewBag.Ward)";
+        
+        $(document).ready(function () {
+            console.log("Document is ready");
+            // Load provinces
+            $.ajax({
+                url: '/address/getProvinces',
+                type: 'GET',
+                success: function (data_tinh) {
+                    console.log("Provinces loaded:", data_tinh);
+
+                    // Populate provinces dropdown
+                    $.each(data_tinh, function (key_tinh, val_tinh) {
+                        $("#tinh").append('<option value="' + val_tinh.provinceID + '">' + val_tinh.provinceName + '</option>');
+                    });
+
+                    // Set shopProvince if available after provinces are loaded
+                    if (shopProvince) {
+                        console.log("Setting province to:", shopProvince);
+                        $("#tinh").val(shopProvince).trigger('change');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error loading provinces:", error);
+                    console.log("Status code:", xhr.status);
+                }
+            });
+
+            // Province change event
+            $(document).on('change', '#tinh', function () {
+                var idtinh = $(this).val();
+                $("#quan").html('<option value="0">Quận Huyện</option>');
+                $("#phuong").html('<option value="0">Phường Xã</option>');
+
+                // Load districts
+                $.ajax({
+                    url: '/address/getDistricts?provinceId=' + idtinh,
+                    type: 'GET',
+                    success: function (data_quan) {
+                        console.log("Districts loaded:", data_quan);
+                        $.each(data_quan, function (key_quan, val_quan) {
+                            $("#quan").append('<option value="' + val_quan.districtID + '">' + val_quan.districtName + '</option>');
+                        });
+
+                        // Set shopDistrict if available after districts are loaded
+                        if (shopDistrict) {
+                            console.log("Setting district to:", shopDistrict);
+                            $("#quan").val(shopDistrict).trigger('change');
+                        }
+                    }
+                });
+            });
+
+            // District change event
+            $(document).on('change', '#quan', function () {
+                var idquan = $(this).val();
+                var selectedProvince = $("#tinh option:selected").text();
+                $("#phuong").html('<option value="0">Phường Xã</option>');
+
+
+                $.ajax({
+                    url: '/address/getWards?districtId=' + idquan,
+                    type: 'GET',
+                    success: function (data_phuong) {
+                        console.log("Wards loaded:", data_phuong);
+                        $.each(data_phuong, function (key_phuong, val_phuong) {
+                            $("#phuong").append('<option value="' + val_phuong.wardCode + '">' + val_phuong.wardName + '</option>');
+                        });
+
+                        // Set shopWard if available after wards are loaded
+                        if (shopWard) {
+                            console.log("Setting ward to:", shopWard);
+                            $("#phuong").val(shopWard);
+                        }
+                    }
+                });
+            });
+
+            // Ward change event
+            $(document).on('change', '#phuong', function () {
+                var selectedCommune = $(this).find("option:selected").text();
+                var selectedDistrict = $("#quan option:selected").text();
+                var selectedProvince = $("#tinh option:selected").text();
+                $('#address').val(selectedProvince + ", " + selectedDistrict + ", " + selectedCommune);
+            });
+        });
+
+
     </script>
         }
