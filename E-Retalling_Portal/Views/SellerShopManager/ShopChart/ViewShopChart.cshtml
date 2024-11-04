@@ -6,51 +6,34 @@
 <div class="content m-4 pb-3">
     <div class="row p-4">
         <div class="col-12">
-            <label for="yearSelector">Select Year:</label>
-            <select id="yearSelector" onchange="loadChartData()">
+            <h2>Shop Sales Chart</h2>
+            <label for="yearDropdown">Select Year:</label>
+            <select id="yearDropdown" onchange="updateChart()">
                 <option value="2023">2023</option>
                 <option value="2024">2024</option>
-                <option value="2025">2025</option>
                 <!-- Add more years as needed -->
             </select>
 
             <div>
-                <canvas id="shopChart" width="400" height="200"></canvas>
+                <canvas id="salesChart" width="400" height="200"></canvas>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    let chart;
+    let salesChart;
 
-    async function loadChartData() {
-        const year = document.getElementById("yearSelector").value;
+    // Initialize or update the chart
+    function initChart(labels, sales, others, averages) {
+        const ctx = document.getElementById('salesChart').getContext('2d');
 
-        try {
-            const response = await fetch(`/SellerShopManager/LoadChartData?yearString=${year}`);
-            const result = await response.json();
-
-            if (result.error) {
-                alert(result.error);
-                return;
-            }
-
-            const labels = result.labels;
-            const sales = result.sales;
-            const others = result.others;
-            const averages = result.averages;
-
-            renderChart(labels, sales, others, averages);
-        } catch (error) {
-            console.error("Error loading chart data:", error);
+        // If the chart already exists, destroy it before creating a new one
+        if (salesChart) {
+            salesChart.destroy();
         }
-    }
 
-    function renderChart(labels, sales, others, averages) {
-        const ctx = document.getElementById('shopChart').getContext('2d');
-
-        chart = new Chart(ctx, {
+        salesChart = new Chart(ctx, {
             type: 'bar',
             data: {
                 labels: labels,
@@ -58,42 +41,76 @@
                     {
                         label: 'Sales',
                         data: sales,
-                        backgroundColor: 'rgba(75, 192, 192, 0.6)',
                         borderColor: 'rgba(75, 192, 192, 1)',
-                        borderWidth: 1
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4
                     },
                     {
-                        label: 'Other',
+                        label: 'Transaction Fee',
                         data: others,
-                        backgroundColor: 'rgba(153, 102, 255, 0.6)',
-                        borderColor: 'rgba(153, 102, 255, 1)',
-                        borderWidth: 1
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4
                     },
                     {
-                        label: 'Average',
+                        label: 'Averages Order',
                         data: averages,
-                        backgroundColor: 'rgba(255, 159, 64, 0.6)',
-                        borderColor: 'rgba(255, 159, 64, 1)',
-                        borderWidth: 1
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4
                     }
                 ]
             },
             options: {
+                responsive: true,
                 scales: {
-                    x: {
-                        beginAtZero: true
-                    },
                     y: {
-                        beginAtZero: true
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Values'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Months'
+                        }
                     }
                 }
             }
         });
     }
 
-    // Load the chart data when the page first loads
-    document.addEventListener("DOMContentLoaded", loadChartData);
+    // Fetch data and update chart based on selected year
+    function updateChart() {
+        const yearString = document.getElementById('yearDropdown').value;
 
+        fetch(`/ShopChart/LoadChartData?yearString=${yearString}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    console.error('Error loading chart data:', data.error);
+                    alert(data.error);
+                    return;
+                }
+
+                const { labels, sales, others, averages } = data;
+                initChart(labels, sales, others, averages);
+            })
+            .catch(error => console.error('Error loading chart data:', error));
+    }
+
+    // Initialize the chart on page load with the selected year
+    document.addEventListener('DOMContentLoaded', () => {
+        updateChart();
+    });
 </script>
 
 

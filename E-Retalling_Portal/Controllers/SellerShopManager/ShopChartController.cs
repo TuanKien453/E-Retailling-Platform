@@ -33,6 +33,7 @@ namespace E_Retalling_Portal.Controllers.SellerShopManager
                 double countSale = 0;
                 double countAverage = 0;
                 double countBreak = 0;
+                double countFee = 0;
 
                 int year = DateTime.ParseExact(yearString.Trim(), "yyyy", null).Year;
                 for (int i = 0; i < monthsString.Length; i++)
@@ -40,6 +41,7 @@ namespace E_Retalling_Portal.Controllers.SellerShopManager
                     countSale = 0;
                     countAverage = 0;
                     countBreak = 0;
+                    countFee = 0;
                     int day = i + 1;
                     int month = DateTime.ParseExact(monthsString[i].Trim(), "MMMM", null).Month;
                     List<Order> orderInMonth = context.Orders.GetOrderByYearMonth(year, month).ToList();
@@ -56,7 +58,8 @@ namespace E_Retalling_Portal.Controllers.SellerShopManager
                                 if (products.Contains(context.Products.GetProductById(item.productId).FirstOrDefault()))
                                 {
                                     double today = item.quanity * item.price;
-                                    countBreak += today * item.transactionFee + item.shippingFee;
+                                    countFee += today * item.transactionFee / 100;
+                                    countBreak += today * item.transactionFee/100 + item.shippingFee;
                                     countSale += today;
                                     countAverage += countSale + countBreak;
                                 }

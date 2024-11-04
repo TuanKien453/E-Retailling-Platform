@@ -77,6 +77,7 @@ namespace E_Retalling_Portal.Controllers.ShopManager
                 double countSale = 0;
                 double countAverage = 0;
                 double countBreak = 0;
+                double countFee = 0;
                
                 
                 for (int i = 0; i < daysInMonth; i++)
@@ -84,6 +85,7 @@ namespace E_Retalling_Portal.Controllers.ShopManager
                     countSale = 0;
                     countAverage = 0;
                     countBreak = 0;
+                    countFee = 0;
                     int day = i + 1;
                     List<Order> orderInMonth = context.Orders.GetOrderByYearMonthDay(year, month, day).ToList();
 
@@ -99,7 +101,8 @@ namespace E_Retalling_Portal.Controllers.ShopManager
                                 if (products.Contains(context.Products.GetProductById(item.productId).FirstOrDefault()))
                                 {
                                     double today = item.quanity * item.price;
-                                    countBreak += today * item.transactionFee + item.shippingFee;
+                                    countFee += today * item.transactionFee / 100;
+                                    countBreak += today * item.transactionFee/100 + item.shippingFee;
                                    countSale += today;
                                     countAverage += countSale + countBreak;
                                 }
@@ -107,7 +110,7 @@ namespace E_Retalling_Portal.Controllers.ShopManager
                             
                         }
                         data[i] = countSale;
-                        other[i] = countBreak;
+                        other[i] = countFee;
                         average[i] = countAverage;
                     }
                    
