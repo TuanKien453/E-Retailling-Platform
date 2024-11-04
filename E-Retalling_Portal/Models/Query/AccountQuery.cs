@@ -28,5 +28,15 @@ namespace E_Retalling_Portal.Models.Query
 		{
 				return dbAccount.Where(acc => acc.externalId == externalId && acc.externalType == externalType);
 		}
+
+        public static IQueryable<Account> GetAllAccountsByRoleId(this DbSet<Account> dbAccount, int roleId)
+        {
+            return dbAccount.Where(acc => acc.roleId == roleId);
+        }
+
+		public static int GetUserIdByAccountId(this DbSet<Account> dbAccount, int accountId)
+		{
+			return dbAccount.Where(a => a.id == accountId).FirstOrDefault().userId;
+		}
 	}
 }
