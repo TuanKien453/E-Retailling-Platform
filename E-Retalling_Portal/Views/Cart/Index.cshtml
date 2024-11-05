@@ -270,6 +270,12 @@
             {
                 <div style="color: red;">@TempData["mess"]</div>
             }
+            @if (TempData["successMess"] != null)
+            {
+                <div class="alert alert-success" role="alert" style="color:white;max-width:400px;padding:12px;">
+                    Order success ! View order list for detail
+                </div>
+            }
         </div>
         <div class="col-xl-4">
             <div class="mt-5 mt-lg-0">

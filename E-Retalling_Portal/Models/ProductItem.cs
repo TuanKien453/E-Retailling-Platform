@@ -7,7 +7,9 @@ namespace E_Retalling_Portal.Models
         [Key]
         public int id { get; set; }
         public int  productId { get; set; }
+        [Range(0, 10000)]
         public int quantity { get; set; }
+        [Range(0, 10000000)]
         public double price { get; set; }
         public int imageId { get; set; }
         [Required,MaxLength(100)]

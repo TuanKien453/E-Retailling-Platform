@@ -14,7 +14,9 @@ namespace E_Retalling_Portal.Models
         public int shopId { get; set; }
         [MaxLength(5000)]
         public string desc { get; set; }
+        [Range(0, 10000000)]
         public double price { get; set; }
+        [Range(0, 10000)]
         public int quantity {  get; set; }
         public int weight {  get; set; }
         public bool isVariation { get; set; }

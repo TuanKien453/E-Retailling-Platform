@@ -12,7 +12,8 @@ namespace E_Retalling_Portal.Models
         public string? email { get; set; }
         [RegularExpression(@"^0\d{9}$", ErrorMessage = "Phone number must be 10 digits starting with 0.")]
         public string? phoneNumber { get; set; }
-        public string? displayName { get; set; }
+		[MaxLength(100)]
+		public string? displayName { get; set; }
         [DataType(DataType.Date)]
         public string? birthday { get; set; }
         public string? gender { get; set; }
