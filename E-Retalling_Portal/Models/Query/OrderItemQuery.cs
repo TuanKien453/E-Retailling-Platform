@@ -17,6 +17,11 @@ namespace E_Retalling_Portal.Models.Query
                     .ThenInclude(pi => pi.image)
                 .Where(oi => oi.order.userId == userId);
         }
-
+        public static IQueryable<OrderItem> GetOrderItemByShopId(this DbSet<OrderItem> dbAccount, int shopId)
+        {
+            return dbAccount
+                .Include(oi => oi.product)
+                .Where(oi => oi.product.shopId == shopId);
+        }
     }
 }
