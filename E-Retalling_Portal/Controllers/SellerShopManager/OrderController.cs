@@ -92,7 +92,8 @@ namespace E_Retalling_Portal.Controllers.SellerShopManager
                                 Price = orderItem.price,
 								Product = orderItem.product,
 								ProductItem = orderItem.productItem,
-								ProductItemId = orderItem.productItemId
+								ProductItemId = orderItem.productItemId,
+								OrderItem = orderItem
                             });
             return joinedData;
         }

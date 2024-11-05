@@ -24,10 +24,6 @@ namespace E_Retalling_Portal.Models
 		public string ward { get; set; }
 		[MaxLength(100)]
 		public string? address { get; set; }
-        [Range(1, 5)]
-        public int? rating { get; set; }
-        [MaxLength(400)]
-        public string? comment { get; set; }
         public User user { get; set; }
         public List<OrderItem> orderItems { get; set; }
 

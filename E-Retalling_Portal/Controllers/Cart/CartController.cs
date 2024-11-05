@@ -96,10 +96,10 @@ namespace E_Retalling_Portal.Controllers.Cart
 				var cartDetails = cartItems.Select(ci => new CartItemModel
 				{
 					quantity = ci.Value,
-					product = ci.Key.EndsWith("P") ? products.FirstOrDefault(p => p.id == int.Parse(ci.Key.TrimEnd('P'))) : null,
-					productItem = ci.Key.EndsWith("PI") ? productItems.FirstOrDefault(pi => pi.id == int.Parse(ci.Key.TrimEnd("PI".ToCharArray()))) : null,
-					discountedPrice = ci.Key.EndsWith("P") ? (float)context.Products.GetProductDiscountPrice(products.FirstOrDefault(p => p.id == int.Parse(ci.Key.TrimEnd('P')))) :
-					ci.Key.EndsWith("PI") ? (float)context.ProductItems.GetProductItemDiscountPrice(productItems.FirstOrDefault(pi => pi.id == int.Parse(ci.Key.TrimEnd("PI".ToCharArray())))) : 0
+					product = ci.Key.EndsWith("P") ? products.FirstOrDefault(p => p.id == int.Parse(ci.Key.TrimEnd('P')) && p.deleteAt == null) : null,
+					productItem = ci.Key.EndsWith("PI") ? productItems.FirstOrDefault(pi => pi.deleteAt == null && pi.id == int.Parse(ci.Key.TrimEnd("PI".ToCharArray()))) : null,
+					discountedPrice = ci.Key.EndsWith("P") ? (float)context.Products.GetProductDiscountPrice(products.FirstOrDefault(p => p.deleteAt == null && p.id == int.Parse(ci.Key.TrimEnd('P')))) :
+					ci.Key.EndsWith("PI") ? (float)context.ProductItems.GetProductItemDiscountPrice(productItems.FirstOrDefault(pi => pi.deleteAt == null && pi.id == int.Parse(ci.Key.TrimEnd("PI".ToCharArray())))) : 0
 				}).ToList();
 
 				if (cartDetails == null || !cartDetails.Any())
