@@ -3,14 +3,16 @@ using E_Retalling_Portal.Models;
 using E_Retalling_Portal.Models.Query;
 using E_Retalling_Portal.Models.Enums;
 using E_Retalling_Portal.Util;
-using PagedList;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System.Drawing.Printing;
+using X.PagedList.Extensions;
 namespace E_Retalling_Portal.Controllers.Home
 {
     public class ViewProductDetailController : Controller
     {
-        public IActionResult Index(int? productId)
+        public IActionResult Index(int? productId, int? page)
         {
-            CookiesUtils.SaveProductToCookie(productId.Value,Request,Response);
+            CookiesUtils.SaveProductToCookie(productId.Value, Request, Response);
             using (var context = new Context())
             {
                 var product = context.Products.GetProductById(productId.Value).FirstOrDefault();
@@ -20,14 +22,14 @@ namespace E_Retalling_Portal.Controllers.Home
 
                 if (product.isVariation == true)
                 {
-                    
-                    
+
+
                     Dictionary<int, double> discountPrices = new Dictionary<int, double>();
                     foreach (var item in productItemList)
                     {
                         totalQuantityOfProductItems += item.quantity;
-                            var discountedPrice = context.ProductItems.GetProductItemDiscountPrice(item);
-                            discountPrices[item.id] = discountedPrice;
+                        var discountedPrice = context.ProductItems.GetProductItemDiscountPrice(item);
+                        discountPrices[item.id] = discountedPrice;
                     }
                     var maxPrice = discountPrices.Min(pd => pd.Value);
                     var minPrice = discountPrices.Max(pd => pd.Value);
@@ -42,7 +44,7 @@ namespace E_Retalling_Portal.Controllers.Home
                             maxPrice = item.Value;
                         }
                     }
-                    
+
 
 
                     ViewBag.discountPrices = discountPrices;
@@ -52,7 +54,7 @@ namespace E_Retalling_Portal.Controllers.Home
                 List<Product> products = GetProductsIsNotDelete(similarProducts).Take(6).ToList();
 
                 Dictionary<int, double> discountProductSimilar = new Dictionary<int, double>();
-                foreach(var item in products)
+                foreach (var item in products)
                 {
                     var discountPrice = context.Products.GetProductDiscountPrice(item);
                     discountProductSimilar[item.id] = discountPrice;
@@ -65,8 +67,31 @@ namespace E_Retalling_Portal.Controllers.Home
                 ViewBag.product = product;
                 ViewBag.productItemList = productItemList;
                 ViewBag.similarProducts = products;
+                var orderItems = context.OrderItems.GetStarAndCommentByProductId(product.id)
+                                                    .Select(oi => new FeedbackViewModel
+                                                    {
+                                                        displayName = context.Users
+                                                    .Where(u => u.id == oi.order.userId)
+                                                    .Select(u => u.displayName)
+                                                     .FirstOrDefault() ?? "",
+                                                        productItemAttribute = oi.productItem.attribute,
+                                                        comment = oi.comment,
+                                                        rating = oi.rating
+                                                    })
+                                                    .ToList() as List<FeedbackViewModel>;
+                int pageSize = 5;
+                int pageNumber = (page ?? 1);
+                var feedbackList = orderItems.ToPagedList(pageNumber, pageSize);
+                var ratings = context.OrderItems
+                                                    .Where(oi => oi.productId == productId && oi.rating.HasValue)
+                                                    .Select(oi => oi.rating.Value)
+                                                    .ToList();
+
+                int averageRating = ratings.Any() ? (int)Math.Round(ratings.Average()) : 0;
+                ViewBag.averageRating = averageRating;
+
+                return View("/Views/Home/ViewProductDetail.cshtml", feedbackList);
             }
-            return View("/Views/Home/ViewProductDetail.cshtml");
         }
         private List<Product> GetProductsIsNotDelete(List<Product>? productList)
         {

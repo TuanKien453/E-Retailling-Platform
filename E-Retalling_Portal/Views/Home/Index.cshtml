@@ -169,14 +169,6 @@
                                     <a href="@Url.Action("Index", "ViewProductDetail", new { area = "Home", productId = product.id })" class="product-view"><i class="fa fa-search"></i></a>
                                 </div>
                                 <div class="product-content">
-                                    <ul class="rating">
-                                        <li class="fas fa-star"></li>
-                                        <li class="fas fa-star"></li>
-                                        <li class="fas fa-star"></li>
-                                        <li class="fas fa-star"></li>
-                                        <li class="fas fa-star disable"></li>
-                                        <li class="disable">(1 reviews)</li>
-                                    </ul>
                                     <h3 class="title"><a href="@Url.Action("Index", "ViewProductDetail", new { area = "Home", productId = product.id })">@product.name</a></h3>
                                     @foreach (var item in ViewBag.productDiscounts)
                                     {
