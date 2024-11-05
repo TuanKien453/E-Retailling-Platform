@@ -21,7 +21,10 @@ namespace E_Retalling_Portal.Controllers.SellerShopManager
 		{
 			using (var context = new Context())
 			{
-				var orderItemList = context.OrderItems.ToList();
+                int? accountId = (int)HttpContext.Session.GetInt32(SessionKeys.AccountId.ToString());
+                Account account = context.Accounts.GetAccountByAccountId(accountId.Value).FirstOrDefault();
+				var shop = context.Shops.GetShopbyAccId(accountId.Value).FirstOrDefault();
+                var orderItemList = context.OrderItems.GetOrderItemByUserId(shop.id).ToList();
 				var orderInfoResponses = new List<OrderInfoResponse>();
 				foreach (var orderItem in orderItemList)
 				{
