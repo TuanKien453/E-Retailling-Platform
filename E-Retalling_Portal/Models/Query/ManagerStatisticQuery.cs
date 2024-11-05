@@ -39,7 +39,7 @@ namespace E_Retalling_portal.Models.Query
                         saleYear = g.Key.saleYear,
                         saleMonth = g.Key.saleMonth,
                         saleDay = g.Key.saleDay,
-                        totalQuantity = g.Sum(oi => oi.quanity)
+                        totalQuantity = g.Sum(oi => oi.quantity)
                     })
                     .OrderBy(s => s.shopId)
                     .ThenBy(s => s.saleYear)
@@ -118,12 +118,12 @@ namespace E_Retalling_portal.Models.Query
                         saleDay = g.Key.saleDay,
                         totalRevenue = (decimal)g.Sum(oi =>
                             oi.productItemId.HasValue ?
-                                oi.quanity * oi.product.productItems.FirstOrDefault(pi => pi.id == oi.productItemId)?.price :
-                                oi.quanity * oi.product.price),
+                                oi.quantity * oi.product.productItems.FirstOrDefault(pi => pi.id == oi.productItemId)?.price :
+                                oi.quantity * oi.product.price),
                         totalTransactionFee = (decimal)g.Sum(oi =>
                             (oi.productItemId.HasValue ?
-                                oi.quanity * oi.product.productItems.FirstOrDefault(pi => pi.id == oi.productItemId)?.price :
-                                oi.quanity * oi.product.price) * (oi.transactionFee / 100))
+                                oi.quantity * oi.product.productItems.FirstOrDefault(pi => pi.id == oi.productItemId)?.price :
+                                oi.quantity * oi.product.price) * (oi.transactionFee / 100))
                     })
                     .OrderBy(s => s.shopId)
                     .ThenBy(s => s.saleYear)
@@ -214,7 +214,7 @@ namespace E_Retalling_portal.Models.Query
                         saleYear = g.Key.SaleYear,
                         saleMonth = g.Key.SaleMonth,
                         saleDay = g.Key.SaleDay,
-                        quantitySold = g.Sum(oi => oi.quanity)
+                        quantitySold = g.Sum(oi => oi.quantity)
                     })
                     .OrderByDescending(p => p.quantitySold)
                     .Take(10)
@@ -249,12 +249,12 @@ namespace E_Retalling_portal.Models.Query
 						saleDay = g.Key.saleDay,
 						totalRevenue = (decimal)g.Sum(oi =>
 							oi.productItemId.HasValue ?
-								oi.quanity * oi.product.productItems.FirstOrDefault(pi => pi.id == oi.productItemId)?.price :
-								oi.quanity * oi.product.price),
+								oi.quantity * oi.product.productItems.FirstOrDefault(pi => pi.id == oi.productItemId)?.price :
+								oi.quantity * oi.product.price),
 						totalTransactionFee = (decimal)g.Sum(oi =>
 							(oi.productItemId.HasValue ?
-								oi.quanity * oi.product.productItems.FirstOrDefault(pi => pi.id == oi.productItemId)?.price :
-								oi.quanity * oi.product.price) * (oi.transactionFee / 100))
+								oi.quantity * oi.product.productItems.FirstOrDefault(pi => pi.id == oi.productItemId)?.price :
+								oi.quantity * oi.product.price) * (oi.transactionFee / 100))
 					})
 					.OrderBy(s => s.saleYear)
 					.ThenBy(s => s.saleMonth)
