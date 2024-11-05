@@ -15,7 +15,14 @@ namespace E_Retalling_Portal.Controllers.Home
             {
                 var product = context.Products.GetProductById(productId.Value).FirstOrDefault();
                 var productItemList = context.ProductItems.GetProductItem(productId.Value).ToList();
-                var similarProducts = context.Products.GetSimilarProductByProductCategory(product.category, product.id).ToList();
+                var similarProducts = new List<Product>();
+                if (product.category?.parentCategoryId.HasValue == true)
+                {
+                     similarProducts = context.Products
+                        .GetSimilarProductByProductCategory(product.category.parentCategoryId.Value, product.id)
+                        .ToList();
+                }
+
                 int totalQuantityOfProductItems = 0;
 
                 if (product.isVariation == true)
@@ -49,16 +56,19 @@ namespace E_Retalling_Portal.Controllers.Home
                     ViewBag.minPrice = minPrice;
                     ViewBag.maxPrice = maxPrice;
                 }
-                List<Product> products = GetProductsIsNotDelete(similarProducts).Take(6).ToList();
-
-                Dictionary<int, double> discountProductSimilar = new Dictionary<int, double>();
-                foreach(var item in products)
+                List<Product> products = Get6ProductsIsNotDelete(similarProducts);
+                foreach (var item in products)
                 {
-                    var discountPrice = context.Products.GetProductDiscountPrice(item);
-                    discountProductSimilar[item.id] = discountPrice;
-                }
+                    if (item.isVariation == true && item.productItems.Count > 0)
+                    {
+                        var min = item.productItems.Min(item => item.price);
 
-                ViewBag.discountProductSimilar = discountProductSimilar;
+                        item.price = min;
+                        Console.WriteLine(item.price);
+                    }
+                }
+                var productDiscounts = context.ProductDiscounts.GetProductDiscount().ToList();
+                ViewBag.productDiscounts = productDiscounts;
                 ViewBag.quantityProduct = totalQuantityOfProductItems;
                 ViewBag.productPrice = context.Products.GetProductDiscountPrice(product);
                 ViewBag.productImageList = product.images;
@@ -68,13 +78,13 @@ namespace E_Retalling_Portal.Controllers.Home
             }
             return View("/Views/Home/ViewProductDetail.cshtml");
         }
-        private List<Product> GetProductsIsNotDelete(List<Product>? productList)
+        private List<Product> Get6ProductsIsNotDelete(List<Product>? productList)
         {
             List<Product> products = new List<Product>();
             int count = 0;
             foreach (var product in productList)
             {
-                if (count >= 10)
+                if (count >= 6)
                 {
                     break;
                 }
