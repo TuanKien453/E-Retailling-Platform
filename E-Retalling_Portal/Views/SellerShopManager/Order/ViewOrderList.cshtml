@@ -1,12 +1,11 @@
 ﻿@{
     ViewData["Title"] = "Order List";
-
 }
 <link href="~/css/OrderList.css" rel="stylesheet">
 <div class="container">
     <!-- Tabs -->
     <div class="tabs">
-        <div class="tab active" data-status="all">Tất cả</div>
+        <div class="tab active" data-status="all">All</div>
         <div class="tab" data-status="ready_to_pick">Ready To Pick</div>
         <div class="tab" data-status="picking">Picking</div>
         <div class="tab" data-status="picked">Picked</div>
@@ -19,7 +18,7 @@
     <div class="order-list">
         @foreach (var item in ViewBag.OrderList)
         {
-            var isProductItemNull = item.ProductItemId == null;
+            string displayStatus = System.Globalization.CultureInfo.CurrentCulture.TextInfo.ToTitleCase(@item.Status.Replace("_", " "));            var isProductItemNull = item.ProductItemId == null;
             var productImage = isProductItemNull ? item.Product.coverImage.imageName : item.ProductItem.image.imageName;
             var productName = isProductItemNull ? item.Product.name : $"{item.Product.name} - {item.ProductItem.attribute}";
             var price = isProductItemNull ? item.Product.price : item.ProductItem.price;
@@ -55,7 +54,7 @@
                         <p>@productName</p>
                         <p>Quantity: <span>@item.Quantity items</span></p>
                         <p>
-                            Subtotal(<span>@item.Quantity items</span>):
+                            Product Price(<span>@item.Quantity items</span>):
                             @if (totalPrice != item.Price)
                             {
                             <span style="text-decoration: line-through; color: #999;">
@@ -64,7 +63,10 @@
                             }
                             <span style="color: #e84118;">@item.Price VND</span>
                         </p>
-                        <p>@item.Status</p>
+                        <p>
+                            Shipping Fee: @item.ShippingFee VND
+                        </p>
+                        <div class="tab" data-status="@item.Status"><span>Status: @displayStatus</span></div>
                     </div>
                 </div>
                 <div class="order-footer">
@@ -122,7 +124,6 @@
         });
     });
 
-    // Tìm kiếm đơn hàng
     document.querySelector('.search-bar').addEventListener('input', function() {
         const searchTerm = this.value.toLowerCase();
         orderCards.forEach(card => {
