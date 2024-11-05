@@ -540,8 +540,8 @@ namespace E_Retalling_Portal.Controllers.Home
                     var url = _vnPayService.CreatePaymentUrl(HttpContext, $"{order.id}", stringAmount, formattedCurrentTime, formattedEndTime);
                     return Redirect(url);
                 }
-
-                return Ok("order success");
+                TempData["successMess"] = "Order Success";
+                return RedirectToAction("Index","Cart");
             }
 
 
@@ -634,8 +634,9 @@ namespace E_Retalling_Portal.Controllers.Home
                     context.Update(o);
                     context.SaveChanges();
                 }
-                return Json(response);
-            }
+                TempData["successMess"] = "Order Success";
+				RedirectToAction("Index", "Cart");
+			}
             return Ok("transaction fail");
         }
     }
