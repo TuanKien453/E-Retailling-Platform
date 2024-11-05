@@ -1,0 +1,145 @@
+﻿@model List<E_Retalling_Portal.Models.ManagerStatisticModel.CustomerStats>
+
+@{
+    ViewData["Title"] = " Customer Stats";
+    Layout = "~/Views/Shared/ManagerSideBarLayout.cshtml";
+}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+    body {
+        font-family: 'Arial', sans-serif;
+    }
+
+    .chart-title {
+        text-align: center;
+        margin: 20px 10px;
+        font-size: 24px;
+        font-weight: bold;
+    }
+</style>
+
+<body>
+    <div class="content m-4 pb-3">
+        <h2 class="text-center text-primary" style="margin-top: 20px; padding-top: 40px">Customer Statistics</h2>
+
+        &nbsp; From:
+        <input type="date" id="startDate" onchange="updateChart()" />
+
+         &nbsp; To:
+        <input type="date" id="endDate" onchange="updateChart()" />
+        <div style="display:flex; justify-content:right; padding-right: 10px">
+        <ul class="nav nav-pills justify-content-end mb-0" id="chart-tab-tab" role="tablist">
+            <li class="nav-item w-50" role="presentation">
+                <button class="nav-link active" id="chart-tab-home-tab" data-bs-toggle="pill" data-bs-target="#chart-tab-home" type="button" role="tab" aria-controls="chart-tab-home" onclick="setDisplayMode('month')" aria-selected="true">Month</button>
+                </li>
+           <li class="nav-item w-50" role="presentation">
+                    <button class="nav-link" id="chart-tab-profile-tab" data-bs-toggle="pill" data-bs-target="#chart-tab-profile" type="button" role="tab" aria-controls="chart-tab-profile" onclick="setDisplayMode('day')" aria-selected="false" tabindex="-1">Day</button>
+               </li>
+        </ul>
+        </div>
+        <div class="p-5">
+            <canvas id="CustomerChart" width="100" height="50"></canvas>
+        </div>
+        
+
+        <script>
+            const customerData = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model));
+
+            let CustomerChart;
+
+            function renderChart(startDate, endDate, mode) {
+                const filteredData = customerData.filter(item => {
+                    const saleDate = new Date(item.saleYear, item.saleMonth - 1, item.saleDay || 1);
+                    return saleDate >= startDate && saleDate <= endDate;
+                });
+
+                let labels, customers;
+
+                if (mode === 'day') {
+                    labels = filteredData.map(item => `${item.saleDay || '1'}/${item.saleMonth}/${item.saleYear}`);
+                    customers = filteredData.map(item => item.totalCustomers);
+                } else if (mode === 'month') {
+                    const monthlyData = {};
+                    filteredData.forEach(item => {
+                        const monthKey = `${item.saleMonth}/${item.saleYear}`;
+                        monthlyData[monthKey] = (monthlyData[monthKey] || 0) + item.totalCustomers;
+                    });
+                    labels = Object.keys(monthlyData);
+                    customers = Object.values(monthlyData);
+                }
+
+                const ctx = document.getElementById('CustomerChart').getContext('2d');
+
+                if (CustomerChart) {
+                    CustomerChart.destroy();
+                }
+
+                CustomerChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Total Customers',
+                            data: customers,
+                            backgroundColor: 'rgba(153, 102, 255, 0.6)',
+                            borderColor: 'rgba(153, 102, 255, 1)',
+                            borderWidth: 1,
+             
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: mode === 'day' ? 'Day' : 'Month'
+                                }
+                            },
+                            y: {
+                                title: {
+                                    display: true,
+                                    text: 'Number of Customers'
+                                },
+                                beginAtZero: true
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'top'
+                            },
+                        }
+                    }
+                });
+            }
+
+            let displayMode = 'month'; // Set a default mode
+
+            function setDisplayMode(mode) {
+              displayMode = mode;
+              updateChart(); // Update the chart based on the selected mode
+           }
+
+            function updateChart() {
+                const startDate = new Date(document.getElementById('startDate').value);
+                const endDate = new Date(document.getElementById('endDate').value);
+
+                if (startDate > endDate) {
+                    alert("Start Date cannot be greater than End Date");
+                    return; 
+                }
+
+                renderChart(startDate, endDate, displayMode);
+            }
+
+            updateChart();
+        </script>
+
+        <div style="display: flex; justify-content: flex-end; margin-bottom: 20px; margin-right: 20px;">
+            <a href="@Url.Action("Index", "ManagerStatistic")" style="text-decoration: none; color: #007bff; border: 1px solid #007bff; border-radius: 5px; padding: 10px;">Back to List Shops</a>
+        </div>
+    </div>
+</body>
+
+</html>

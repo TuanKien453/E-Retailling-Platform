@@ -1,0 +1,142 @@
+﻿@model List<E_Retalling_Portal.Models.ManagerStatisticModel.CategoryStats>
+
+@{
+    ViewData["Title"] = "Category Sale Statistic";
+    Layout = "~/Views/Shared/ManagerSideBarLayout.cshtml";
+}
+
+<div class="content m-4 pb-3">
+    <h2 class="text-center text-primary" style="margin-top: 20px; padding-top: 40px">Category Statistics</h2>
+
+    &nbsp;&nbsp;
+    <label for="startDate">From:</label>
+    <input type="date" id="startDate" onchange="updateChart(getSelectedStartDate(), getSelectedEndDate())" />
+
+    &nbsp;
+    <label for="endDate">To:</label>
+    <input type="date" id="endDate" onchange="updateChart(getSelectedStartDate(), getSelectedEndDate())" />
+
+    <div style="display:flex; justify-content:right; padding-right: 10px">
+        <ul class="nav nav-pills justify-content-end mb-0" id="chart-tab-tab" role="tablist">
+            <li class="nav-item w-50" role="presentation">
+                <button class="nav-link active" id="chart-tab-home-tab" data-bs-toggle="pill" data-bs-target="#chart-tab-home" type="button" role="tab" aria-controls="chart-tab-home" onclick="setDisplayMode('month')" aria-selected="true">Month</button>
+            </li>
+            <li class="nav-item w-50" role="presentation">
+                    <button class="nav-link" id="chart-tab-profile-tab" data-bs-toggle="pill" data-bs-target="#chart-tab-profile" type="button" role="tab" aria-controls="chart-tab-profile" onclick="setDisplayMode('day')" aria-selected="false" tabindex="-1">Day</button>
+            </li>
+        </ul>
+    </div>
+
+    <div class="p-3 d-flex justify-content-center my-4" style="width: 600px;height: 600px; display:flex; justify-content:center; margin: 300px; padding: 0">
+       <canvas id="myPieChart" width="150" height="70" ></canvas>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+    const salesData = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model));
+
+    let myPieChart; 
+    let displayMode = 'month'; // Default display mode
+
+    function updateChart(startDate, endDate) {
+        // Check if startDate is greater than endDate
+        if (new Date(startDate) > new Date(endDate)) {
+            // Set endDate to today's date
+            endDate = new Date().toISOString().split('T')[0]; // Format: YYYY-MM-DD
+            document.getElementById('endDate').value = endDate; // Set end date to today
+        }
+
+        // Filter data by selected start and end dates
+        const filteredData = salesData.filter(item => {
+            const saleDate = new Date(item.saleYear, item.saleMonth - 1); // Month is 0-indexed
+            return saleDate >= new Date(startDate) && saleDate <= new Date(endDate);
+        });
+
+        // Create a map to accumulate quantities by category names
+        const categoryMap = {};
+
+        filteredData.forEach(item => {
+            categoryMap[item.categoryName] = (categoryMap[item.categoryName] || 0) + item.totalQuantity;
+        });
+
+        // Convert map to arrays for chart
+        const categoryNames = Object.keys(categoryMap);
+        const quantities = Object.values(categoryMap);
+
+        // Set up chart configuration
+        const ctx = document.getElementById('myPieChart').getContext('2d');
+
+        // Destroy the old chart if it exists
+        if (myPieChart) {
+            myPieChart.destroy();
+        }
+
+        // Create a new chart
+        myPieChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: categoryNames,
+                datasets: [{
+                    label: 'Sales Quantity',
+                    data: quantities,
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                    },
+                }
+            }
+        });
+    }
+
+    function setDisplayMode(mode) {
+        displayMode = mode;
+        updateChart(getSelectedStartDate(), getSelectedEndDate());
+    }
+
+    function getSelectedStartDate() {
+        return document.getElementById('startDate').value;
+    }
+
+    function getSelectedEndDate() {
+        return document.getElementById('endDate').value;
+    }
+
+    const today = new Date();
+    const lastYear = new Date(today);
+    lastYear.setFullYear(today.getFullYear() - 1);
+
+    document.getElementById('startDate').value = lastYear.toISOString().split('T')[0]; // Set to one year ago
+    document.getElementById('endDate').value = today.toISOString().split('T')[0]; // Set to today
+      document.getElementById('myPieChart').style.display = ''; 
+     document.getElementById('myPieChart').style.width = '200px';
+     document.getElementById('myPieChart').style.height = '200px';
+    updateChart(getSelectedStartDate(), getSelectedEndDate());
+</script>
+
+    
+    <div style="display: flex; justify-content: flex-end; margin-bottom: 20px; margin-right: 20px;">
+        <a href="@Url.Action("Index", "ManagerStatistic")" style="text-decoration: none; color: #007bff; border: 1px solid #007bff; border-radius: 5px; padding: 10px;">Back to List Shops</a>
+    </div>
+</div>

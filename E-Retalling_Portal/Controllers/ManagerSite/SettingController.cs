@@ -1,10 +1,12 @@
-﻿using E_Retalling_Portal.Models;
+﻿using E_Retalling_Portal.Controllers.Filter;
+using E_Retalling_Portal.Models;
 using E_Retalling_Portal.Models.Query;
 using Microsoft.AspNetCore.Mvc;
 
 namespace E_Retalling_Portal.Controllers.ManagerSite
 {
-    public class SettingController : Controller
+	[TypeFilter(typeof(ManagerFilter))]
+	public class SettingController : Controller
     {
         public IActionResult Index()
         {

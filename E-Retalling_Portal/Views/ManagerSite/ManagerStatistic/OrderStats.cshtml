@@ -1,0 +1,129 @@
+﻿@model List<E_Retalling_Portal.Models.ManagerStatisticModel.OrderStats>
+
+@{
+    ViewData["Title"] = "Order Stats";
+    Layout = "~/Views/Shared/ManagerSideBarLayout.cshtml";
+}
+
+<style>
+    body {
+        font-family: 'Arial', sans-serif;
+    }
+
+    .chart-title {
+        text-align: center;
+        margin: 20px 10px;
+        font-size: 24px;
+        font-weight: bold;
+    }
+</style>
+
+<div class="content m-4 pb-3">
+    <h2 class="text-center text-primary" style="margin-top: 20px; padding-top: 40px">Order Statistics</h2>
+
+    <!-- Start Date Picker -->
+    &nbsp;<label for="startDate">From:</label>
+    <input type="date" id="startDate">
+
+    <!-- End Date Picker -->
+    &nbsp;<label for="endDate">To:</label>
+    <input type="date" id="endDate">
+
+    <!-- Mode Toggle Buttons -->
+    <div style="display:flex; justify-content:right; padding-right: 10px">
+        <ul class="nav nav-pills justify-content-end mb-0">
+            <li class="nav-item w-50">
+                <button class="nav-link active" id="monthModeBtn" onclick="setDisplayMode('month')">Month</button>
+            </li>
+            <li class="nav-item w-50">
+                <button class="nav-link" id="dayModeBtn" onclick="setDisplayMode('day')">Day</button>
+            </li>
+        </ul>
+    </div>
+
+    <div class="p-5">
+        <canvas id="monthlyOrderChart" width="100" height="50"></canvas>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        const orderData = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model));
+        let monthlyOrderChart;
+        let currentMode = 'month';
+
+        function updateChart(startDate, endDate) {
+            const filteredData = orderData.filter(item => {
+                const saleDate = new Date(item.saleYear, item.saleMonth - 1, item.saleDay || 1);
+                return saleDate >= new Date(startDate) && saleDate <= new Date(endDate);
+            });
+
+            const groupedData = {};
+            filteredData.forEach(item => {
+                const label = currentMode === "day" 
+                    ? `${item.saleDay}/${item.saleMonth}/${item.saleYear}` 
+                    : `${item.saleMonth}/${item.saleYear}`;
+                if (!groupedData[label]) {
+                    groupedData[label] = 0;
+                }
+                groupedData[label] += item.totalOrders;
+            });
+
+            const labels = Object.keys(groupedData);
+            const orders = Object.values(groupedData);
+
+            const ctx = document.getElementById('monthlyOrderChart').getContext('2d');
+            if (monthlyOrderChart) monthlyOrderChart.destroy();
+
+            monthlyOrderChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Total Orders',
+                        data: orders,
+                        backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: { title: { display: true, text: `${currentMode.charAt(0).toUpperCase() + currentMode.slice(1)}` } },
+                        y: { title: { display: true, text: 'Total Orders' }, beginAtZero: true }
+                    },
+                    plugins: { legend: { display: true, position: 'top' } }
+                }
+            });
+        }
+
+        function setDisplayMode(mode) {
+            currentMode = mode;
+            updateChart(getStartDate(), getEndDate());
+
+            // Update button styling
+            document.getElementById('monthModeBtn').classList.toggle('active', mode === 'month');
+            document.getElementById('dayModeBtn').classList.toggle('active', mode === 'day');
+        }
+
+        function getStartDate() { return document.getElementById('startDate').value; }
+        function getEndDate() { return document.getElementById('endDate').value; }
+
+        document.getElementById('startDate').addEventListener('change', () => updateChart(getStartDate(), getEndDate()));
+        document.getElementById('endDate').addEventListener('change', () => updateChart(getStartDate(), getEndDate()));
+
+        const today = new Date();
+        document.getElementById('endDate').value = today.toISOString().split('T')[0];
+        const oneYearAgo = new Date(today);
+        oneYearAgo.setFullYear(today.getFullYear() - 1);
+        document.getElementById('startDate').value = oneYearAgo.toISOString().split('T')[0];
+
+        // Initialize chart with default mode
+        updateChart(getStartDate(), getEndDate());
+    </script>
+
+    <div style="display: flex; justify-content: flex-end; margin-bottom: 20px; margin-right: 20px;">
+        <a href="@Url.Action("Index", "ManagerStatistic")" style="text-decoration: none; color: #007bff; border: 1px solid #007bff; border-radius: 5px; padding: 10px;">Back to List Shops</a>
+    </div>
+</div>
