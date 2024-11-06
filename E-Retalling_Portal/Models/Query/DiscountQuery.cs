@@ -17,5 +17,16 @@ namespace E_Retalling_Portal.Models.Query
         {
             return dbDis.Where(d => d.id == discountId);
         }
+
+        public static bool IsShop(this DbSet<Discount> dbDiscount, int shopId, int discountId)
+        {
+
+            var d = dbDiscount.Where(d => d.id == discountId).FirstOrDefault();
+            if (d == null)
+            {
+                return false;
+            }
+            return d.shopId == shopId;
+        }
     }
 }

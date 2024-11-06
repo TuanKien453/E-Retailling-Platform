@@ -62,7 +62,7 @@ namespace E_Retalling_Portal.Models.Query
                 var today = DateTime.Today;
                 if (today >= DateTime.Parse(discount.startDate.ToString()) && today <= DateTime.Parse(discount.endDate.ToString())) 
                 {
-                    return productItem.price - Math.Round(productItem.price * Math.Round(((double)discount.value / 100), 2), 2);
+                    return Math.Round(productItem.price - Math.Round(productItem.price * Math.Round(((double)discount.value / 100), 2), 2));
                 } else return productItem.price;
 
 

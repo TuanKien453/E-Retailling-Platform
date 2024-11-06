@@ -1,4 +1,358 @@
 ﻿@{
     ViewData["Title"] = "DashBoard";
     Layout = "~/Views/Shared/ShopManagerSideBarLayout.cshtml";
+    var currentMonth = DateTime.Now.ToString("MMMM");
 }
+<style id="ShopDashBoard">
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+    }
+
+
+    .content {
+        width: 100%;
+        max-width: 1200px; /* Adjust as needed */
+        margin: 0 auto;
+        padding: 20px;
+        overflow-y: auto; /* Ensures scrolling within the content if it overflows */
+    }
+
+    .card-container {
+        display: flex;
+        gap: 20px;
+    }
+
+    .card {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        width: 250px;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        text-align: left;
+        position: relative;
+    }
+
+    .card-content {
+        display: flex;
+        align-items: center;
+        gap: 15px; /* Space between icon and text */
+    }
+
+    .icon {
+        font-size: 36px;
+        padding: 10px;
+        border-radius: 50%;
+        display: inline-block;
+    }
+
+    .icon-yellow {
+        background-color: #fceecf;
+        color: #f4b400;
+    }
+
+    .icon-green {
+        background-color: #d8f3dc;
+        color: #52b788;
+    }
+
+    .icon-orange {
+        background-color: #ffedd5;
+        color: #fb923c;
+    }
+
+    .icon-blue {
+        background-color: #e0f7fa;
+        color: #00796b;
+    }
+
+    .text-container {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .count {
+        font-size: 24px;
+        font-weight: bold;
+        color: #333;
+    }
+
+    .label {
+        font-size: 14px;
+        color: #666;
+    }
+
+    .divider {
+        margin: 10px 0;
+        height: 1px;
+        background-color: #e0e0e0;
+    }
+
+    .update {
+        font-size: 14px;
+        color: #888;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .update-icon {
+        font-size: 16px;
+    }
+</style>
+
+<style id="chart">
+    /* Add some basic styling */
+    .chart-container {
+        width: 80%;
+        margin: auto;
+    }
+
+    .month-selector {
+        margin: 20px auto;
+        display: flex;
+        justify-content: center;
+    }
+</style>
+<link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.css" />
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/2.1.8/js/dataTables.js"></script>
+<style>
+    .row-img {
+        width: 80px;
+        height: 80px;
+    }
+</style>
+<div class="content m-4 pb-3" id="ShopDashBoard">
+    <div class="row p-4">
+        <div class="col-12">
+            <div class="card-container" >
+                <div class="card">
+                    <div class="card-content">
+                        <div class="icon icon-yellow">📦</div>
+                        <div class="text-container">
+                            <div class="count">@ViewBag.TotalProduct</div>
+                            <div class="label">Totat Product</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-content">
+                        <div class="icon icon-green">📥</div>
+                        <div class="text-container">
+                            <div class="count">@ViewBag.StockProduct</div>
+                            <div class="label">Stock Prduct</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-content">
+                        <div class="icon icon-orange">🛒</div>
+                        <div class="text-container">
+                            <div class="count">@ViewBag.SaleProducts</div>
+                            <div class="label">Sale Product</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-content">
+                        <div class="icon icon-blue">📅</div>
+                        <div class="text-container">
+                            <div class="count">@ViewBag.ActiveDays</div>
+                            <div class="label">Active Days</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-container" style="margin-top: 20px" id="ShopDashBoard">
+                <div class="card">
+                    <div class="card-content">
+                        <div class="icon icon-yellow">📂</div>
+                        <div class="text-container">
+                            <div class="count">@ViewBag.Category</div>
+                            <div class="label">Totat Category</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-content">
+                        <div class="icon icon-green">📈</div>
+                        <div class="text-container">
+                            <div class="count">@ViewBag.Order</div>
+                            <div class="label">Total Order</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-content">
+                        <div class="icon icon-orange">👥</div>
+                        <div class="text-container">
+                            <div class="count">@ViewBag.Users</div>
+                            <div class="label">Total Customer</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h2 style="text-align: center; font-weight: bold; margin: 20px">Monthly static</h2>
+
+            <div id = "chart" class="month-selector" >
+                <label style="display: block; text-align: center;" for="monthDropdown">Select Month:</label>
+                <select id="monthDropdown" onchange="updateChart()">
+                    <option value="January">January</option>
+                    <option value="February">February</option>
+                    <option value="March">March</option>
+                    <option value="April">April</option>
+                    <option value="May">May</option>
+                    <option value="June">June</option>
+                    <option value="July">July</option>
+                    <option value="August">August</option>
+                    <option value="September">September</option>
+                    <option value="October">October</option>
+                    <option value="November">November</option>
+                    <option value="December">December</option>
+                </select>
+            </div>
+
+            <!-- Chart container -->
+            <div id="chart" class="chart-container">
+                <canvas id="salesChart"></canvas>
+            </div>
+            
+            <div>
+                <table id="myTable" class="display">
+                    <thead>
+                        <tr>
+                            <th>Days</th>
+                            <th>Sale</th>
+                            <th>Transaction Fee</th>
+                            <th>Average Order</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <!-- Rows will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+
+             
+        </div>
+    </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+<script>
+    let salesChart;
+
+    function initChart(labels, sales, others, averages) {
+        const ctx = document.getElementById('salesChart').getContext('2d');
+
+        if (salesChart) {
+            salesChart.destroy();
+        }
+
+        salesChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Revenue Sales',
+                        data: sales,
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4
+                    },
+                    {
+                        label: 'Transaction Fee',
+                        data: others,
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4
+                    },
+                    {
+                        label: 'Revenue Order',
+                        data: averages,
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: { display: true, text: 'Values' }
+                    },
+                    x: {
+                        title: { display: true, text: 'Days' }
+                    }
+                }
+            }
+        });
+    }
+
+    function updateChart() {
+        const monthName = document.getElementById('monthDropdown').value;
+        fetch(`/ShopDashBoard/LoadChartData?monthName=${monthName}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    console.error('Error:', data.error);
+                    alert(data.error);
+                    return;
+                }
+
+                const { labels, sales, others, averages } = data;
+
+                const tableBody = document.getElementById('tableBody');
+                tableBody.innerHTML = '';
+
+                labels.forEach((label, i) => {
+                    const row = `<tr>
+                            <td>${label}</td>
+                            <td>${sales[i]}</td>
+                            <td>${others[i]}</td>
+                            <td>${averages[i]}</td>
+                        </tr>`;
+                    tableBody.innerHTML += row;
+                });
+
+                initChart(labels, sales, others, averages);
+            })
+            .catch(error => console.error('Error loading chart data:', error));
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('monthDropdown').value = "@currentMonth";
+        updateChart();
+    });
+</script>
+
+<script>
+
+    $(document).ready(function () {
+        $('#myTable').DataTable({
+            paging: false,
+            layout: false
+        });
+    });
+</script>
