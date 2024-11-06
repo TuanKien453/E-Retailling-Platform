@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "View Product";
+    bool hasDiscount = false;
 }
 
 
@@ -59,7 +60,17 @@
                                 @ViewBag.averageRating 
                             </span>
                         </div>
-                        <span class="text-muted"><i class="fas fa-shopping-basket fa-sm mx-1"></i>@ViewBag.quantityProduct</span>
+                        <span class="text-muted">
+                            <i class="fas fa-shopping-basket fa-sm mx-1"></i>
+                            @if (ViewBag.quantityProduct == 0)
+                            {
+                                <span> @ViewBag.product.quantity</span>
+                            }
+                            else
+                            {
+                                <span> @ViewBag.quantityProduct</span>
+                            }
+                        </span>
                         <span class="text-success ms-2">In stock</span>
                     </div>
 
@@ -91,12 +102,6 @@
 
                         </span>
                     </div>
-
-                    <p>
-                        @Html.Raw(ViewBag.product.desc)
-                    </p>
-
-
                     <div class="product-grid">
                         @foreach (var productItem in ViewBag.productItemList)
                         {
@@ -138,6 +143,9 @@
                     </button>
                     <div id="popupMessage" class="popup-message" style="display: none; top:50px; height:40px;">Added to cart successfully!</div>
                     <div id="errorMessage" class="popup-message" style="display: none; background-color:white;color: red; top:50px; height:40px;">Please choose a product!</div>
+                    <p>
+                        @Html.Raw(ViewBag.product.desc)
+                    </p>
                 </div>
             </main>
         </div>
@@ -300,7 +308,6 @@
             <h5 class="card-title">Similar</h5>
             @foreach (var product in ViewBag.similarProducts)
             {
-                var discountPrice = ViewBag.discountProductSimilar != null && ViewBag.discountProductSimilar.ContainsKey(product.id)? ViewBag.discountProductSimilar[product.id]: 0;
                 <div class="col-md-2 col-sm-6">
                     <div class="product-grid">
                         <div class="product-image">
@@ -311,10 +318,23 @@
                         </div>
                         <div class="product-content">
                             <h3 class="title"><a href="@Url.Action("Index", "ViewProductDetail", new { area = "Home", productId = product.id })">@product.name</a></h3>
-                            @if(discountPrice == @product.price){
-                            <div class="price">@($"{product.price}VND")</div>
-                            }else{
-                                <div class="price">@($"{discountPrice}VND")- <s>@($"{product.price}VND")</s></div>
+                            @foreach (var item in ViewBag.productDiscounts)
+                            {
+                                if (item.product != null && item.product.id == product.id)
+                                {
+                                    <span class="discount-name">@item.discount.name</span>
+                                    hasDiscount = true;
+                                    var discountedPrice = Math.Round(product.price * (1 - (item.discount.value / 100.0)), 2);
+                                    <div class="price-container">
+                                        <div class="price"> @discountedPrice VND </div>
+                                        <div class="price"><s>@product.price VND</s></div>
+                                    </div>
+                                    break;
+                                }
+                            }
+                            @if (hasDiscount == false)
+                            {
+                                <div class="price">@product.price VND</div>
                             }
                         </div>
                     </div>

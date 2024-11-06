@@ -106,6 +106,20 @@ namespace E_Retalling_Portal.Controllers.Home
             using (var context = new Context())
             {
                 productList = context.Products.GetProduct().Where(p=>p.shopId==id).ToList();
+                if (productList != null)
+                {
+                    foreach (var product in productList)
+                    {
+                        if (product.isVariation == true && product.productItems.Count > 0)
+                        {
+                            var min = product.productItems.Min(item => item.price);
+
+                            product.price = min;
+                        }
+                    }
+                }
+                var productDiscounts = context.ProductDiscounts.GetProductDiscount().ToList();
+                ViewBag.productDiscounts = productDiscounts;
                 shop = context.Shops.Include(s=>s.products).Include(s=>s.account).ThenInclude(a=>a.user).FirstOrDefault(s => s.id == id);
             }
             if (productList != null)
@@ -120,6 +134,7 @@ namespace E_Retalling_Portal.Controllers.Home
                     }
                 }
             }
+
             var pageNumber = page ?? 1;
             var pageSize = 42;
             List<Product> products = GetProductsIsNotDelete(productList);
