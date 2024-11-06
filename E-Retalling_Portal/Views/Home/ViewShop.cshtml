@@ -2,8 +2,39 @@
 
 @{
     ViewData["Title"] = "Home Page";
+    bool hasDiscount1 = false;
 }
+<div class="row m-3 p-2 shadow border rounded" style="background-color:white">
+        <!-- Left Column -->
+        <div class="col-6">
+        <div class="d-flex align-items-center mb-3">
+            <i class="bi bi-box-seam me-2"></i>
+            <span>Shop: @ViewBag.shop.name</span>
+        </div>
+            <div class="d-flex align-items-center mb-3">
+                <i class="bi bi-box-seam me-2"></i>
+                <span>products: <span class="text-danger fw-bold">@ViewBag.shop.products.Count</span></span>
+            </div>
+            <div class="d-flex align-items-center mb-3">
+                <i class="bi bi-chat-dots me-2"></i>
+                <span>address: @ViewBag.shop.address</span>
+            </div>
+        </div>
+
+        <!-- Right Column -->
+        <div class="col-6">
+            <div class="d-flex align-items-center mb-3">
+                <i class="bi bi-people me-2"></i>
+            <span>Phone number: @ViewBag.Shop.account.user.phoneNumber</span>
+            </div>
+            <div class="d-flex align-items-center mb-3">
+                <i class="bi bi-star me-2"></i>
+            <span>Contract: @ViewBag.Shop.account.user.email</span>
+            </div>
+        </div>
+    </div>
 <div class="row">
+    <h3>Products</h3>
     @foreach (var product in Model)
     {
         <div class="col-md-2 col-sm-6">
@@ -20,7 +51,24 @@
                 </div>
                 <div class="product-content">
                     <h3 class="title"><a href="@Url.Action("Index", "ViewProductDetail", new { area = "Home", productId = product.id })">@product.name</a></h3>
-                    <div class="price">$@product.price</div>
+                    @foreach (var item in ViewBag.productDiscounts)
+                    {
+                        if (item.product != null && item.product.id == product.id)
+                        {
+                            <span class="discount-name">@item.discount.name</span>
+                            hasDiscount1 = true;
+                            var discountedPrice = Math.Round(product.price * (1 - (item.discount.value / 100.0)), 2);
+                            <div class="price-container">
+                                <div class="price"> @discountedPrice VND</div>
+                                <div class="price"><s>@product.price VND</s></div>
+                            </div>
+                            break;
+                        }
+                    }
+                    @if (hasDiscount1 == false)
+                    {
+                        <div class="price">@product.price VND</div>
+                    }
                 </div>
             </div>
         </div>

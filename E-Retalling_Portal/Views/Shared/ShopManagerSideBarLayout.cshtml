@@ -29,6 +29,21 @@
 
                         <li class="mb-1">
                             <div class="sidebar-parent">
+                                <button class="btn btn-toggle align-items-center rounded collapsed no-shadow text-white" data-bs-toggle="collapse" data-bs-target="#static-collapse" aria-expanded="false">
+                                    <i class="fa-solid fa-chart-simple">&nbsp;</i>
+                                    Static
+                                    <i class="fa-solid fa-chevron-down dropdown-icon"></i>
+                                </button>
+                            </div>
+                            <div class="collapse" id="static-collapse">
+                                <ul class="btn-toggle-nav list-unstyled fw-normal pb-2 small">
+                                    <li class="activeable"><a href="@Url.Action("ViewShopChart","ShopChart")" class="">Revenue Of Year</a></li>
+                                </ul>
+                            </div>
+                        </li>
+
+                        <li class="mb-1">
+                            <div class="sidebar-parent">
                                 <button class="btn btn-toggle align-items-center rounded collapsed no-shadow text-white" data-bs-toggle="collapse" data-bs-target="#shop-collapse" aria-expanded="false">
                                     <i class="fa-solid fa-shop">&nbsp;</i>
                                     Shop
@@ -41,7 +56,7 @@
                                 </ul>
                             </div>
                         </li>
-
+                       
                         <li class="mb-1">
                             <div class="sidebar-parent">
                                 <button class="btn btn-toggle align-items-center rounded collapsed no-shadow text-white" data-bs-toggle="collapse" data-bs-target="#product-collapse" aria-expanded="false">
@@ -53,8 +68,7 @@
                             <div class="collapse" id="product-collapse">
                                 <ul class="btn-toggle-nav list-unstyled fw-normal pb-2 small">
                                     <li class="activeable"><a href="@Url.Action("ViewProducts","Product")" class="">View all</a></li>
-                                    <li class="activeable"><a href="@Url.Action("AddProduct","Product")" class="">Add Product</a></li>
-                                    <li class="activeable"><a href="#" class="">Static</a></li>
+                                    <li class="activeable"><a href="@Url.Action("AddProduct","Product")" class="">Add Product</a></li>                       
                                 </ul>
                             </div>
                         </li>
