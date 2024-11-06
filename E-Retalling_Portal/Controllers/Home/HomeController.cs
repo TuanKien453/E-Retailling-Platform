@@ -102,9 +102,11 @@ namespace E_Retalling_Portal.Controllers.Home
         public IActionResult ViewShop(int id, int? page)
         {
             List<Product> productList;
+            Shop shop;
             using (var context = new Context())
             {
                 productList = context.Products.GetProduct().Where(p=>p.shopId==id).ToList();
+                shop = context.Shops.Include(s=>s.products).Include(s=>s.account).ThenInclude(a=>a.user).FirstOrDefault(s => s.id == id);
             }
             if (productList != null)
             {
@@ -119,9 +121,10 @@ namespace E_Retalling_Portal.Controllers.Home
                 }
             }
             var pageNumber = page ?? 1;
-            var pageSize = 1;
+            var pageSize = 42;
             List<Product> products = GetProductsIsNotDelete(productList);
             var paginatedProducts = products.ToPagedList(pageNumber, pageSize);
+            ViewBag.shop = shop;
             ViewBag.id = id;
             return View("ViewShop", paginatedProducts);
         }

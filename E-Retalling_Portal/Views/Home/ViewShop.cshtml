@@ -3,7 +3,37 @@
 @{
     ViewData["Title"] = "Home Page";
 }
+<div class="row m-3 p-2 shadow border rounded" style="background-color:white">
+        <!-- Left Column -->
+        <div class="col-6">
+        <div class="d-flex align-items-center mb-3">
+            <i class="bi bi-box-seam me-2"></i>
+            <span>Shop: @ViewBag.shop.name</span>
+        </div>
+            <div class="d-flex align-items-center mb-3">
+                <i class="bi bi-box-seam me-2"></i>
+                <span>products: <span class="text-danger fw-bold">@ViewBag.shop.products.Count</span></span>
+            </div>
+            <div class="d-flex align-items-center mb-3">
+                <i class="bi bi-chat-dots me-2"></i>
+                <span>address: @ViewBag.shop.address</span>
+            </div>
+        </div>
+
+        <!-- Right Column -->
+        <div class="col-6">
+            <div class="d-flex align-items-center mb-3">
+                <i class="bi bi-people me-2"></i>
+            <span>Phone number: @ViewBag.Shop.account.user.phoneNumber</span>
+            </div>
+            <div class="d-flex align-items-center mb-3">
+                <i class="bi bi-star me-2"></i>
+            <span>Contract: @ViewBag.Shop.account.user.email</span>
+            </div>
+        </div>
+    </div>
 <div class="row">
+    <h3>Products</h3>
     @foreach (var product in Model)
     {
         <div class="col-md-2 col-sm-6">
