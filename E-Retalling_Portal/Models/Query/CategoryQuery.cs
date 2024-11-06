@@ -38,7 +38,7 @@ namespace E_Retalling_Portal.Models.Query
                 // Perform recursive delete for all child categories
                 DeleteChildCategories(dbCate, parentCategory.id, context);
                 //----------------------------------------------------------------------------------------------
-                List<Product> products = context.Products.Where(p => p.categoryId == parentCategoryId).ToList();
+                List<Product> products = context.Products.Where(p => p.categoryId == parentCategoryId && p.deleteAt ==null).ToList();
                 foreach (var product in products)
                 {
                     product.status = 2;
@@ -67,7 +67,7 @@ namespace E_Retalling_Portal.Models.Query
             {
                 DeleteChildCategories(dbCate, childCategory.id, context);
                 //----------------------------------------------------------------------------------------------
-                List<Product> products = context.Products.Where(p=>p.categoryId== childCategory.id).ToList();
+                List<Product> products = context.Products.Where(p=>p.categoryId== childCategory.id && p.deleteAt == null).ToList();
                 foreach(var product in products)
                 {
                     product.status = 2;

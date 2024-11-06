@@ -10,6 +10,11 @@ namespace E_Retalling_Portal.Controllers.Filter
     {
         public void OnActionExecuted(ActionExecutedContext context)
         {
+
+        }
+
+        public void OnActionExecuting(ActionExecutingContext context)
+        {
             Boolean haveAccess = false;
             var session = context.HttpContext.Session;
             var accId = session.GetInt32(SessionKeys.AccountId.ToString());
@@ -18,7 +23,8 @@ namespace E_Retalling_Portal.Controllers.Filter
                 using (var DbContext = new Context())
                 {
                     Account acc = DbContext.Accounts.GetAccountByAccountId(accId.Value).FirstOrDefault();
-                    if (acc != null && acc.roleId == 2) { 
+                    if (acc != null && acc.roleId == 2)
+                    {
                         haveAccess = true;
                     }
                 }
@@ -28,11 +34,6 @@ namespace E_Retalling_Portal.Controllers.Filter
             {
                 context.Result = new RedirectResult("/Home/Error505");
             }
-        }
-
-        public void OnActionExecuting(ActionExecutingContext context)
-        {
-
         }
     }
 }
