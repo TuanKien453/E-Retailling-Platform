@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Home Page";
+    bool hasDiscount1 = false;
 }
 <div class="row">
     @foreach (var product in Model)
@@ -20,7 +21,24 @@
                 </div>
                 <div class="product-content">
                     <h3 class="title"><a href="@Url.Action("Index", "ViewProductDetail", new { area = "Home", productId = product.id })">@product.name</a></h3>
-                    <div class="price">$@product.price</div>
+                    @foreach (var item in ViewBag.productDiscounts)
+                    {
+                        if (item.product != null && item.product.id == product.id)
+                        {
+                            <span class="discount-name">@item.discount.name</span>
+                            hasDiscount1 = true;
+                            var discountedPrice = Math.Round(product.price * (1 - (item.discount.value / 100.0)), 2);
+                            <div class="price-container">
+                                <div class="price"> @discountedPrice VND</div>
+                                <div class="price"><s>@product.price VND</s></div>
+                            </div>
+                            break;
+                        }
+                    }
+                    @if (hasDiscount1 == false)
+                    {
+                        <div class="price">@product.price VND</div>
+                    }
                 </div>
             </div>
         </div>

@@ -70,8 +70,8 @@ namespace E_Retalling_Portal.Controllers.Home
                     }
                 }
 
-                ViewBag.discountProductSimilar = discountProductSimilar;
-                ViewBag.quantityProduct = totalQuantityOfProductItems;
+                var productDiscounts = context.ProductDiscounts.GetProductDiscount().ToList();
+                ViewBag.productDiscounts = productDiscounts; ViewBag.quantityProduct = totalQuantityOfProductItems;
                 ViewBag.productPrice = context.Products.GetProductDiscountPrice(product);
                 ViewBag.productImageList = product.images;
                 ViewBag.product = product;
