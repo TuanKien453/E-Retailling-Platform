@@ -24,6 +24,42 @@
                         <a href="@Url.Action("Index", "ViewProductDetail", new { area = "Home", productId = product.id })" class="product-view"><i class="fa fa-search"></i></a>
                     </div>
                     <div class="product-content">
+                         @if (ViewBag.recommendProductRatings != null && ViewBag.recommendProductRatings.ContainsKey(product.id))
+                {
+                    int averageRating = ViewBag.recommendProductRatings[product.id];
+
+                    <!-- Display stars -->
+                    <div class="product-rating">
+                        @for (int i = 1; i <= 5; i++)
+                        {
+                            if (i <= averageRating)
+                            {
+                                <i class="fa fa-star" style="font-size: 12px; color:yellow"></i>  <!-- Filled star -->
+                            }
+                            else
+                            {
+                                <i class="fa fa-star text-muted" style="font-size: 12px;"></i>  <!-- Empty star -->
+                            }
+                        }
+                        <span class="ms-1">
+                            @averageRating
+                        </span> <!-- Display numeric rating -->
+                    </div>
+                }
+                else
+                {
+                    <!-- Display 5 empty stars if no rating -->
+                    <div class="product-rating">
+                        @for (int i = 1; i <= 5; i++)
+                        {
+                            <i class="fa fa-star text-muted" style="font-size: 12px;"></i>  <!-- Empty star -->
+                        }
+                        <span class="ms-1">
+                            0
+                        </span> <!-- No ratings yet -->
+                    </div>
+                }
+
                         <h3 class="title"><a href="@Url.Action("Index", "ViewProductDetail", new { area = "Home", productId = product.id })">@product.name</a></h3>
                         @foreach (var item in ViewBag.productDiscounts)
                         {
@@ -169,7 +205,43 @@
                                     <a href="@Url.Action("Index", "ViewProductDetail", new { area = "Home", productId = product.id })" class="product-view"><i class="fa fa-search"></i></a>
                                 </div>
                                 <div class="product-content">
+                                     <div class="product-rating">
+    @if (ViewBag.productAverageRatings != null && ViewBag.productAverageRatings.ContainsKey(product.id))
+    {
+        int averageRating = ViewBag.productAverageRatings[product.id];
+
+        // Display stars
+        @for (int i = 1; i <= 5; i++)
+        {
+            if (i <= averageRating)
+            {
+                <i class="fa fa-star" style="font-size: 12px; color:yellow"></i>  <!-- Filled star -->
+            }
+            else
+            {
+                <i class="fa fa-star text-muted" style="font-size: 12px;"></i>  <!-- Empty star -->
+            }
+        }
+        <span class="ms-1">
+            @averageRating
+        </span> <!-- Display numeric rating -->
+    }
+    else
+    {
+        // Display 5 empty stars if no rating
+        @for (int i = 1; i <= 5; i++)
+        {
+            <i class="fa fa-star text-muted" style="font-size: 12px;"></i>  <!-- Empty star -->
+        }
+        <span class="ms-1">
+            0
+        </span> <!-- No ratings yet -->
+    }
+</div>
                                     <h3 class="title"><a href="@Url.Action("Index", "ViewProductDetail", new { area = "Home", productId = product.id })">@product.name</a></h3>
+
+
+
                                     @foreach (var item in ViewBag.productDiscounts)
                                     {
                                         if (item.product != null && item.product.id == product.id)

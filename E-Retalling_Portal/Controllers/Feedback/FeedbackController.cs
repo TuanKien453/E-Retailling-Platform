@@ -13,12 +13,6 @@ namespace E_Retalling_Portal.Controllers.Feedback
             return View("Views/Home/Index.cshtml");
         }
 
-        public IActionResult SubmitFeedback(int orderItemId)
-        {
-            ViewBag.OrderItemId = orderItemId;
-            return View("Views/Home/Feedback.cshtml");
-        }
-
         public IActionResult FeedbackProcess(int orderItemId,  string comment, int star)
         {
             if(comment.Length > 200)

@@ -96,6 +96,39 @@ namespace E_Retalling_Portal.Controllers.Home
                 ViewBag.currentPage = pageNumber;
                 ViewBag.recommendedProduct = GetRecommendProduct();
                 ViewBag.page = pageNumber;
+                var productAverageRatings = new Dictionary<int, int>();
+                var recommendProductRatings = new Dictionary<int, int>();
+
+                foreach (var product in paginatedProducts)
+                {
+                    // Get the ratings for the current product
+                    var ratings = context.OrderItems
+                        .Where(oi => oi.productId == product.id && oi.rating.HasValue)
+                        .Select(oi => oi.rating.Value)
+                        .ToList();
+
+                    // Calculate the average rating for the current product, rounding to the nearest integer
+                    int averageRating = ratings.Any() ? (int)Math.Round(ratings.Average()) : 0;
+
+                    // Add the productId and its average rating to the dictionary
+                    productAverageRatings[product.id] = averageRating;
+                }
+                foreach (var recommendProduct in GetRecommendProduct())
+                {
+                    // Get the ratings for the current product
+                    var ratings = context.OrderItems
+                        .Where(oi => oi.productId == recommendProduct.id && oi.rating.HasValue)
+                        .Select(oi => oi.rating.Value)
+                        .ToList();
+
+                    // Calculate the average rating for the current product, rounding to the nearest integer
+                    int recommendaverageRating = ratings.Any() ? (int)Math.Round(ratings.Average()) : 0;
+
+                    // Add the productId and its average rating to the dictionary
+                    recommendProductRatings[recommendProduct.id] = recommendaverageRating;
+                }
+                ViewBag.productAverageRatings = productAverageRatings;
+                ViewBag.recommendProductRatings = recommendProductRatings;
                 return View(paginatedProducts);          
             }
         }
