@@ -19,6 +19,9 @@ namespace E_Retalling_Portal.Models.Query
         {
             return dbShop.Where(s => s.accountId != accId && s.name == name);
         }
-
+        public static IQueryable<Shop> GetShopById(this DbSet<Shop> dbShop, int id)
+        {
+            return dbShop.Where(s => s.id == id);
+        }
     }
 }

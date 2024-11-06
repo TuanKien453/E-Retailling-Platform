@@ -1,0 +1,106 @@
+﻿@model List<E_Retalling_Portal.Models.ManagerStatisticModel.Top10SellingProduct>
+
+@{
+    ViewData["Title"] = "Top 10 Selling Products";
+    Layout = "~/Views/Shared/ManagerSideBarLayout.cshtml";
+}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+    body {
+        font-family: 'Arial', sans-serif;
+    }
+
+    .chart-title {
+        text-align: center;
+        margin: 20px 0;
+        font-size: 24px;
+        font-weight: bold;
+    }
+</style>
+<body>
+    <div class="content m-4 pb-3">
+        <h2 class="text-center text-primary" style="margin-top: 20px; padding-top: 40px">Top 10 Selling Products</h2>
+
+        &nbsp;From:
+        <input type="date" id="startDatePicker" value="@DateTime.Now.AddYears(-1).ToString("yyyy-MM-dd")" />
+
+        &nbsp;To:
+        <input type="date" id="endDatePicker" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+
+        <div class="p-5">
+        <canvas id="topSellingChart" width="100" height="50"></canvas>
+        </div>
+
+        <script>
+            const data = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model));
+
+            const ctx = document.getElementById('topSellingChart').getContext('2d');
+            let topSellingChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Quantity Sold',
+                        data: [],
+                        backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true, 
+                            title: {
+                                display: true,
+                                text: 'Quantity Sold',
+                                padding: { bottom: 10 },
+                            }
+                        }
+                    }
+                }
+            });
+
+            function updateChart() {
+                const startDate = new Date(document.getElementById('startDatePicker').value);
+                const endDate = new Date(document.getElementById('endDatePicker').value);
+
+                if (startDate > endDate) {
+                    alert("Start date must be before end date.");
+                    return;
+                }
+
+                const aggregatedData = {};
+
+                data.forEach(d => {
+                    const saleDate = new Date(d.saleYear, d.saleMonth - 1, d.saleDay || 1);
+                    if (saleDate >= startDate && saleDate <= endDate) {
+                        const productName = d.productItemName || d.productName;
+                        if (!aggregatedData[productName]) {
+                            aggregatedData[productName] = 0;
+                        }
+                        aggregatedData[productName] += d.quantitySold;
+                    }
+                });
+
+                topSellingChart.data.labels = Object.keys(aggregatedData);
+                topSellingChart.data.datasets[0].data = Object.values(aggregatedData);
+
+                topSellingChart.update();
+            }
+
+            document.getElementById('startDatePicker').addEventListener('change', updateChart);
+            document.getElementById('endDatePicker').addEventListener('change', updateChart);
+
+            // Initialize chart with default date range
+            updateChart();
+        </script>
+
+        <div style="display: flex; justify-content: flex-end; margin-bottom: 20px; margin-right: 20px;">
+            <a href="@Url.Action("Index", "ManagerStatistic")" style="text-decoration: none; color: #007bff; border: 1px solid #007bff; border-radius: 5px; padding: 10px;">Back to List Shops</a>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,95 @@
+﻿@model List<Shop>
+
+@{
+    ViewData["Title"] = "List Shops";
+    Layout = "~/Views/Shared/ManagerSideBarLayout.cshtml";
+}
+<link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.css" />
+<style>
+    .dropdown-menu {
+        border: 1px solid #007bff; 
+        border-radius: 0.25rem; 
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15); 
+    }
+
+    .dropdown-item {
+        padding: 10px 15px; 
+        color: #343a40; 
+        border-bottom: 1px solid #007bff; 
+    }
+
+        .dropdown-item:last-child {
+            border-bottom: none; 
+        }
+
+        .dropdown-item:hover {
+            background-color: #007bff; 
+            color: white; 
+        }
+
+        .dropdown-item:focus {
+            outline: none; 
+            background-color: #0056b3; 
+            color: white; 
+        }
+</style>
+<div class="content m-4 pb-3">
+
+    <div class="row p-4">
+        <div class="col-12">
+            <table id="myTable" class="display">
+                <thead>
+                    <tr>
+                        <th style="text-align: left;">ShopId</th>
+                        <th>Shop Name</th>
+                        <th style="text-align: left;">Province</th>
+                        <th style="text-align: left;">District</th>
+                        <th style="text-align: left;">Ward</th>
+                        <th style="text-align: left;">Created At</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td style="text-align: left;">@item.id</td>
+                            <td>@item.name</td>
+                            <td class="province-cell" data-provinceid="@item.province" style="text-align: left;">@item.province</td>
+                            <td class="district-cell" data-districtid="@item.district" style="text-align: left;">@item.district</td>
+                            <td class="ward-cell" data-wardid="@item.ward" style="text-align: left;">@item.ward</td>
+                            <td style="text-align: left;">@item.createdAt</td>
+                            <td>
+                                <div class="dropdown">
+                                    <a href="#" class="text-decoration-none" data-bs-toggle="dropdown" aria-expanded="false">View statistic</a>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" href="@Url.Action("Top10SellingProducts", "ManagerStatistic", new { shopId = @item.id })">Top 10 Selling Products</a></li>
+                                        <li><a class="dropdown-item" href="@Url.Action("CategoryStats", "ManagerStatistic", new { shopId = @item.id })">Category Stats</a></li>
+                                        <li><a class="dropdown-item" href="@Url.Action("RevenueStats", "ManagerStatistic", new { shopId = @item.id })">Revenue Stats</a></li>
+                                        <li><a class="dropdown-item" href="@Url.Action("OrderStats", "ManagerStatistic", new { shopId = @item.id })">Order Stats</a></li>
+                                        <li><a class="dropdown-item" href="@Url.Action("CustomerStats", "ManagerStatistic", new { shopId = @item.id })">Customer Stats</a></li>
+                                    </ul>
+                                </div>
+                            </td>
+
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script src="~/js/detailAddress.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/2.1.8/js/dataTables.js"></script>
+<script>
+
+    $(document).ready(function () {
+        $(document).ready(function () {
+            $('#myTable').DataTable({
+                lengthMenu: [[5, 10, 15], [5, 10, 15]]
+            });
+        });
+    });
+
+</script> 

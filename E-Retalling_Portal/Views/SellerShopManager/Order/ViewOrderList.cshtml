@@ -1,112 +1,167 @@
 ﻿@{
     ViewData["Title"] = "Order List";
-
 }
 <link href="~/css/OrderList.css" rel="stylesheet">
 <div class="container">
     <!-- Tabs -->
     <div class="tabs">
-        <div class="tab active">Tất cả</div>
-        <div class="tab">Chờ thanh toán</div>
-        <div class="tab">Vận chuyển</div>
-        <div class="tab">Chờ giao hàng</div>
-        <div class="tab">Hoàn thành</div>
-        <div class="tab">Đã hủy</div>
-        <div class="tab">Trả hàng/Hoàn tiền</div>
+        <div class="tab active" data-status="all">All</div>
+        <div class="tab" data-status="ready_to_pick">Ready To Pick</div>
+        <div class="tab" data-status="picking">Picking</div>
+        <div class="tab" data-status="picked">Picked</div>
+        <div class="tab" data-status="delivering">Delivering</div>
+        <div class="tab" data-status="delivered">Delivered</div>
     </div>
 
-    <!-- Search bar -->
-    <input type="text" class="search-bar" placeholder="">
+    <input type="text" class="search-bar" placeholder="Search order...">
 
-    @foreach (var item in ViewBag.OrderList)
-    {
-        @if (item.productItemId == null)
+    <div class="order-list">
+        @foreach (var item in ViewBag.OrderList)
         {
-            <div class="order-card">
+            string displayStatus = System.Globalization.CultureInfo.CurrentCulture.TextInfo.ToTitleCase(@item.Status.Replace("_", " "));           
+            var isProductItemNull = item.ProductItemId == null;
+            var productImage = isProductItemNull ? item.Product.coverImage.imageName : item.ProductItem.image.imageName;
+            var productName = isProductItemNull ? item.Product.name : $"{item.Product.name} - {item.ProductItem.attribute}";
+            var price = isProductItemNull ? item.Product.price : item.ProductItem.price;
+            var totalPrice = (price ?? 0) * (item.Quantity ?? 0);
+            var orderItemId = item.ItemId;
+            var orderStatus = item.Status;
+            var orderItem = item.OrderItem;
+
+            <div class="order-card" data-status="@orderStatus">
                 <div class="order-header">
-                    <div class="shop-name">@item.product.shop.name</div>
+                    <div class="shop-name">@item.Product.shop.name</div>
                     <div class="shop-actions">
-                        <a href="/Home/ViewShop?id=@item.product.shop.id">
-                            <button>Xem Shop</button>
+                        <a href="/Home/ViewShop?id=@item.Product.shop.id">
+                            <button>View Shop</button>
                         </a>
+                        <button type="button"
+                                data-bs-toggle="modal"
+                                data-bs-target="#viewOrderDetail"
+                                data-item='{
+                                "productName": "@productName",
+                                "quantity": "@item.Quantity",
+                                "price": "@item.Price",
+                                "shippingFee": "@item.ShippingFee",
+                                "status": "@item.Status",
+                                "productPrice": "@price"
+                        }'>
+                            View Order Detail
+                        </button>
                     </div>
                 </div>
                 <div class="order-content">
-                    <img src="~/productImages/@item.product.coverImage.imageName" alt="Product Image">
+                    <img src="~/productImages/@productImage" alt="Product Image">
                     <div class="order-details">
-                        <p>@item.product.name</p>
-                        <p>@item.quantity</p>
+                        <p>@productName</p>
+                        <p>Quantity: <span>@item.Quantity items</span></p>
                         <p>
-                            @if (item != null && item.product != null && item.productItem != null)
+                            Product Price(<span>@item.Quantity items</span>):
+                            @if (totalPrice != item.Price)
                             {
-                                var totalPrice = (item.product.price ?? 0) * (item.quantity ?? 0);
-                                if (totalPrice != item.price)
-                                {
-                                    <span style="text-decoration: line-through; color: #999;">
-                                        @totalPrice
-                                    </span>
-                                }
+                            <span style="text-decoration: line-through; color: #999;">
+                                <span>@totalPrice VND</span>
+                            </span>
                             }
-                            <span style="color: #e84118;">@item.price</span>
-
+                            <span style="color: #e84118;">@item.Price VND</span>
                         </p>
+                        <p>
+                            Shipping Fee: @item.ShippingFee VND
+                        </p>
+                        <div class="tab" data-status="@item.Status"><span>Status: @displayStatus</span></div>
                     </div>
                 </div>
                 <div class="order-footer">
-                    <div class="total-price">Thành tiền: @(item.price + item.shippingFee)</div>
+                    <div class="total-price">Total price: @(item.Price + item.ShippingFee)VND</div>
                     <div class="actions">
-                        <a href="/ViewProductDetail?area=Home&productId=@item.product.id">
-                            <button>Mua Lại</button>
+                        @if (displayStatus == "Delivered")
+                        {
+                            <a asp-controller="Feedback" asp-action="SubmitFeedback" asp-route-orderItemId="@orderItemId">
+                                <button>
+                                    @(orderItem.rating != null || orderItem.comment != null ? "Update" : "Feedback")
+                                </button>
+                            </a>
+                        }
+
+                        <a href="/ViewProductDetail?area=Home&productId=@item.Product.id">
+                            <button>Buy again</button>
                         </a>
                     </div>
                 </div>
-
             </div>
         }
-        else
-        {
-            <div class="order-card">
-                <div class="order-header">
-                    <div class="shop-name">@item.product.shop.name</div>
-                    <div class="shop-actions">
-                        <a href="/Home/ViewShop?id=@item.product.shop.id">
-                            <button>Xem Shop</button>
-                        </a>
-                    </div>
-                </div>
-                <div class="order-content">
-                    <img src="~/productImages/@item.productItem.image.imageName" alt="Product Image">
-                    <div class="order-details">
-                        <p>@item.product.name-@item.productItem.attribute</p>
-                        <p>@item.quantity</p>
-                        <p>
-                            @if (item != null && item.product != null && item.productItem != null)
-                            {
-                                var totalPrice = (item.productItem.price ?? 0) * (item.quantity ?? 0);
-                                if (totalPrice != item.price)
-                                {
-                                    <span style="text-decoration: line-through; color: #999;">
-                                        @totalPrice
-                                    </span>
-                                }
-                            }
-                            <span style="color: #e84118;">@item.price</span>
-
-                        </p>
-                    </div>
-                </div>
-                <div class="order-footer">
-                    <div class="total-price">Thành tiền: @(item.price + item.shippingFee)</div>
-                    <div class="actions">
-                        <a href="/ViewProductDetail?area=Home&productId=@item.product.id">
-                            <button>Mua Lại</button>
-                        </a>
-                    </div>
-                </div>
-
-            </div>
-        }
-    }
-
-
+    </div>
 </div>
+<div class="modal fade" id="viewOrderDetail" tabindex="-1" aria-labelledby="viewOrderDetailLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="viewOrderDetailLabel">Order Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Product Name:</strong> <span id="modalProductName"></span></p>
+                <p><strong>Quantity:</strong> <span id="modalQuantity"></span> items</p>
+                <p><strong>Status:</strong> <span id="modalStatus"></span></p>
+                <p><strong>Total Product Price:</strong> <span id="modalProductPrice"></span> VND</p>
+                <p><strong>Discount Price:</strong> -<span id="modalDiscountPrice"></span> VND</p>
+                <p><strong>Shipping Fee:</strong> <span id="modalShippingFee"></span> VND</p>
+                <p><strong>Total Price:</strong> <span id="modalTotalPrice"></span> VND</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    const tabs = document.querySelectorAll('.tab');
+    const orderCards = document.querySelectorAll('.order-card');
+
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            tabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+
+            const status = tab.getAttribute('data-status');
+
+            orderCards.forEach(card => {
+                if (status === 'all' || card.getAttribute('data-status') === status) {
+                    card.style.display = 'block'; 
+                } else {
+                    card.style.display = 'none'; 
+                }
+            });
+        });
+    });
+
+    document.querySelector('.search-bar').addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase();
+        orderCards.forEach(card => {
+            const productName = card.querySelector('.order-details p').textContent.toLowerCase();
+            if (productName.includes(searchTerm)) {
+                card.style.display = 'block'; 
+            } else {
+                card.style.display = 'none'; 
+            }
+        });
+    });
+
+    document.querySelectorAll('[data-bs-target="#viewOrderDetail"]').forEach(button => {
+        button.addEventListener('click', () => {
+            const item = JSON.parse(button.getAttribute('data-item'));
+            const totalProductPrice = (parseFloat(item.productPrice) * parseFloat(item.quantity)).toFixed(2);
+            const discountPrice = (parseFloat(totalProductPrice) - parseFloat(item.price)).toFixed(2);
+            document.getElementById('modalProductName').textContent = item.productName;
+            document.getElementById('modalQuantity').textContent = item.quantity;
+            document.getElementById('modalShippingFee').textContent = item.shippingFee;
+            document.getElementById('modalDiscountPrice').textContent = discountPrice;
+            document.getElementById('modalProductPrice').textContent = totalProductPrice;
+
+            const totalPrice = (parseFloat(item.price) + parseFloat(item.shippingFee)).toFixed(2);
+            document.getElementById('modalTotalPrice').textContent = totalPrice;
+            document.getElementById('modalStatus').textContent = item.status;
+        });
+    });
+</script>
+

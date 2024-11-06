@@ -163,7 +163,11 @@ namespace E_Retalling_Portal.Controllers.ShopManager
                 ModelState.ReadErrors();
                 using (var context = new Context())
                 {
-                    context.ProductItems.Update(pi);
+                    ProductItem oldPI = context.ProductItems.GetProductItemByProductItemId(pi.id).FirstOrDefault();
+                    oldPI.price = pi.price;
+                    oldPI.quantity = pi.quantity;
+                    oldPI.imageId = pi.imageId;
+                    oldPI.attribute = pi.attribute;
                     context.SaveChanges();
                 }
                 return RedirectToAction("EditVariation", new { productId = pi.productId });

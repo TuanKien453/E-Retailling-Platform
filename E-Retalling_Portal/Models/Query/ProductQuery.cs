@@ -16,12 +16,26 @@ namespace E_Retalling_Portal.Models.Query
         }
         public static IQueryable<Product> GetProduct(this DbSet<Product> dbProduct)
         {
-            return dbProduct.Include("coverImage").Include("category").Include("images").Include("productItems").Include("shop").Where(p => p.deleteAt == null || (p.productItems.Where(pi=>pi.deleteAt==null).ToList().Count > 0 && p.isVariation == true) );
+            return dbProduct.Include("coverImage").Include("category").Include("images").Include("productItems").Include("shop").Where(p => p.deleteAt == null || (p.productItems.Where(pi => pi.deleteAt == null).ToList().Count > 0 && p.isVariation == true));
         }
-        public static IQueryable<Product> GetSimilarProductByProductCategory(this DbSet<Product> dbProduct, Category category, int productId)
+        public static IQueryable<Product> GetSimilarProductByProductCategory(this DbSet<Product> dbProduct, int parentCategoryId, int productId)
         {
-            return dbProduct.Include(p => p.coverImage).Include(p => p.images).Include(p => p.productItems).Include(p => p.category).Where(p => p.deleteAt == null && p.category.parentCategoryId == category.parentCategoryId && p.id != productId || (p.productItems.Count > 0 && p.id != productId));
+            return dbProduct
+                .Include(p => p.coverImage)
+                .Include(p => p.images)
+                .Include(p => p.productItems)
+                .Include(p => p.category)
+                .Where(p =>
+                    p.deleteAt == null &&
+                    p.id != productId &&
+                    p.category.parentCategoryId == parentCategoryId &&
+                    (p.productItems == null || p.productItems.Count >= 0)
+                );
         }
+
+
+
+
 
         public static void DeleteProductById(this DbSet<Product> dbProduct, int productId, Context context)
         {
@@ -40,10 +54,11 @@ namespace E_Retalling_Portal.Models.Query
             return dbProduct.Include(p => p.coverImage).Include(p => p.shop).Where(p => p.deleteAt == null && p.isVariation == false);
         }
 
-        public static bool IsShop(this DbSet<Product> dbProduct, int shopId, int productId) {
-        
-            var p = dbProduct.Where(p=>p.id==productId).FirstOrDefault();
-            if (p==null)
+        public static bool IsShop(this DbSet<Product> dbProduct, int shopId, int productId)
+        {
+
+            var p = dbProduct.Where(p => p.id == productId).FirstOrDefault();
+            if (p == null)
             {
                 return false;
             }

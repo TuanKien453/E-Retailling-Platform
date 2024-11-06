@@ -17,7 +17,11 @@ namespace E_Retalling_Portal.Models
 		public double transactionFee { get; set; }
 		[MaxLength(50)]
 		public string? externalOrderCode { get; set; }
-		public Order order { get; set; }
+        [Range(1, 5)]
+        public int? rating { get; set; }
+        [MaxLength(400)]
+        public string? comment { get; set; }
+        public Order order { get; set; }
 
         public ProductItem productItem { get; set; }
         public Product product { get; set; }

@@ -15,11 +15,11 @@
                         <th style="width: 15%;">Name</th>
                         <th style="width: 15%;">Phone</th>
                         <th style="width: 20%;">Address</th>
+                        <th style="width: 8%;">TransactionFee</th>
+                        <th style="width: 8%;">ShippingFee</th>
+                        <th style="width: 8%;">Price</th>
                         <th style="width: 20%;">Content</th>
                         <th style="width: 8%;">Weight(gram)</th>
-                        <th style="width: 8%;">Length(cm)</th>
-                        <th style="width: 8%;">Width(cm)</th>
-                        <th style="width: 8%;">Height(cm)</th>
                         <th style="width: 10%;">Required Note</th>
                         <th style="width: 8%;">Status</th>
                     </tr>
@@ -28,17 +28,17 @@
                     @foreach (var item in ViewBag.OrderInfo)
                     {
                         <tr>
-                            <td>@item.Data.OrderCode</td>
-                            <td>@item.Data.ToName</td>
-                            <td>@item.Data.ToPhone</td>
-                            <td>@item.Data.ToAddress</td>
-                            <td>@item.Data.Content</td>
-                            <td>@item.Data.Weight</td>
-                            <td>@item.Data.Length</td>
-                            <td>@item.Data.Width</td>
-                            <td>@item.Data.Height</td>
-                            <td>@item.Data.RequiredNote</td>
-                            <td>@item.Data.Status</td>
+                            <td>@item.OrderCode</td>
+                            <td>@item.ToName</td>
+                            <td>@item.ToPhone</td>
+                            <td>@item.ToAddress</td>
+                            <td>@item.TransactionFee</td>
+                            <td>@item.ShippingFee</td>
+                            <td>@item.Price</td>
+                            <td>@item.Content</td>
+                            <td>@item.Weight</td>
+                            <td>@item.RequiredNote</td>
+                            <td>@item.Status</td>
                         </tr>
                     }
                 </tbody>

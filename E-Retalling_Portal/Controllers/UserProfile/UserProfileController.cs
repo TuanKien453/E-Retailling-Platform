@@ -164,7 +164,8 @@ namespace E_Retalling_Portal.Controllers.UserProfile
                             using (var context = new Context())
                             {
                                 int? accountId = (int)HttpContext.Session.GetInt32(SessionKeys.AccountId.ToString());
-                                User newUser = context.Users.GetUserByUserIdInAccount(accountId.Value).FirstOrDefault();
+                                int userId = context.Accounts.GetUserIdByAccountId(accountId.Value);
+                                User newUser = context.Users.GetUserByUserIdInAccount(userId).FirstOrDefault();
 
                                 newUser.displayName = userToUpdate.displayName;
                                 newUser.email = userToUpdate.email;
