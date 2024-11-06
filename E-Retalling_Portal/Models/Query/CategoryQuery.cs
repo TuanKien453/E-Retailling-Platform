@@ -107,5 +107,32 @@ namespace E_Retalling_Portal.Models.Query
 
             }
         }
+
+        public static List<Category> GetAllOfCategoriesByShop(this DbSet<Category> dbCate, int shopId)
+        {
+            using (var context = new Context())
+            {
+                int count = 0;
+                List<Product> products = context.Products.GetProductsByShop(shopId).ToList();
+                List<int> ints = new List<int>();
+                List<Category> cate = new List<Category>();
+                foreach (var product in products)
+                {
+                    if (!ints.Contains(product.categoryId))
+                    {
+                        ints.Add(product.categoryId);
+                    }
+                }
+
+                foreach (int item in ints)
+                {
+                    Category example = context.Categories.GetSubCategoriesByCategoryId(item).FirstOrDefault();
+                    cate.Add(example);
+                }
+
+                return cate;
+            }
+        }
+
     }
 }

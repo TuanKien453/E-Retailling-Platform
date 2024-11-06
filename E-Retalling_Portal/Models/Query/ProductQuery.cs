@@ -157,6 +157,22 @@ namespace E_Retalling_Portal.Models.Query
                     return salesProduct;
             }
         }
+        public static int GetNumberOfProductByCategory(this DbSet<Product> dbProduct, int shopId, Category category)
+        {
+            using (var context = new Context())
+            {
+                int count = 0;
+                List<Product> products = context.Products.GetProductsByShop(shopId).ToList();
+                foreach (var product in products)
+                {
+                    if(product.categoryId == category.id)
+                    {
+                        count++;
+                    }
+                }
+                return count;
 
+            }
+        }
     }
 }
