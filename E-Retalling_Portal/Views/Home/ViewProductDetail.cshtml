@@ -1,4 +1,6 @@
-﻿@{
+﻿@model X.PagedList.IPagedList<E_Retalling_Portal.Models.FeedbackViewModel>
+
+@{
     ViewData["Title"] = "View Product";
     bool hasDiscount = false;
 }
@@ -43,13 +45,20 @@
                     </h4>
                     <div class="d-flex flex-row my-3">
                         <div class="text-warning mb-1 me-2">
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fas fa-star-half-alt"></i>
+                            @for (int i = 1; i <= 5; i++)
+                            {
+                                if (i <= ViewBag.averageRating)
+                                {
+                                    <i class="fa fa-star"></i> 
+                                }
+                                else
+                                {
+                                    <i class="fa fa-star text-muted"></i> 
+                                }
+                            }
                             <span class="ms-1">
-                                4.5
+                                @ViewBag.averageRating 
+                            </span>
                         </div>
                         <span class="text-muted">
                             <i class="fas fa-shopping-basket fa-sm mx-1"></i>
@@ -158,8 +167,143 @@
                 </div>
             </div>
         </div>
+        <div class="row g-3">
+
+            @if (Model != null && Model.Any())
+            {
+                <h2 class="feedback-title" style="font-size: 25px">Customer Feedback</h2>
+
+                foreach (var feedback in Model)
+                {
+                    <div class="feedback-item" style="margin: 0">
+                        <div class="feedback-header">
+                            <div class="user-info">
+                                <strong class="user-name">@feedback.displayName</strong>
+                                @if (!string.IsNullOrEmpty(feedback.productItemAttribute))
+                                {
+                                    <div class="feedback-product-attribute">
+                                        <small>Attribute: @feedback.productItemAttribute</small>
+                                    </div>
+                                }
+                                <span class="rating">
+                                    @for (int i = 1; i <= 5; i++)
+                                    {
+                                        if (i <= feedback.rating)
+                                        {
+                                            <span class="filled-star">&#9733;</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="empty-star">&#9734;</span>
+                                        }
+                                    }
+                                </span>
+                            </div>
+                        </div>
+                        <p class="feedback-comment">@feedback.comment</p>
+                    </div>
+                }
+
+                // Hiển thị điều khiển phân trang
+                @Html.PagedListPager(Model, page => Url.Action("Index", new { productId = ViewBag.product.id, page }),
+                         new PagedListRenderOptions
+            {
+                DisplayLinkToFirstPage = PagedListDisplayMode.IfNeeded,
+                DisplayLinkToLastPage = PagedListDisplayMode.IfNeeded,
+                MaximumPageNumbersToDisplay = 10,
+                DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
+                DisplayLinkToNextPage = PagedListDisplayMode.Always,
+            })
+            }
+            else
+            {
+                <div class="no-feedback-message" style="text-align: center; margin-top: 20px; font-size: 20px; color: red;">
+                    <strong>No feedback available.</strong> <br />
+                    We would love to hear your thoughts!
+                </div>
+            }
 
 
+            <style>
+                .no-feedback-message {
+                    text-align: center;
+                    margin-top: 20px;
+                    font-size: 20px;
+                    color: red;
+                }
+
+                .feedback-title {
+                    text-align: center;
+                    font-size: 28px;
+                    margin-bottom: 20px;
+                    color: #333;
+                }
+
+                .feedback-item {
+                    border: 1px solid #e3e3e3;
+                    border-radius: 8px;
+                    padding: 15px;
+                    margin-bottom: 20px;
+                    background-color: #f9f9f9;
+                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+                }
+
+                .feedback-header {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                }
+
+                .user-info {
+                    display: flex;
+                    flex-direction: column; 
+                    align-items: flex-start;
+                }
+
+                .user-name {
+                    font-size: 18px;
+                    font-weight: 600;
+                    color: #007bff;
+                }
+
+                .rating {
+                    display: inline-flex;
+                    margin-top: 5px;
+                }
+
+                .filled-star {
+                    color: #FFD700; 
+                    font-size: 20px;
+                    margin-right: 2px;
+                }
+
+                .empty-star {
+                    color: #d3d3d3; 
+                    font-size: 20px;
+                    margin-right: 2px;
+                }
+
+                .feedback-product-attribute {
+                    color: #6c757d; 
+                    font-style: italic;
+                    font-size: 14px;
+                }
+
+                .feedback-comment {
+                    font-size: 16px;
+                    line-height: 1.6;
+                    margin-top: 10px;
+                    color: #333;
+                }
+
+                hr {
+                    border: none;
+                    border-top: 1px solid #e3e3e3;
+                    margin: 20px 0;
+                }
+            </style>
+
+        </div>
         <div class="row g-3">
             <h5 class="card-title">Similar</h5>
             @foreach (var product in ViewBag.similarProducts)

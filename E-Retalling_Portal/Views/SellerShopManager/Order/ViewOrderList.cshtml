@@ -18,13 +18,15 @@
     <div class="order-list">
         @foreach (var item in ViewBag.OrderList)
         {
-            string displayStatus = System.Globalization.CultureInfo.CurrentCulture.TextInfo.ToTitleCase(@item.Status.Replace("_", " "));            var isProductItemNull = item.ProductItemId == null;
+            string displayStatus = System.Globalization.CultureInfo.CurrentCulture.TextInfo.ToTitleCase(@item.Status.Replace("_", " "));           
+            var isProductItemNull = item.ProductItemId == null;
             var productImage = isProductItemNull ? item.Product.coverImage.imageName : item.ProductItem.image.imageName;
             var productName = isProductItemNull ? item.Product.name : $"{item.Product.name} - {item.ProductItem.attribute}";
             var price = isProductItemNull ? item.Product.price : item.ProductItem.price;
             var totalPrice = (price ?? 0) * (item.Quantity ?? 0);
-
-            var orderStatus = item.Status; 
+            var orderItemId = item.ItemId;
+            var orderStatus = item.Status;
+            var orderItem = item.OrderItem;
 
             <div class="order-card" data-status="@orderStatus">
                 <div class="order-header">
@@ -72,6 +74,15 @@
                 <div class="order-footer">
                     <div class="total-price">Total price: @(item.Price + item.ShippingFee)VND</div>
                     <div class="actions">
+                        @if (displayStatus == "Delivered")
+                        {
+                            <a asp-controller="Feedback" asp-action="SubmitFeedback" asp-route-orderItemId="@orderItemId">
+                                <button>
+                                    @(orderItem.rating != null || orderItem.comment != null ? "Update" : "Feedback")
+                                </button>
+                            </a>
+                        }
+
                         <a href="/ViewProductDetail?area=Home&productId=@item.Product.id">
                             <button>Buy again</button>
                         </a>

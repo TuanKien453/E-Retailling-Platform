@@ -4,9 +4,9 @@ namespace E_Retalling_Portal.Models.Query
 {
     public static class OrderItemQuery
     {
-        public static IQueryable<OrderItem> GetOrderItemByUserId(this DbSet<OrderItem> dbAccount, int userId)
+        public static IQueryable<OrderItem> GetOrderItemByUserId(this DbSet<OrderItem> dbOrderItem, int userId)
         {
-            return dbAccount
+            return dbOrderItem
                 .Include(oi => oi.order)
                 .Include(oi => oi.productItem)
                 .Include(oi => oi.product)
@@ -17,11 +17,25 @@ namespace E_Retalling_Portal.Models.Query
                     .ThenInclude(pi => pi.image)
                 .Where(oi => oi.order.userId == userId);
         }
-        public static IQueryable<OrderItem> GetOrderItemByShopId(this DbSet<OrderItem> dbAccount, int shopId)
+
+        public static IQueryable<OrderItem> GetOrderItemByOrderItemId(this DbSet<OrderItem> dbOrderItem, int orderItemId)
         {
-            return dbAccount
-                .Include(oi => oi.product)
-                .Where(oi => oi.product.shopId == shopId);
+            return dbOrderItem
+                .Where(oi => oi.id == orderItemId );
         }
+
+        public static IQueryable<OrderItem> GetStarAndCommentByProductId(this DbSet<OrderItem> dbOrderItem, int productId)
+        {
+            var orderItems = dbOrderItem
+                .Include(oi => oi.order)
+                .Include(oi => oi.productItem)
+                .Include(oi => oi.product)
+                    .ThenInclude(p => p.shop)
+                .Where(oi => oi.productId == productId && oi.rating != null);
+
+            return orderItems;
+        }
+
+
     }
 }
