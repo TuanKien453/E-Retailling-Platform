@@ -32,7 +32,7 @@ namespace E_Retalling_Portal.Models.Query
             }
             return price;
         }
-        public static IQueryable<OrderItem> GetOrderItemByUserId(this DbSet<OrderItem> dbAccount, int userId)
+        public static IQueryable<OrderItem> GetOrderItemByUserId(this DbSet<OrderItem> dbOrderItem, int userId)
         {
             return dbOrderItem
                 .Include(oi => oi.order)
