@@ -1,7 +1,7 @@
 ﻿@{
     ViewData["Title"] = "DashBoard";
     Layout = "~/Views/Shared/ShopManagerSideBarLayout.cshtml";
-    var currentMonth = DateTime.Now.ToString("MMMM");
+    var currentMonth = DateTime.Now.ToString("MMMM");  // Get the full name of the current month
 }
 <style id="ShopDashBoard">
     * {
@@ -205,6 +205,31 @@
                 </div>
             </div>
 
+            <div class="container">
+                <div class="row">
+                    <div class="col-6">
+                    <div class="date-selector">
+                            <h3 style="text-align: center; font-weight: bold; margin: 20px">Sale Product</h3>
+                        <label>Start Date:</label>
+                        <input type="date" id="startDate" onchange="updateBarChart()">
+                        <label>End Date:</label>
+                        <input type="date" id="endDate" onchange="updateBarChart()">
+                    </div>
+
+                    <div id="barChartContainer" style="width: 100%; margin: auto;">
+                        <canvas id="productBarChart"></canvas>
+                    </div>
+                    </div>
+                    <div class="col-6" style="margin-top: 50px">
+                        <h3 style ="text-align: center; font-weight: bold; margin: 20px">Total Product in Category</h3>
+                        <div id="categoryChartContainer" style="width: 100%; margin: auto;">
+                            <canvas id="categoryBarChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+
             <h2 style="text-align: center; font-weight: bold; margin: 20px">Monthly static</h2>
 
             <div id = "chart" class="month-selector" >
@@ -252,63 +277,65 @@
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
 <script>
-    let salesChart;
+    let salesChart; // Ensure this is globally scoped
 
-    function initChart(labels, sales, others, averages) {
-        const ctx = document.getElementById('salesChart').getContext('2d');
+function initChart(labels, sales, others, averages) {
+    const ctx = document.getElementById('salesChart').getContext('2d');
 
-        if (salesChart) {
-            salesChart.destroy();
-        }
+    // Destroy existing chart before creating a new one
+    if (salesChart !== undefined && salesChart !== null) {
+        salesChart.destroy();
+    }
 
-        salesChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: labels,
-                datasets: [
-                    {
-                        label: 'Revenue Sales',
-                        data: sales,
-                        borderColor: 'rgba(75, 192, 192, 1)',
-                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                        borderWidth: 2,
-                        fill: true,
-                        tension: 0.4
-                    },
-                    {
-                        label: 'Transaction Fee',
-                        data: others,
-                        borderColor: 'rgba(255, 99, 132, 1)',
-                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                        borderWidth: 2,
-                        fill: true,
-                        tension: 0.4
-                    },
-                    {
-                        label: 'Revenue Order',
-                        data: averages,
-                        borderColor: 'rgba(54, 162, 235, 1)',
-                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                        borderWidth: 2,
-                        fill: true,
-                        tension: 0.4
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        title: { display: true, text: 'Values' }
-                    },
-                    x: {
-                        title: { display: true, text: 'Days' }
-                    }
+    salesChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    label: 'Revenue Sales',
+                    data: sales,
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.4
+                },
+                {
+                    label: 'Transaction Fee',
+                    data: others,
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.4
+                },
+                {
+                    label: 'Revenue Order',
+                    data: averages,
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.4
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: { display: true, text: 'Values' }
+                },
+                x: {
+                    title: { display: true, text: 'Days' }
                 }
             }
-        });
-    }
+        }
+    });
+}
+
 
     function updateChart() {
         const monthName = document.getElementById('monthDropdown').value;
@@ -344,6 +371,208 @@
     document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('monthDropdown').value = "@currentMonth";
         updateChart();
+    });
+   
+</script>
+
+<script>
+    let productBarChart; // Globally scoped chart instance
+
+    // Function to initialize the bar chart
+    function initBarChart(labels, dataSets) {
+        const ctx = document.getElementById('productPieChart').getContext('2d');
+
+        // Destroy existing chart before creating a new one
+        if (productBarChart !== undefined && productBarChart !== null) {
+            productBarChart.destroy();
+        }
+
+        productBarChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: dataSets
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top'
+                    },
+                    title: {
+                        display: true,
+                        text: 'Product Sales and Daily Order Counts'
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Quantity / Count'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Days'
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // Function to update the chart with new data
+    function updateBarChart() {
+        const startDate = document.getElementById('startDate').value;
+        const endDate = document.getElementById('endDate').value;
+
+        if (!startDate || !endDate) {
+            alert("Please select both start and end dates.");
+            return;
+        }
+
+        fetch(`/ShopDashBoard/LoadProductDataFromDay?startTime=${startDate}&endTime=${endDate}`)
+            .then(response => response.json())
+            .then(data => {
+                if (!data || !Array.isArray(data.productNames) || !Array.isArray(data.productQuantities)) {
+                    console.error('Invalid data format:', data);
+                    alert('Unexpected data format received. Please try again.');
+                    return;
+                }
+
+                if (data.productNames.length === 0 || data.productQuantities.length === 0) {
+                    alert('No data available for the selected date range.');
+                    return;
+                }
+
+                const ctx = document.getElementById('productBarChart').getContext('2d');
+
+                // Destroy the existing chart instance if it exists and is a Chart
+                if (window.productBarChart instanceof Chart) {
+                    window.productBarChart.destroy();
+                }
+
+                // Create a new bar chart
+                window.productBarChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: data.productNames,
+                        datasets: [{
+                            label: 'Product Quantities',
+                            data: data.productQuantities,
+                            backgroundColor: [
+                                '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',
+                                '#FF9F40', '#FF6384', '#36A2EB', '#FFCE56'
+                            ],
+                            hoverOffset: 4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: 'top'
+                            }
+                        }
+                    }
+                });
+            })
+            .catch(error => {
+                console.error('Error loading product data for the bar chart:', error);
+                alert('Failed to load data. Please try again later.');
+            });
+
+        fetch('/ShopDashBoard/LoadProductInCate')
+            .then(response => response.json())
+            .then(data => {
+                if (!data || !Array.isArray(data.category) || !Array.isArray(data.number)) {
+                    console.error('Invalid data format:', data);
+                    alert('Unexpected data format received. Please try again.');
+                    return;
+                }
+
+                const ctxCate = document.getElementById('categoryBarChart').getContext('2d');
+
+                // Destroy any existing category chart instance if it exists
+                if (categoryBarChart instanceof Chart) {
+                    categoryBarChart.destroy();
+                }
+
+                // Create a new category product count bar chart
+                categoryBarChart = new Chart(ctxCate, {
+                    type: 'bar',
+                    data: {
+                        labels: data.category,  // Category names
+                        datasets: [{
+                            label: 'Number of Products in Category',
+                            data: data.number,  // Number of products per category
+                            backgroundColor: [
+                                'rgba(255, 99, 132, 0.2)',
+                                'rgba(255, 159, 64, 0.2)',
+                                'rgba(255, 205, 86, 0.2)',
+                                'rgba(75, 192, 192, 0.2)',
+                                'rgba(54, 162, 235, 0.2)',
+                                'rgba(153, 102, 255, 0.2)',
+                                'rgba(201, 203, 207, 0.2)'
+                            ],
+                            borderColor: [
+                                'rgb(255, 99, 132)',
+                                'rgb(255, 159, 64)',
+                                'rgb(255, 205, 86)',
+                                'rgb(75, 192, 192)',
+                                'rgb(54, 162, 235)',
+                                'rgb(153, 102, 255)',
+                                'rgb(201, 203, 207)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'Categories'
+                                }
+                            },
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Number of Products'
+                                }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                position: 'top'
+                            }
+                        }
+                    }
+                });
+            })
+            .catch(error => {
+                console.error('Error loading category data for the bar chart:', error);
+                alert('Failed to load category data. Please try again later.');
+            });
+    }
+
+    // Initial load of both charts when the page is loaded
+    window.onload = updateBarChart;
+
+    // Ensure the chart loads with the current month's start and end dates on page load
+    document.addEventListener('DOMContentLoaded', () => {
+        const currentDate = new Date();
+        const startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1).toISOString().split('T')[0];
+        const endOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).toISOString().split('T')[0];
+
+        document.getElementById('startDate').value = startOfMonth;
+        document.getElementById('endDate').value = endOfMonth;
+
+        updateBarChart();
     });
 </script>
 
