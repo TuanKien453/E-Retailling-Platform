@@ -19,6 +19,20 @@ namespace E_Retalling_Portal.Models.Query
             );
         }
 
+
+        public static IQueryable<Order> GetOrderByDateRange(this DbSet<Order> DbOrder, DateTime startDate, DateTime endDate)
+        {
+            // Chuyển đổi ngày bắt đầu và kết thúc sang định dạng yyyyMMddHHmmss
+            string startDateString = startDate.ToString("yyyyMMddHHmmss");
+            string endDateString = endDate.ToString("yyyyMMddHHmmss");
+
+            return DbOrder.FromSqlRaw(
+                "SELECT * FROM Orders WHERE createTime >= {0} AND createTime <= {1}",
+                startDateString, endDateString
+            );
+        }
+
+
         public static IQueryable<Order> GetOrderByYearMonthDay(this DbSet<Order> DbOrder, int year, int month, int day)
         {
             string datePrefix = $"{year:D4}{month:D2}{day:D2}"; // Format as yyyyMMdd

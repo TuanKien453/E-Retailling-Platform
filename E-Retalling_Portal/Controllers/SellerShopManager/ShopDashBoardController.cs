@@ -3,6 +3,8 @@ using E_Retalling_Portal.Models.Enums;
 using E_Retalling_Portal.Models.Query;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using System.Diagnostics.Metrics;
+using System.Globalization;
 using System.Security.Policy;
 
 namespace E_Retalling_Portal.Controllers.ShopManager
@@ -41,6 +43,8 @@ namespace E_Retalling_Portal.Controllers.ShopManager
                 ViewBag.Order = order;
                 ViewBag.Users = users;
 
+
+
                 return View("/Views/SellerShopManager/ShopDashBoard/Index.cshtml");
             }
 
@@ -75,8 +79,8 @@ namespace E_Retalling_Portal.Controllers.ShopManager
                 double countAverage = 0;
                 double countBreak = 0;
                 double countFee = 0;
-               
-                
+
+
                 for (int i = 0; i < daysInMonth; i++)
                 {
                     countSale = 0;
@@ -86,36 +90,36 @@ namespace E_Retalling_Portal.Controllers.ShopManager
                     int day = i + 1;
                     List<Order> orderInMonth = context.Orders.GetOrderByYearMonthDay(year, month, day).ToList();
                     foreach (var order in orderInMonth)
-                    {                   
+                    {
                         List<OrderItem> orderItems = context.OrderItems.GetOrderItemByOrderId(order.id).ToList();
                         foreach (var item in orderItems)
                         {
                             if (item.shippingStatus.ToString().Equals("delivered", StringComparison.OrdinalIgnoreCase))
-                            {                               
+                            {
                                 if (products.Contains(context.Products.GetProductById(item.productId).FirstOrDefault()))
                                 {
                                     double today = item.quantity * item.price;
                                     countFee += today * item.transactionFee / 100;
-                                    countBreak += today * item.transactionFee/100 + (double)item.shippingFee / 1000;
-                                   countSale += today;
-                                    
+                                    countBreak += today * item.transactionFee / 100 + (double)item.shippingFee / 1000;
+                                    countSale += today;
+
                                 }
                             }
-                            
+
                         }
                         countAverage += countSale + countBreak;
                         data[i] = countSale;
                         other[i] = countFee;
                         average[i] = countAverage;
                     }
-                   
+
 
                 }
 
-                    int[] days = new int[daysInMonth];
+                int[] days = new int[daysInMonth];
                 for (int i = 1; i <= daysInMonth; i++)
                 {
-                    days[i-1] = i;
+                    days[i - 1] = i;
                 }
 
                 var labels = days;
@@ -126,5 +130,92 @@ namespace E_Retalling_Portal.Controllers.ShopManager
             }
 
         }
+
+        public IActionResult LoadProductDataFromDay(DateTime startTime, DateTime endTime)
+        {
+            using (var context = new Context())
+            {
+                int? accId = HttpContext.Session.GetInt32(SessionKeys.AccountId.ToString());
+                var shop = context.Shops.GetShopbyAccId(accId.Value).FirstOrDefault();
+
+                List<Product> products = context.Products.GetProductsByShop(shop.id).ToList();
+
+                // Fetch orders without date filtering
+                List<Order> allOrders = context.Orders.ToList();
+
+                // Filter orders in memory based on parsed `createTime`
+                List<Order> ordersFromDate = allOrders
+                    .Where(order =>
+                    {
+                        DateTime orderDate;
+                        bool isParsed = DateTime.TryParseExact(
+                            order.createTime,
+                            "yyyyMMddHHmmss",
+                            CultureInfo.InvariantCulture,
+                            DateTimeStyles.None,
+                            out orderDate
+                        );
+                        return isParsed && orderDate >= startTime && orderDate <= endTime;
+                    })
+                    .ToList();
+
+                Dictionary<int, int> productFromDay = new Dictionary<int, int>();
+
+                foreach (var order in ordersFromDate)
+                {
+                    List<OrderItem> orderItems = context.OrderItems.GetOrderItemByOrderId(order.id).ToList();
+                    foreach (var item in orderItems)
+                    {
+                        if (item.shippingStatus.ToString().Equals("delivered", StringComparison.OrdinalIgnoreCase))
+                        {
+                            var product = context.Products.GetProductById(item.productId).FirstOrDefault();
+                            if (product != null && products.Contains(product))
+                            {
+                                if (productFromDay.ContainsKey(item.productId))
+                                {
+                                    productFromDay[item.productId] += item.quantity;
+                                }
+                                else
+                                {
+                                    productFromDay[item.productId] = item.quantity;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                var productData = productFromDay.Select(item => new
+                {
+                    ProductName = context.Products.GetProductById(item.Key).FirstOrDefault()?.name,
+                    Quantity = item.Value
+                }).ToList();
+
+                return Json(new
+                {
+                    productNames = productData.Select(p => p.ProductName).ToArray(),
+                    productQuantities = productData.Select(p => p.Quantity).ToArray()
+                });
+            }
+        }
+
+        public IActionResult LoadProductInCate()
+        {
+            using (var context = new Context())
+            {
+                int? accId = HttpContext.Session.GetInt32(SessionKeys.AccountId.ToString());
+                var shop = context.Shops.GetShopbyAccId(accId.Value).FirstOrDefault();
+                List<Category> category = context.Categories.GetAllOfCategoriesByShop(shop.id).ToList();
+                int[] number = new int[category.Count];
+                int i = 0;
+                foreach (Category cate in category)
+                {
+                    number[i] = context.Products.GetNumberOfProductByCategory(shop.id, cate);
+                    i++;
+                }
+                return Json(new { category = category.Select(c => c.name).ToArray(), number });
+            }
+        }
+
     }
+
 }
