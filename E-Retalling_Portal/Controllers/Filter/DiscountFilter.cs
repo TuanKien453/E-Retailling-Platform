@@ -88,9 +88,9 @@ namespace E_Retalling_Portal.Controllers.Filter
                         return;
                     }
                 }
-                if (context.ActionArguments.TryGetValue("discount", out var discountObj) && discountObj is Discount discount)
+                if (context.ActionArguments.TryGetValue("discountId", out var discountObj) && discountObj is int discountId)
                 {
-                    if (!dbContext.Discounts.IsShop(shop.id, discount.id))
+                    if (!dbContext.Discounts.IsShop(shop.id, discountId))
                     {
                         context.Result = new RedirectToActionResult("Error505", "Home", null);
                         return;

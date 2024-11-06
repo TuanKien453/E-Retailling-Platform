@@ -41,9 +41,6 @@ namespace E_Retalling_Portal.Controllers.ShopManager
                 ViewBag.Order = order;
                 ViewBag.Users = users;
 
-                
-
-
                 return View("/Views/SellerShopManager/ShopDashBoard/Index.cshtml");
             }
 

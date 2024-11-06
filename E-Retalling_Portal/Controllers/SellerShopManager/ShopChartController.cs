@@ -80,7 +80,6 @@ namespace E_Retalling_Portal.Controllers.SellerShopManager
                         List<OrderItem> orderItems = context.OrderItems.GetOrderItemByOrderId(order.id).ToList();
                         foreach (var item in orderItems)
                         {
-                            Console.WriteLine($"item = {item.shippingStatus}, {item.quantity}, {item.externalOrderCode} ");
                             if (item.shippingStatus.ToString().Equals("delivered", StringComparison.OrdinalIgnoreCase))
                             {
                                 if (products.Contains(context.Products.GetProductById(item.productId).FirstOrDefault()))
@@ -100,10 +99,7 @@ namespace E_Retalling_Portal.Controllers.SellerShopManager
                         average[i] = countAverage;
                     }
 
-
                 }
-
-
                 var labels = monthsString;
                 var sales = data;
                 var others = other;

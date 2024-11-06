@@ -79,16 +79,22 @@ namespace E_Retalling_Portal.Models.Query
         {
             using (var context = new Context())
             {
+                Console.WriteLine($"product = {product.id}, {product.name}");
                 ProductDiscount productDiscount = context.ProductDiscounts.GetProductDiscountByProductIdAndProductItemId(product.id, null).FirstOrDefault();
                 if (productDiscount == null)
                 {
                     return product.price;
+                } else
+                {
+                    Discount discount = context.Discounts.GetDiscountByDiscountId(productDiscount.discountId).FirstOrDefault();
+                    var today = DateTime.Today;
+                    if (today >= DateTime.Parse(discount.startDate.ToString()) && today <= DateTime.Parse(discount.endDate.ToString()))
+                    {
+                        return Math.Round(product.price - Math.Round(product.price * Math.Round(((double)discount.value / 100), 2), 2));
+                    }
+                    else return product.price;
                 } 
-                Discount discount = context.Discounts.GetDiscountByDiscountId(productDiscount.discountId).FirstOrDefault();
-                var today = DateTime.Today;
-                if (today >= DateTime.Parse(discount.startDate.ToString()) && today <= DateTime.Parse(discount.endDate.ToString())) {
-                    return Math.Round(product.price - Math.Round(product.price * Math.Round(((double)discount.value / 100), 2), 2));
-                } else return product.price;
+                
             }
         }
 

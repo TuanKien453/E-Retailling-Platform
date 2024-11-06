@@ -119,7 +119,15 @@
         justify-content: center;
     }
 </style>
-
+<link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.css" />
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/2.1.8/js/dataTables.js"></script>
+<style>
+    .row-img {
+        width: 80px;
+        height: 80px;
+    }
+</style>
 <div class="content m-4 pb-3" id="ShopDashBoard">
     <div class="row p-4">
         <div class="col-12">
@@ -191,7 +199,7 @@
                         <div class="icon icon-orange">👥</div>
                         <div class="text-container">
                             <div class="count">@ViewBag.Users</div>
-                            <div class="label">Total User Order</div>
+                            <div class="label">Total Customer</div>
                         </div>
                     </div>
                 </div>
@@ -222,6 +230,22 @@
                 <canvas id="salesChart"></canvas>
             </div>
             
+            <div>
+                <table id="myTable" class="display">
+                    <thead>
+                        <tr>
+                            <th>Days</th>
+                            <th>Sale</th>
+                            <th>Transaction Fee</th>
+                            <th>Average Order</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <!-- Rows will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+
              
         </div>
     </div>
@@ -230,11 +254,9 @@
 <script>
     let salesChart;
 
-    // Initialize or update the chart
     function initChart(labels, sales, others, averages) {
         const ctx = document.getElementById('salesChart').getContext('2d');
 
-        // If the chart already exists, destroy it before creating a new one
         if (salesChart) {
             salesChart.destroy();
         }
@@ -245,7 +267,7 @@
                 labels: labels,
                 datasets: [
                     {
-                        label: 'Sales',
+                        label: 'Revenue Sales',
                         data: sales,
                         borderColor: 'rgba(75, 192, 192, 1)',
                         backgroundColor: 'rgba(75, 192, 192, 0.2)',
@@ -263,7 +285,7 @@
                         tension: 0.4
                     },
                     {
-                        label: 'Averages Order',
+                        label: 'Revenue Order',
                         data: averages,
                         borderColor: 'rgba(54, 162, 235, 1)',
                         backgroundColor: 'rgba(54, 162, 235, 0.2)',
@@ -278,44 +300,59 @@
                 scales: {
                     y: {
                         beginAtZero: true,
-                        title: {
-                            display: true,
-                            text: 'Values'
-                        }
+                        title: { display: true, text: 'Values' }
                     },
                     x: {
-                        title: {
-                            display: true,
-                            text: 'Day of the Month'
-                        }
+                        title: { display: true, text: 'Days' }
                     }
                 }
             }
         });
     }
 
-    // Fetch data and update chart based on selected month
     function updateChart() {
         const monthName = document.getElementById('monthDropdown').value;
         fetch(`/ShopDashBoard/LoadChartData?monthName=${monthName}`)
             .then(response => response.json())
             .then(data => {
                 if (data.error) {
-                    console.error('Error loading chart data:', data.error);
+                    console.error('Error:', data.error);
                     alert(data.error);
                     return;
                 }
 
                 const { labels, sales, others, averages } = data;
+
+                const tableBody = document.getElementById('tableBody');
+                tableBody.innerHTML = '';
+
+                labels.forEach((label, i) => {
+                    const row = `<tr>
+                            <td>${label}</td>
+                            <td>${sales[i]}</td>
+                            <td>${others[i]}</td>
+                            <td>${averages[i]}</td>
+                        </tr>`;
+                    tableBody.innerHTML += row;
+                });
+
                 initChart(labels, sales, others, averages);
             })
             .catch(error => console.error('Error loading chart data:', error));
     }
 
-    // Initialize the chart on page load with the current month
     document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('monthDropdown').value = "@currentMonth";
         updateChart();
     });
 </script>
 
+<script>
+
+    $(document).ready(function () {
+        $('#myTable').DataTable({
+            paging: false,
+            layout: false
+        });
+    });
+</script>
