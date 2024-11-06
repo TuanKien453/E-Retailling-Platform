@@ -273,6 +273,31 @@ namespace E_Retalling_Portal.Controllers.Home
             int transactionFee = 0;
             using (var context = new Context())
             {
+
+                //Delete Product and ProductItem has been ordered in cart cookie
+                var productsFromCookie = CookiesUtils.GetCartItems(Request);
+                foreach (var product in pItems)
+                {
+                    string key = $"{product.Key.id}P";
+
+                    if (productsFromCookie.ContainsKey(key))
+                    {
+                        productsFromCookie.Remove(key);
+                    }
+                }
+
+                foreach (var productItem in piItems)
+                {
+                    string key = $"{productItem.Key.id}PI";
+
+                    if (productsFromCookie.ContainsKey(key))
+                    {
+                        productsFromCookie.Remove(key);
+                    }
+                }
+
+                CookiesUtils.SetCartItems(productsFromCookie, Response);
+
                 transactionFee = Int32.Parse(context.Settings.FirstOrDefault(x => x.name.Equals("fee")).value.Replace("%", ""));
                 order = new Order
                 {
