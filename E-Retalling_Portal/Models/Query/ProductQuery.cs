@@ -79,7 +79,6 @@ namespace E_Retalling_Portal.Models.Query
         {
             using (var context = new Context())
             {
-                Console.WriteLine($"product = {product.id}, {product.name}");
                 ProductDiscount productDiscount = context.ProductDiscounts.GetProductDiscountByProductIdAndProductItemId(product.id, null).FirstOrDefault();
                 if (productDiscount == null)
                 {
