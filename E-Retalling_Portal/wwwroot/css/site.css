@@ -382,6 +382,19 @@ body {
     }
 
 
+.discount-value {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: rgba(255, 0, 0, 0.8); /* Semi-transparent red background */
+    color: white;
+    font-size: 14px;
+    border-radius: 5px;
+    font-weight: bold;
+    display: inline-block; /* Only occupy necessary space */
+    z-index: 1;
+}
+
 .custom-button.selected .checkmark {
     display: block; /* Hi?n th? d?u check khi s?n ph?m ???c ch?n */
 }

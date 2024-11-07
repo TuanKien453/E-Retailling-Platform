@@ -2,45 +2,54 @@
 
 @{
     ViewData["Title"] = "Home Page";
-    bool hasDiscount1 = false;
+    var productDiscounts = ViewBag.productDiscounts as Dictionary<int, ProductDiscount>;
 }
 <div class="row m-3 p-2 shadow border rounded" style="background-color:white">
-        <!-- Left Column -->
-        <div class="col-6">
+    <!-- Left Column -->
+    <div class="col-6">
         <div class="d-flex align-items-center mb-3">
             <i class="bi bi-box-seam me-2"></i>
             <span>Shop: @ViewBag.shop.name</span>
         </div>
-            <div class="d-flex align-items-center mb-3">
-                <i class="bi bi-box-seam me-2"></i>
-                <span>products: <span class="text-danger fw-bold">@ViewBag.shop.products.Count</span></span>
-            </div>
-            <div class="d-flex align-items-center mb-3">
-                <i class="bi bi-chat-dots me-2"></i>
-                <span>address: @ViewBag.shop.address</span>
-            </div>
+        <div class="d-flex align-items-center mb-3">
+            <i class="bi bi-box-seam me-2"></i>
+            <span>products: <span class="text-danger fw-bold">@ViewBag.shop.products.Count</span></span>
         </div>
-
-        <!-- Right Column -->
-        <div class="col-6">
-            <div class="d-flex align-items-center mb-3">
-                <i class="bi bi-people me-2"></i>
-            <span>Phone number: @ViewBag.Shop.account.user.phoneNumber</span>
-            </div>
-            <div class="d-flex align-items-center mb-3">
-                <i class="bi bi-star me-2"></i>
-            <span>Contract: @ViewBag.Shop.account.user.email</span>
-            </div>
+        <div class="d-flex align-items-center mb-3">
+            <i class="bi bi-chat-dots me-2"></i>
+            <span>address: @ViewBag.shop.address</span>
         </div>
     </div>
+
+    <!-- Right Column -->
+    <div class="col-6">
+        <div class="d-flex align-items-center mb-3">
+            <i class="bi bi-people me-2"></i>
+            <span>Phone number: @ViewBag.Shop.account.user.phoneNumber</span>
+        </div>
+        <div class="d-flex align-items-center mb-3">
+            <i class="bi bi-star me-2"></i>
+            <span>Contract: @ViewBag.Shop.account.user.email</span>
+        </div>
+    </div>
+</div>
 <div class="row">
     <h3>Products</h3>
     @foreach (var product in Model)
     {
+        var discount = productDiscounts != null && productDiscounts.ContainsKey(product.id)
+        ? productDiscounts[product.id]
+        : null;
+        var discountPrice = discount != null ? ((100 - discount.discount.value) * product.price / 100)
+        : product.price;
         <div class="col-md-2 col-sm-6">
             <div class="product-grid">
                 <div class="product-image">
                     <a href="@Url.Action("Index", "ViewProductDetail", new { area = "Home", productId = product.id })" class="image">
+                        @if (discount != null)
+                        {
+                            <div class="discount-value">-@discount.discount.value %</div>
+                        }
                         <img class="img-1" src="~/productImages/@product.coverImage.imageName">
                         @if (product.images.Count > 1)
                         {
@@ -51,35 +60,26 @@
                 </div>
                 <div class="product-content">
                     <h3 class="title"><a href="@Url.Action("Index", "ViewProductDetail", new { area = "Home", productId = product.id })">@product.name</a></h3>
-                    @foreach (var item in ViewBag.productDiscounts)
+                    @if (discount != null)
                     {
-                        if (item.product != null && item.product.id == product.id)
-                        {
-                            <span class="discount-name">@item.discount.name</span>
-                            hasDiscount1 = true;
-                            var discountedPrice = Math.Round(product.price * (1 - (item.discount.value / 100.0)), 2);
-                            <div class="price-container">
-                                <div class="price"> @discountedPrice VND</div>
-                                <div class="price"><s>@product.price VND</s></div>
-                            </div>
-                            break;
-                        }
+                        <span class="discount-name">@discount.discount.name</span>
+                        <div class="price"> @discountPrice.ToString("#,0").Replace(",", ".") VND   <s>@product.price.ToString("#,0").Replace(",", ".") VND</s></div>
                     }
-                    @if (hasDiscount1 == false)
+                    else
                     {
-                        <div class="price">@product.price VND</div>
+                        <div class="price">@product.price.ToString("#,0").Replace(",", ".") VND</div>
                     }
                 </div>
             </div>
         </div>
     }
 </div>
-@Html.PagedListPager(Model, page => Url.Action("ViewShop", new { page,ViewBag.id}), new PagedListRenderOptions
-               {
-                   DisplayLinkToFirstPage = PagedListDisplayMode.IfNeeded,
-                   DisplayLinkToLastPage = PagedListDisplayMode.IfNeeded,
-                   MaximumPageNumbersToDisplay = 8,
-                   DisplayLinkToPreviousPage = PagedListDisplayMode.IfNeeded,
-                   DisplayLinkToNextPage = PagedListDisplayMode.IfNeeded,
+@Html.PagedListPager(Model, page => Url.Action("ViewShop", new { page, ViewBag.id }), new PagedListRenderOptions
+{
+    DisplayLinkToFirstPage = PagedListDisplayMode.IfNeeded,
+    DisplayLinkToLastPage = PagedListDisplayMode.IfNeeded,
+    MaximumPageNumbersToDisplay = 8,
+    DisplayLinkToPreviousPage = PagedListDisplayMode.IfNeeded,
+    DisplayLinkToNextPage = PagedListDisplayMode.IfNeeded,
 
-               })
+})
