@@ -62,7 +62,7 @@ namespace E_Retalling_Portal.Services
                 }
 
 
-                await Task.Delay(TimeSpan.FromMinutes(10), stoppingToken);
+                await Task.Delay(TimeSpan.FromMinutes(15), stoppingToken);
             }
         }
 
