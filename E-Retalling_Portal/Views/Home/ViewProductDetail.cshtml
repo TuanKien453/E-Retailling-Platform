@@ -167,12 +167,12 @@
                 </div>
             </div>
         </div>
-        <div class="row g-3">
+        <div class="row g-3" id="reviews-section">
 
             @if (Model != null && Model.Any())
             {
-                <h2 class="feedback-title" style="font-size: 25px">Customer Feedback</h2>
-
+                <h2 class="feedback-title" style="font-size: 25px">Customer Feedback (@Model.Count Feedbacks)</h2>
+               
                 foreach (var feedback in Model)
                 {
                     <div class="feedback-item" style="margin: 0">
@@ -204,7 +204,6 @@
                     </div>
                 }
 
-                // Hiển thị điều khiển phân trang
                 @Html.PagedListPager(Model, page => Url.Action("Index", new { productId = ViewBag.product.id, page }),
                          new PagedListRenderOptions
             {
@@ -217,7 +216,7 @@
             }
             else
             {
-                <div class="no-feedback-message" style="text-align: center; margin-top: 20px; font-size: 20px; color: red;">
+                <div class="no-feedback-message" style="text-align: center; margin-top: 20px; font-size: 20px; color: #8936Ec;">
                     <strong>No feedback available.</strong> <br />
                     We would love to hear your thoughts!
                 </div>

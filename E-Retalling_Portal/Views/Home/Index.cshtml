@@ -1,313 +1,313 @@
 ﻿@model X.PagedList.IPagedList<E_Retalling_Portal.Models.Product>
 
 @{
-    ViewData["Title"] = "Home Page";
-    bool hasDiscount = false;
-    bool hasDiscount1 = false;
+	ViewData["Title"] = "Home Page";
+	bool hasDiscount = false;
+	bool hasDiscount1 = false;
 }
 
 <div class="container mt-4">
-    <div class="row">
-        <h3>You May Like</h3>
-        @foreach (var product in ViewBag.recommendedProduct)
-        {
-            <div class="col-md-2 col-sm-6">
-                <div class="product-grid">
-                    <div class="product-image">
-                        <a href="@Url.Action("Index", "ViewProductDetail", new { area = "Home", productId = product.id })" class="image">
-                            <img class="img-1" src="~/productImages/@product.coverImage.imageName">
-                            @if (product.images.Count>1)
-                            {
-                                <img class="img-2" src="~/productImages/@product.images[1].imageName">
-                            }
-                        </a>
-                        <a href="@Url.Action("Index", "ViewProductDetail", new { area = "Home", productId = product.id })" class="product-view"><i class="fa fa-search"></i></a>
-                    </div>
-                    <div class="product-content">
-                         @if (ViewBag.recommendProductRatings != null && ViewBag.recommendProductRatings.ContainsKey(product.id))
-                {
-                    int averageRating = ViewBag.recommendProductRatings[product.id];
+	<div class="row">
+		<h3>You May Like</h3>
+		@foreach (var product in ViewBag.recommendedProduct)
+		{
+			<div class="col-md-2 col-sm-6">
+				<div class="product-grid">
+					<div class="product-image">
+						<a href="@Url.Action("Index", "ViewProductDetail", new { area = "Home", productId = product.id })" class="image">
+							<img class="img-1" src="~/productImages/@product.coverImage.imageName">
+							@if (product.images.Count > 1)
+							{
+								<img class="img-2" src="~/productImages/@product.images[1].imageName">
+							}
+						</a>
+						<a href="@Url.Action("Index", "ViewProductDetail", new { area = "Home", productId = product.id })" class="product-view"><i class="fa fa-search"></i></a>
+					</div>
+					<div class="product-content">
+						@if (ViewBag.recommendProductRatings != null && ViewBag.recommendProductRatings.ContainsKey(product.id))
+						{
+							int averageRating = ViewBag.recommendProductRatings[product.id];
 
-                    <!-- Display stars -->
-                    <div class="product-rating">
-                        @for (int i = 1; i <= 5; i++)
-                        {
-                            if (i <= averageRating)
-                            {
-                                <i class="fa fa-star" style="font-size: 12px; color:yellow"></i>  <!-- Filled star -->
-                            }
-                            else
-                            {
-                                <i class="fa fa-star text-muted" style="font-size: 12px;"></i>  <!-- Empty star -->
-                            }
-                        }
-                        <span class="ms-1">
-                            @averageRating
-                        </span> <!-- Display numeric rating -->
-                    </div>
-                }
-                else
-                {
-                    <!-- Display 5 empty stars if no rating -->
-                    <div class="product-rating">
-                        @for (int i = 1; i <= 5; i++)
-                        {
-                            <i class="fa fa-star text-muted" style="font-size: 12px;"></i>  <!-- Empty star -->
-                        }
-                        <span class="ms-1">
-                            0
-                        </span> <!-- No ratings yet -->
-                    </div>
-                }
+							<!-- Display stars -->
+							<div class="product-rating">
+								@for (int i = 1; i <= 5; i++)
+								{
+									if (i <= averageRating)
+									{
+										<i class="fa fa-star" style="font-size: 12px; color:yellow"></i>  <!-- Filled star -->
+									}
+									else
+									{
+										<i class="fa fa-star text-muted" style="font-size: 12px;"></i>  <!-- Empty star -->
+									}
+								}
+								<span class="ms-1">
+									@averageRating
+								</span> <!-- Display numeric rating -->
+							</div>
+						}
+						else
+						{
+							<!-- Display 5 empty stars if no rating -->
+							<div class="product-rating">
+								@for (int i = 1; i <= 5; i++)
+								{
+									<i class="fa fa-star text-muted" style="font-size: 12px;"></i>  <!-- Empty star -->
+								}
+								<span class="ms-1">
+									0
+								</span> <!-- No ratings yet -->
+							</div>
+						}
 
-                        <h3 class="title"><a href="@Url.Action("Index", "ViewProductDetail", new { area = "Home", productId = product.id })">@product.name</a></h3>
-                        @foreach (var item in ViewBag.productDiscounts)
-                        {
-                            if (item.product != null && item.product.id == product.id)
-                            {
-                                <span class="discount-name">@item.discount.name</span>
-                                hasDiscount = true;
-                                var discountedPrice = Math.Round(product.price * (1 - (item.discount.value / 100.0)), 2);
-                                <div class="price-container">
-                                    <div class="price"> @discountedPrice VND </div>
-                                    <div class="price"><s>@product.price VND</s></div>
-                                </div>
-                                break;
-                            }
-                        }
-                        @if (hasDiscount == false)
-                        {
-                            <div class="price">@product.price VND</div>
-                        }
-                    </div>
-                </div>
-            </div>
-        }
+						<h3 class="title"><a href="@Url.Action("Index", "ViewProductDetail", new { area = "Home", productId = product.id })">@product.name</a></h3>
+						@foreach (var item in ViewBag.productDiscounts)
+						{
+							if (item.product != null && item.product.id == product.id)
+							{
+								<span class="discount-name">@item.discount.name</span>
+								hasDiscount = true;
+								var discountedPrice = Math.Round(product.price * (1 - (item.discount.value / 100.0)), 2);
+								<div class="price-container">
+									<div class="price"> @discountedPrice VND </div>
+									<div class="price"><s>@product.price VND</s></div>
+								</div>
+								break;
+							}
+						}
+						@if (hasDiscount == false)
+						{
+							<div class="price">@product.price VND</div>
+						}
+					</div>
+				</div>
+			</div>
+		}
 
 
 
-    </div>
+	</div>
 </div>
 
 <nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item">
-            <a href="@Url.Action("Index", "Home")">Home</a>
-        </li>
+	<ol class="breadcrumb">
+		<li class="breadcrumb-item">
+			<a href="@Url.Action("Index", "Home")">Home</a>
+		</li>
 
-        @foreach (var breadcrumb in ViewBag.breadcrumbList)
-        {
-            <li class="breadcrumb-item">
-                <a href="@Url.Action("Index", "Home", new { categoryId = breadcrumb.Url })">@breadcrumb.Name</a>
-            </li>
-        }
-    </ol>
+		@foreach (var breadcrumb in ViewBag.breadcrumbList)
+		{
+			<li class="breadcrumb-item">
+				<a href="@Url.Action("Index", "Home", new { categoryId = breadcrumb.Url })">@breadcrumb.Name</a>
+			</li>
+		}
+	</ol>
 </nav>
 
 
 
 
 <section class="py-3">
-    <div class="container">
+	<div class="container">
 
-        <div class="row">
-            <div class="col-lg-3">
-                <div class="filter-sidebar">
-                    <form method="get" action="@Url.Action("Index", "Home")">
-                        @if (ViewBag.isParentCategory == true)
-                        {
-                            @foreach (var category in ViewBag.categoryList)
-                            {
-                                <div class="category-group">
-                                    @if (category.parentCategoryId == null)
-                                    {
-                                        <ul>
-                                            <li>
-                                                <a href="@Url.Action("Index", "Home", new { categoryId = category.id })"
-                                                   class="category-link">
-                                                    @category.name
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    }
-                                </div>
-                            }
-                        }
-                        else
-                        {
+		<div class="row">
+			<div class="col-lg-3">
+				<div class="filter-sidebar">
+					<form method="get" action="@Url.Action("Index", "Home")">
+						@if (ViewBag.isParentCategory == true)
+						{
+							@foreach (var category in ViewBag.categoryList)
+							{
+								<div class="category-group">
+									@if (category.parentCategoryId == null)
+									{
+										<ul>
+											<li>
+												<a href="@Url.Action("Index", "Home", new { categoryId = category.id })"
+												   class="category-link">
+													@category.name
+												</a>
+											</li>
+										</ul>
+									}
+								</div>
+							}
+						}
+						else
+						{
 
-                            @foreach (var subCategory in ViewBag.subcategory)
-                            {
-                                <ul>
-                                    <li>
-                                        <a href="@Url.Action("Index", "Home", new { categoryId = subCategory.id })"
-                                           class="subcategory-link">
-                                            @subCategory.name
-                                        </a>
-                                    </li>
-                                </ul>
-                            }
+							@foreach (var subCategory in ViewBag.subcategory)
+							{
+								<ul>
+									<li>
+										<a href="@Url.Action("Index", "Home", new { categoryId = subCategory.id })"
+										   class="subcategory-link">
+											@subCategory.name
+										</a>
+									</li>
+								</ul>
+							}
 
-                        }
-                        <label>Filter by price :</label>
-                        <b id="minPrice">$ @(ViewBag.minPrice ?? 250)</b> - <b id="maxPrice">$ @(ViewBag.maxPrice != null && ViewBag.maxPrice == 1000 ? "1000+" : ViewBag.maxPrice ?? 450)</b>
-                        <input id="ex2" type="text" class="span2" value=""
-                               data-slider-min="2" data-slider-max="1000"
-                               data-slider-step="5" data-slider-value="[@(ViewBag.minPrice ?? 250),@(ViewBag.maxPrice ?? 450)]" />
-                        <input type="hidden" name="minPrice" id="minPriceInput" value="@(ViewBag.minPrice ?? 250)" />
-                        <input type="hidden" name="maxPrice" id="maxPriceInput" value="@(ViewBag.maxPrice ?? 450)" />
-                        <input type="hidden" name="categoryId" value="@ViewBag.categoryId" />
-                        <input type="hidden" name="searchQuery" value="@ViewBag.searchQuery" />
-                        <button type="submit" class="btn btn-primary mt-3">Apply Filter</button>
-                    </form>
+						}
+						<label>Filter by price :</label>
+						<b id="minPrice">$ @(ViewBag.minPrice ?? 250)</b> - <b id="maxPrice">$ @(ViewBag.maxPrice != null && ViewBag.maxPrice == 1000 ? "1000+" : ViewBag.maxPrice ?? 450)</b>
+						<input id="ex2" type="text" class="span2" value=""
+							   data-slider-min="2" data-slider-max="1000"
+							   data-slider-step="5" data-slider-value="[@(ViewBag.minPrice ?? 250),@(ViewBag.maxPrice ?? 450)]" />
+						<input type="hidden" name="minPrice" id="minPriceInput" value="@(ViewBag.minPrice ?? 250)" />
+						<input type="hidden" name="maxPrice" id="maxPriceInput" value="@(ViewBag.maxPrice ?? 450)" />
+						<input type="hidden" name="categoryId" value="@ViewBag.categoryId" />
+						<input type="hidden" name="searchQuery" value="@ViewBag.searchQuery" />
+						<button type="submit" class="btn btn-primary mt-3">Apply Filter</button>
+					</form>
 
-                </div>
-            </div>
+				</div>
+			</div>
 
-            <div class="col-lg-9">
-                <div class="row justify-content-end py-2">
-                    <div class="col-lg-4">
-                        <form method="get" action="@Url.Action("Index", "Home")">
-                            <div class="input-group input-group-dynamic mb-4">
-                                <span class="input-group-text"><i class="fas fa-search me-2" aria-hidden="true"></i></span>
-                                <input class="form-control p-1" placeholder="Search" type="text" name="searchQuery" value="@ViewBag.searchQuery" style="background-image:none; border:1px solid gray;">
-                            </div>
-                            <input type="hidden" name="categoryId" value="@ViewBag.categoryId" />
-                            <input type="hidden" name="minPrice" value="@ViewBag.minPrice" />
-                            <input type="hidden" name="maxPrice" value="@ViewBag.maxPrice" />
-                        </form>
-                    </div>
-                </div>
-
-
-
-                <div class="row">
-                    @foreach (var product in Model)
-                    {
-                        <div class="col-md-3 col-sm-6">
-                            <div class="product-grid">
-                                <div class="product-image">
-                                    <a href="@Url.Action("Index", "ViewProductDetail", new { area = "Home", productId = product.id })" class="image">
-                                        <img class="img-1" src="~/productImages/@product.coverImage.imageName">
-
-                                        @foreach (var image in ViewBag.imageList)
-                                        {
-                                            @if (image.productId == product.id && image.productCoveredId == null)
-                                            {
-                                                <img class="img-2" src="~/productImages/@image.imageName">
-                                                break;
-                                            }
-                                        }
+			<div class="col-lg-9">
+				<div class="row justify-content-end py-2">
+					<div class="col-lg-4">
+						<form method="get" action="@Url.Action("Index", "Home")">
+							<div class="input-group input-group-dynamic mb-4">
+								<span class="input-group-text"><i class="fas fa-search me-2" aria-hidden="true"></i></span>
+								<input class="form-control p-1" placeholder="Search" type="text" name="searchQuery" value="@ViewBag.searchQuery" style="background-image:none; border:1px solid gray;">
+							</div>
+							<input type="hidden" name="categoryId" value="@ViewBag.categoryId" />
+							<input type="hidden" name="minPrice" value="@ViewBag.minPrice" />
+							<input type="hidden" name="maxPrice" value="@ViewBag.maxPrice" />
+						</form>
+					</div>
+				</div>
 
 
 
-                                    </a>
-                                    <a href="@Url.Action("Index", "ViewProductDetail", new { area = "Home", productId = product.id })" class="product-view"><i class="fa fa-search"></i></a>
-                                </div>
-                                <div class="product-content">
-                                     <div class="product-rating">
-    @if (ViewBag.productAverageRatings != null && ViewBag.productAverageRatings.ContainsKey(product.id))
-    {
-        int averageRating = ViewBag.productAverageRatings[product.id];
+				<div class="row">
+					@foreach (var product in Model)
+					{
+						<div class="col-md-3 col-sm-6">
+							<div class="product-grid">
+								<div class="product-image">
+									<a href="@Url.Action("Index", "ViewProductDetail", new { area = "Home", productId = product.id })" class="image">
+										<img class="img-1" src="~/productImages/@product.coverImage.imageName">
 
-        // Display stars
-        @for (int i = 1; i <= 5; i++)
-        {
-            if (i <= averageRating)
-            {
-                <i class="fa fa-star" style="font-size: 12px; color:yellow"></i>  <!-- Filled star -->
-            }
-            else
-            {
-                <i class="fa fa-star text-muted" style="font-size: 12px;"></i>  <!-- Empty star -->
-            }
-        }
-        <span class="ms-1">
-            @averageRating
-        </span> <!-- Display numeric rating -->
-    }
-    else
-    {
-        // Display 5 empty stars if no rating
-        @for (int i = 1; i <= 5; i++)
-        {
-            <i class="fa fa-star text-muted" style="font-size: 12px;"></i>  <!-- Empty star -->
-        }
-        <span class="ms-1">
-            0
-        </span> <!-- No ratings yet -->
-    }
-</div>
-                                    <h3 class="title"><a href="@Url.Action("Index", "ViewProductDetail", new { area = "Home", productId = product.id })">@product.name</a></h3>
+										@foreach (var image in ViewBag.imageList)
+										{
+											@if (image.productId == product.id && image.productCoveredId == null)
+											{
+												<img class="img-2" src="~/productImages/@image.imageName">
+												break;
+											}
+										}
 
 
 
-                                    @foreach (var item in ViewBag.productDiscounts)
-                                    {
-                                        if (item.product != null && item.product.id == product.id)
-                                        {
-                                            <span class="discount-name">@item.discount.name</span>
-                                            hasDiscount1 = true;
-                                            var discountedPrice = Math.Round(product.price * (1 - (item.discount.value / 100.0)), 2);
-                                            <div class="price-container">
-                                                <div class="price"> @discountedPrice VND</div>
-                                                <div class="price"><s>@product.price VND</s></div>
-                                            </div>
-                                            break;
-                                        }
-                                    }
-                                    @if (hasDiscount1 == false)
-                                    {
-                                        <div class="price">@product.price VND</div>
-                                    }
-                                </div>
-                            </div>
-                        </div>
+									</a>
+									<a href="@Url.Action("Index", "ViewProductDetail", new { area = "Home", productId = product.id })" class="product-view"><i class="fa fa-search"></i></a>
+								</div>
+								<div class="product-content">
+									<div class="product-rating">
+										@if (ViewBag.productAverageRatings != null && ViewBag.productAverageRatings.ContainsKey(product.id))
+										{
+											int averageRating = ViewBag.productAverageRatings[product.id];
 
-                    }
-                    @Html.PagedListPager(Model, page => Url.Action("Index", new { page, categoryId = ViewBag.categoryId, minPrice = ViewBag.minPrice, maxPrice = ViewBag.maxPrice, searchQuery = ViewBag.searchQuery }), new PagedListRenderOptions
-               {
-                   DisplayLinkToFirstPage = PagedListDisplayMode.IfNeeded,
-                   DisplayLinkToLastPage = PagedListDisplayMode.IfNeeded,
-                   MaximumPageNumbersToDisplay = 10,
-                   DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
-                   DisplayLinkToNextPage = PagedListDisplayMode.Always,
+											// Display stars
+											@for (int i = 1; i <= 5; i++)
+											{
+												if (i <= averageRating)
+												{
+													<i class="fa fa-star" style="font-size: 12px; color:yellow"></i>  <!-- Filled star -->
+												}
+												else
+												{
+													<i class="fa fa-star text-muted" style="font-size: 12px;"></i>  <!-- Empty star -->
+												}
+											}
+											<span class="ms-1">
+												@averageRating
+											</span> <!-- Display numeric rating -->
+										}
+										else
+										{
+											// Display 5 empty stars if no rating
+											@for (int i = 1; i <= 5; i++)
+											{
+												<i class="fa fa-star text-muted" style="font-size: 12px;"></i>  <!-- Empty star -->
+											}
+											<span class="ms-1">
+												0
+											</span> <!-- No ratings yet -->
+										}
+									</div>
+									<h3 class="title"><a href="@Url.Action("Index", "ViewProductDetail", new { area = "Home", productId = product.id })">@product.name</a></h3>
 
-               })
-                </div>
-            </div>
-        </div>
-    </div>
+
+
+									@foreach (var item in ViewBag.productDiscounts)
+									{
+										if (item.product != null && item.product.id == product.id)
+										{
+											<span class="discount-name">@item.discount.name</span>
+											hasDiscount1 = true;
+											var discountedPrice = Math.Round(product.price * (1 - (item.discount.value / 100.0)), 2);
+											<div class="price-container">
+												<div class="price"> @discountedPrice VND</div>
+												<div class="price"><s>@product.price VND</s></div>
+											</div>
+											break;
+										}
+									}
+									@if (hasDiscount1 == false)
+									{
+										<div class="price">@product.price VND</div>
+									}
+								</div>
+							</div>
+						</div>
+
+					}
+					@Html.PagedListPager(Model, page => Url.Action("Index", new { page, categoryId = ViewBag.categoryId, minPrice = ViewBag.minPrice, maxPrice = ViewBag.maxPrice, searchQuery = ViewBag.searchQuery }), new PagedListRenderOptions
+{
+	DisplayLinkToFirstPage = PagedListDisplayMode.IfNeeded,
+	DisplayLinkToLastPage = PagedListDisplayMode.IfNeeded,
+	MaximumPageNumbersToDisplay = 10,
+	DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
+	DisplayLinkToNextPage = PagedListDisplayMode.Always,
+
+})
+				</div>
+			</div>
+		</div>
+	</div>
 </section>
 <script>
-    //----------------------------------------------------------------------------------------
+	//----------------------------------------------------------------------------------------
 
 
-    //Filter by price
-    var slider = new Slider('#ex2', {
-        tooltip: 'hide',
-        range: true
-    });
+	//Filter by price
+	var slider = new Slider('#ex2', {
+		tooltip: 'hide',
+		range: true
+	});
 
-    function updatePriceLabels(value) {
-        document.getElementById('minPrice').textContent = '$ ' + value[0];
-        if (value[1] === 1000) {
-            document.getElementById('maxPrice').textContent = '$ 1000+';
-        } else {
-            document.getElementById('maxPrice').textContent = '$ ' + value[1];
-        }
-        document.getElementById('minPriceInput').value = value[0];
-        document.getElementById('maxPriceInput').value = value[1];
-    }
+	function updatePriceLabels(value) {
+		document.getElementById('minPrice').textContent = '$ ' + value[0];
+		if (value[1] === 1000) {
+			document.getElementById('maxPrice').textContent = '$ 1000+';
+		} else {
+			document.getElementById('maxPrice').textContent = '$ ' + value[1];
+		}
+		document.getElementById('minPriceInput').value = value[0];
+		document.getElementById('maxPriceInput').value = value[1];
+	}
 
 
-    slider.on('slide', function (value) {
-        updatePriceLabels(value);
-    });
+	slider.on('slide', function (value) {
+		updatePriceLabels(value);
+	});
 
-    slider.on('change', function (event) {
-        var value = event.newValue;
-        updatePriceLabels(value);
-    });
-    //-----------------------------------------------------------------
+	slider.on('change', function (event) {
+		var value = event.newValue;
+		updatePriceLabels(value);
+	});
+	//-----------------------------------------------------------------
 </script>

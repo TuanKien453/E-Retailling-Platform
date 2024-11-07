@@ -28,6 +28,17 @@ namespace E_Retalling_Portal.Controllers.Login
 						HttpContext.Session.Clear();
 						return View("SellerLoginForm");
 					}
+					else
+					{
+						int userId = context.Accounts.GetAccountByAccountId((int)accountId).FirstOrDefault().userId;
+
+						if (userId != 0) 
+						{
+							string displayName = context.Users.GetUserById(userId).FirstOrDefault().displayName;
+
+                            HttpContext.Session.SetString(SessionKeys.DisplayName.ToString(), displayName);
+						}
+					}
 				}
 				return RedirectToAction("Index", "CreateShop");
 			}

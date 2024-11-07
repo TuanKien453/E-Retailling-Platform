@@ -23,7 +23,10 @@ function updateTotal(input, price, totalElementId, itemId, quantityInStock, isPr
         quantityModal.show();
     }
 
+   
     let total = quantity * productPrice;
+    input.value = quantity;
+
     document.getElementById(totalElementId).innerText = total.toFixed(2) + " VND";
 
     // Send AJAX request to update cart
@@ -244,3 +247,24 @@ function calculateTotal() {
     totalElement.textContent = total.toFixed(2) + " VND";
 }
 
+document.addEventListener('DOMContentLoaded', function () {
+    const quantityInputs = document.querySelectorAll('input[type="number"]');
+    quantityInputs.forEach(input => {
+        input.addEventListener('input', function () {
+            const newQuantity = this.value;
+
+            const productId = this.getAttribute('data-product-id'); 
+            let checkbox;
+
+            if (this.getAttribute('data-isProduct') === 'true') {
+                checkbox = document.querySelector(`#check-product-${productId}`);
+            } else {
+                checkbox = document.querySelector(`#check-productItem-${productId}`);
+            }
+
+            if (checkbox) {
+                checkbox.setAttribute('data-quantity', newQuantity);
+            }
+        });
+    });
+});

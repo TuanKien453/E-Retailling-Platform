@@ -88,6 +88,7 @@ namespace E_Retalling_Portal.Controllers.Home
                                                         comment = oi.comment,
                                                         rating = oi.rating
                                                     })
+                                                    .OrderByDescending(oi => oi.rating)
                                                     .ToList() as List<FeedbackViewModel>;
                 int pageSize = 5;
                 int pageNumber = (page ?? 1);

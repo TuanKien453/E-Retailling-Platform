@@ -1,4 +1,8 @@
-﻿<!DOCTYPE html>
+﻿@{
+    string ?displayName = Context.Session.GetString(SessionKeys.DisplayName.ToString());
+}
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -18,7 +22,7 @@
         <div class="row">
             <div class="col-2 sidebar">
                 <div class="flex-shrink-0">
-                    <h3 class="fs-5 fw-semibold sidebar-title p-3">Account</h3>
+                    <h3 class="fs-5 fw-semibold sidebar-title p-3">@(displayName ?? "Account")</h3>
                     <ul class="list-unstyled ps-0">
                         <li class="mb-1 single-item activeable active">
                             <button class="btn btn-toggle align-items-center rounded collapsed no-shadow text-white">
