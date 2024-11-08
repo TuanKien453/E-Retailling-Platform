@@ -43,7 +43,7 @@ namespace E_Retalling_Portal.Models.Query
                     .ThenInclude(p => p.coverImage)
                 .Include(oi => oi.productItem)
                     .ThenInclude(pi => pi.image)
-                .Where(oi => oi.order.userId == userId);
+                .Where(oi => oi.order.userId == userId && oi.externalOrderCode != null);
         }
         public static IQueryable<OrderItem> GetOrderItemByShopId(this DbSet<OrderItem> dbOrderItem, int shopId)
         {
@@ -56,7 +56,7 @@ namespace E_Retalling_Portal.Models.Query
                     .ThenInclude(p => p.coverImage)
                 .Include(oi => oi.productItem)
                     .ThenInclude(pi => pi.image)
-                .Where(oi => oi.product.shopId == shopId);
+                .Where(oi => oi.product.shopId == shopId && oi.externalOrderCode != null);
         }
 
         public static IQueryable<OrderItem> GetOrderItemByOrderItemId(this DbSet<OrderItem> dbOrderItem, int orderItemId)

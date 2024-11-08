@@ -66,21 +66,88 @@ namespace E_Retalling_Portal.Controllers.Home
                         var min = item.productItems.Min(item => item.price);
 
                         item.price = min;
-                        Console.WriteLine(item.price);
                     }
                 }
-                var productDiscountList = context.ProductDiscounts.GetProductDiscount().ToList();
-                var productDiscounts = new Dictionary<int, ProductDiscount>();
-                foreach (var item in productDiscountList)
+                //---------------------------------
+                var productDiscountItem = new Dictionary<int, ProductDiscountItemModel>();
+                if (products != null)
                 {
-                    if (item.id != null)
+                    foreach (var product1 in products)
                     {
-                        productDiscounts[item.productId] = item;
+                        if (product1.isVariation == true && product1.productItems.Count > 0)
+                        {
+                            foreach (var item in product1.productItems)
+                            {
+                                if (!productDiscountItem.ContainsKey(product1.id))
+                                {
+                                    productDiscountItem[product1.id] = new ProductDiscountItemModel();
+                                }
+                                var productDiscount = context.ProductDiscounts.GetProductDiscountByProductId(product1.id).FirstOrDefault();
+                                if (productDiscount != null)
+                                {
+                                    productDiscountItem[product1.id].productItem = item;
+                                    productDiscountItem[product1.id].productDiscount = productDiscount;
+                                    productDiscountItem[product1.id].discountedPrice = context.ProductItems.GetProductItemDiscountPrice(item);
+                                    if (item.price != productDiscountItem[product1.id].discountedPrice)
+                                    {
+                                        productDiscountItem[product1.id].isDiscount = "true";
+                                        break;
+                                    }
+                                    else
+                                    {
+                                        productDiscountItem[product1.id].isDiscount = "false";
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (!productDiscountItem.ContainsKey(product1.id))
+                            {
+                                productDiscountItem[product1.id] = new ProductDiscountItemModel();
+                            }
+                            var productDiscount = context.ProductDiscounts.GetProductDiscountByProductId(product1.id).FirstOrDefault();
+                            if (productDiscount != null)
+                            {
+                                productDiscountItem[product1.id].product = product;
+                                productDiscountItem[product1.id].productDiscount = productDiscount;
+                                productDiscountItem[product1.id].discountedPrice = context.Products.GetProductDiscountPrice(product1);
+                                if (product.price != productDiscountItem[product1.id].discountedPrice)
+                                {
+                                    productDiscountItem[product1.id].isDiscount = "true";
+                                }
+                                else
+                                {
+                                    productDiscountItem[product1.id].isDiscount = "false";
+                                }
+                            }
+                        }
                     }
                 }
-                ViewBag.productDiscountss = productDiscounts;
+                ViewBag.productDiscounts = productDiscountItem;
+                foreach (var entry in productDiscountItem)
+                {
+                    // In key
+                    Console.WriteLine($"Key: {entry.Key}");
+                    Console.WriteLine($"Discounted Price: {entry.Value.isDiscount}");
+                    // In các giá trị trong ProductDiscountItemModel
+                    Console.WriteLine($"Discounted Price: {entry.Value.discountedPrice}");
+                    if (entry.Value.product != null)
+                    {
+                        Console.WriteLine($"Product Price: {entry.Value.product.price}");
+                    }
+                    if (entry.Value.productItem != null)
+                    {
+                        Console.WriteLine($"productItem Price: {entry.Value.productItem.price}");
+                    }
+                    if (entry.Value.productDiscount != null)
+                    {
+                        Console.WriteLine($"Product Discount: {entry.Value.productDiscount.discount.value}");
+                    }
+                    Console.WriteLine("-----------------------------");
+                }
 
-                ViewBag.productDiscounts = productDiscountList; 
+                //---------------------------------------------------
                 ViewBag.quantityProduct = totalQuantityOfProductItems;
                 ViewBag.productPrice = context.Products.GetProductDiscountPrice(product);
                 ViewBag.productImageList = product.images;

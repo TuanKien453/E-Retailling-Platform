@@ -1,4 +1,4 @@
-using E_Retalling_Portal.Models;
+﻿using E_Retalling_Portal.Models;
 using E_Retalling_Portal.Models.Enums;
 using E_Retalling_Portal.Models.Query;
 using E_Retalling_Portal.Util;
@@ -68,8 +68,86 @@ namespace E_Retalling_Portal.Controllers.Home
                 }
 
 
-
+                var productDiscountItem = new Dictionary<int, ProductDiscountItemModel>();
                 //Get min price of productItems
+                if (productList != null)
+                {
+                    foreach (var product in productList)
+                    {
+                        if (product.isVariation == true && product.productItems.Count > 0)
+                        {
+                            foreach(var item in product.productItems)
+                            {
+                                if (!productDiscountItem.ContainsKey(product.id))
+                                {
+                                    productDiscountItem[product.id] = new ProductDiscountItemModel();
+                                }
+                                var productDiscount = context.ProductDiscounts.GetProductDiscountByProductId(product.id).FirstOrDefault();
+                                if (productDiscount != null)
+                                {
+                                    productDiscountItem[product.id].productItem = item;
+                                    productDiscountItem[product.id].productDiscount = productDiscount;
+                                    productDiscountItem[product.id].discountedPrice = context.ProductItems.GetProductItemDiscountPrice(item);
+                                    if (item.price != productDiscountItem[product.id].discountedPrice)
+                                    {
+                                        productDiscountItem[product.id].isDiscount = "true";
+                                    }
+                                    else
+                                    {
+                                        productDiscountItem[product.id].isDiscount = "false";
+                                    }
+                                    if(productDiscountItem[product.id].isDiscount == "true")
+                                    {
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (!productDiscountItem.ContainsKey(product.id))
+                            {
+                                productDiscountItem[product.id] = new ProductDiscountItemModel();
+                            }
+                            var productDiscount = context.ProductDiscounts.GetProductDiscountByProductId(product.id).FirstOrDefault();
+                            if (productDiscount != null)
+                            {
+                                productDiscountItem[product.id].product = product;
+                                productDiscountItem[product.id].productDiscount = productDiscount;
+                                productDiscountItem[product.id].discountedPrice = context.Products.GetProductDiscountPrice(product);
+                                if (product.price != productDiscountItem[product.id].discountedPrice)
+                                {
+                                    productDiscountItem[product.id].isDiscount = "true";
+                                }
+                                else
+                                {
+                                    productDiscountItem[product.id].isDiscount = "false";
+                                }
+                            }
+                        }
+                    }
+                }
+                foreach (var entry in productDiscountItem)
+                {
+                    // In key
+                    Console.WriteLine($"Key: {entry.Key}");
+                    Console.WriteLine($"Discounted Price: {entry.Value.isDiscount}");
+                    // In các giá trị trong ProductDiscountItemModel
+                    Console.WriteLine($"Discounted Price: {entry.Value.discountedPrice}");
+                    if (entry.Value.product != null)
+                    {
+                        Console.WriteLine($"Product Price: {entry.Value.product.price}");
+                    }
+                    if (entry.Value.productItem != null)
+                    {
+                        Console.WriteLine($"productItem Price: {entry.Value.productItem.price}");
+                    }
+                    if (entry.Value.productDiscount != null)
+                    {
+                        Console.WriteLine($"Product Discount: {entry.Value.productDiscount.discount.value}");
+                    }
+                    Console.WriteLine("-----------------------------");
+                }
                 if (productList != null)
                 {
                     foreach (var product in productList)
@@ -90,18 +168,8 @@ namespace E_Retalling_Portal.Controllers.Home
 
                 var paginatedProducts = products.ToPagedList(pageNumber, pageSize);
 
-                var productDiscountList = context.ProductDiscounts.GetProductDiscount().ToList();
-                var productDiscounts = new Dictionary<int, ProductDiscount>();
-                foreach (var item in productDiscountList)
-                {
-                    if (item.id != null)
-                    {
-                        productDiscounts[item.productId] = item;
-                        Console.WriteLine(item.discount.value);
-                    }
-                }
-
-                ViewBag.productDiscounts = productDiscounts;
+                
+                ViewBag.productDiscounts = productDiscountItem;
                 ViewBag.searchQuery = searchQuery;
                 ViewBag.imageList = imageList;
                 ViewBag.categoryId = categoryId;
@@ -152,27 +220,67 @@ namespace E_Retalling_Portal.Controllers.Home
             using (var context = new Context())
             {
                 productList = context.Products.GetProduct().Where(p=>p.shopId==id).ToList();
+
+                var productDiscountItem = new Dictionary<int, ProductDiscountItemModel>();
                 if (productList != null)
                 {
                     foreach (var product in productList)
                     {
                         if (product.isVariation == true && product.productItems.Count > 0)
                         {
-                            var min = product.productItems.Min(item => item.price);
-                            product.price = min;
+                            foreach (var item in product.productItems)
+                            {
+                                if (!productDiscountItem.ContainsKey(product.id))
+                                {
+                                    productDiscountItem[product.id] = new ProductDiscountItemModel();
+                                }
+                                var productDiscount = context.ProductDiscounts.GetProductDiscountByProductId(product.id).FirstOrDefault();
+                                if (productDiscount != null)
+                                {
+                                    productDiscountItem[product.id].productItem = item;
+                                    productDiscountItem[product.id].productDiscount = productDiscount;
+                                    productDiscountItem[product.id].discountedPrice = context.ProductItems.GetProductItemDiscountPrice(item);
+                                    if (item.price != productDiscountItem[product.id].discountedPrice)
+                                    {
+                                        productDiscountItem[product.id].isDiscount = "true";
+                                        break;
+                                    }
+                                    else
+                                    {
+                                        productDiscountItem[product.id].isDiscount = "false";
+                                    }
+                                    if (productDiscountItem[product.id].isDiscount == "true")
+                                    {
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (!productDiscountItem.ContainsKey(product.id))
+                            {
+                                productDiscountItem[product.id] = new ProductDiscountItemModel();
+                            }
+                            var productDiscount = context.ProductDiscounts.GetProductDiscountByProductId(product.id).FirstOrDefault();
+                            if (productDiscount != null)
+                            {
+                                productDiscountItem[product.id].product = product;
+                                productDiscountItem[product.id].productDiscount = productDiscount;
+                                productDiscountItem[product.id].discountedPrice = context.Products.GetProductDiscountPrice(product);
+                                if (product.price != productDiscountItem[product.id].discountedPrice)
+                                {
+                                    productDiscountItem[product.id].isDiscount = "true";
+                                }
+                                else
+                                {
+                                    productDiscountItem[product.id].isDiscount = "false";
+                                }
+                            }
                         }
                     }
                 }
-                var productDiscountList = context.ProductDiscounts.GetProductDiscount().ToList();
-                var productDiscounts = new Dictionary<int, ProductDiscount>();
-                foreach (var item in productDiscountList)
-                {
-                    if (item.id != null)
-                    {
-                        productDiscounts[item.productId] = item;
-                    }
-                }
-                ViewBag.productDiscounts = productDiscounts;
+                ViewBag.productDiscounts = productDiscountItem;
                 shop = context.Shops.Include(s=>s.products).Include(s=>s.account).ThenInclude(a=>a.user).FirstOrDefault(s => s.id == id);
             }
             if (productList != null)

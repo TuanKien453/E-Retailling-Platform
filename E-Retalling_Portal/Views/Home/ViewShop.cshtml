@@ -2,7 +2,7 @@
 
 @{
     ViewData["Title"] = "Home Page";
-    var productDiscounts = ViewBag.productDiscounts as Dictionary<int, ProductDiscount>;
+    var productDiscounts = ViewBag.productDiscounts as Dictionary<int, ProductDiscountItemModel>;
 }
 <div class="row m-3 p-2 shadow border rounded" style="background-color:white">
     <!-- Left Column -->
@@ -40,15 +40,14 @@
         var discount = productDiscounts != null && productDiscounts.ContainsKey(product.id)
         ? productDiscounts[product.id]
         : null;
-        var discountPrice = discount != null ? ((100 - discount.discount.value) * product.price / 100)
-        : product.price;
+        
         <div class="col-md-2 col-sm-6">
             <div class="product-grid">
                 <div class="product-image">
                     <a href="@Url.Action("Index", "ViewProductDetail", new { area = "Home", productId = product.id })" class="image">
-                        @if (discount != null)
+                        @if (discount.productDiscount != null && discount.isDiscount == "true")
                         {
-                            <div class="discount-value">-@discount.discount.value %</div>
+                            <div class="discount-value">-@discount.productDiscount.discount.value %</div>
                         }
                         <img class="img-1" src="~/productImages/@product.coverImage.imageName">
                         @if (product.images.Count > 1)
@@ -60,10 +59,18 @@
                 </div>
                 <div class="product-content">
                     <h3 class="title"><a href="@Url.Action("Index", "ViewProductDetail", new { area = "Home", productId = product.id })">@product.name</a></h3>
-                    @if (discount != null)
+                    @if (discount != null && discount.product != null && discount.isDiscount == "true")
                     {
-                        <span class="discount-name">@discount.discount.name</span>
-                        <div class="price"> @discountPrice.ToString("#,0").Replace(",", ".") VND   <s>@product.price.ToString("#,0").Replace(",", ".") VND</s></div>
+
+                        <span class="discount-name">@discount.productDiscount.discount.name</span>
+                        <div class="price"> @discount.discountedPrice.ToString("#,0").Replace(",", ".") VND   <s>@discount.product.price.ToString("#,0").Replace(",", ".") VND</s></div>
+                    }
+                    else if (discount != null && discount.productItem != null && discount.isDiscount == "true")
+                    {
+
+                        <span class="discount-name">@discount.productDiscount.discount.name</span>
+                        <div class="price"> @discount.discountedPrice.ToString("#,0").Replace(",", ".") VND   <s>@discount.productItem.price.ToString("#,0").Replace(",", ".") VND</s></div>
+
                     }
                     else
                     {
