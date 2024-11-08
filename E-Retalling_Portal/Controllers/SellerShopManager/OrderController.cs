@@ -7,6 +7,8 @@ using E_Retalling_Portal.Models.Enums;
 using E_Retalling_Portal.Models.Query;
 using System.Transactions;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using System.Drawing.Printing;
+using X.PagedList.Extensions;
 
 namespace E_Retalling_Portal.Controllers.SellerShopManager
 {
@@ -31,12 +33,13 @@ namespace E_Retalling_Portal.Controllers.SellerShopManager
 					if (orderItem.externalOrderCode != null)
 					{
 						var orderInfoResponse = await _ghnService.GetOrderInfoAsync(orderItem.externalOrderCode);
-						if (orderInfoResponse != null)
-						{
 							orderInfoResponses.Add(orderInfoResponse);
-						}
-					}
-				}
+						orderItem.createAt = orderInfoResponse.Data.CreatedDate;
+						orderItem.finishAt = orderInfoResponse.Data.FinishDate;
+						orderItem.shippingStatus = orderInfoResponse.Data.Status;
+                        context.Update(orderItem);
+                    }
+                }
 				var joinedData = GetDataFromOrsedItemAndOrderInfoResponse(orderItemList, orderInfoResponses);
 				foreach(var item in joinedData)
 				{
@@ -46,7 +49,7 @@ namespace E_Retalling_Portal.Controllers.SellerShopManager
 			}
 			return View("/Views/SellerShopManager/Order/OrderInfo.cshtml");
 		}
-		public async Task<IActionResult> ViewOrderList()
+		public async Task<IActionResult> ViewOrderList(int? page, int pageSize = 1, string status = "all")
 		{
 			using (var context = new Context())
 			{
@@ -60,20 +63,27 @@ namespace E_Retalling_Portal.Controllers.SellerShopManager
 					if (orderItem.externalOrderCode != null)
 					{
 						var orderInfoResponse = await _ghnService.GetOrderInfoAsync(orderItem.externalOrderCode);
-                        if (orderInfoResponse != null)
-                        {
                             orderInfoResponses.Add(orderInfoResponse);
-                        }
+                        orderItem.createAt = orderInfoResponse.Data.CreatedDate;
+                        orderItem.finishAt = orderInfoResponse.Data.FinishDate;
+                        orderItem.shippingStatus = orderInfoResponse.Data.Status;
+                        context.Update(orderItem);
                     }
 				}
                 var joinedData = GetDataFromOrsedItemAndOrderInfoResponse(orderItemList, orderInfoResponses);
-				foreach (var item in joinedData)
-				{
-                    Console.WriteLine(item.Product.price);
-				}
-                ViewBag.OrderList = joinedData;
+                if (!string.IsNullOrEmpty(status) && status != "all")
+                {
+                    joinedData = joinedData?.Where(item => item?.ShippingStatus == status).ToList();
+                }
 
-				return View("/Views/SellerShopManager/Order/ViewOrderList.cshtml");
+                int pageNumber = page ?? 1;
+                var paginatedData = joinedData?.ToPagedList(pageNumber, pageSize);
+
+                ViewBag.CurrentStatus = status;
+                ViewBag.OrderList = paginatedData;
+
+
+                return View("/Views/SellerShopManager/Order/ViewOrderList.cshtml");
 			}
 		}
         private IEnumerable<dynamic> GetDataFromOrsedItemAndOrderInfoResponse(List<OrderItem> orderItemList, List<OrderInfoResponse> orderInfoResponses)
@@ -109,5 +119,6 @@ namespace E_Retalling_Portal.Controllers.SellerShopManager
                             });
             return joinedData;
         }
+
     }
 }

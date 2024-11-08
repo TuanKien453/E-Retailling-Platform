@@ -653,10 +653,6 @@ namespace E_Retalling_Portal.Controllers.Home
                         {
                             var orderResponse = await _ghnService.CreateShippingOrderAsync(orderRequestItem);
                             item.externalOrderCode = orderResponse.Data.OrderCode;
-                            var orderInforResponse = await _ghnService.GetOrderInfoAsync(orderResponse.Data.OrderCode);
-                            item.createAt = orderInforResponse.Data.CreatedDate;
-                            item.finishAt = orderInforResponse.Data.FinishDate;
-                            item.shippingStatus = orderInforResponse.Data.Status;
                             context.Update(item);
                         }
                         catch (Exception ex)
