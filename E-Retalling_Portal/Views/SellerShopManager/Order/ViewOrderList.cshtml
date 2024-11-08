@@ -87,7 +87,7 @@
 <div class="container">
     <!-- Tabs -->
     <div class="tabs">
-        <div class="tab active" data-status="all">All</div>
+        <div class="tab" data-status="all">All</div>
         <div class="tab" data-status="ready_to_pick">Ready To Pick</div>
         <div class="tab" data-status="picking">Picking</div>
         <div class="tab" data-status="picked">Picked</div>
@@ -220,26 +220,26 @@
 
 <script>
     const tabs = document.querySelectorAll('.tab');
-    const orderCards = document.querySelectorAll('.order-card');
+const orderCards = document.querySelectorAll('.order-card');
 
-    tabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-            tabs.forEach(t => t.classList.remove('active'));
-            tab.classList.add('active');
+tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+        tabs.forEach(t => t.classList.remove('active')); 
+        tab.classList.add('active'); 
 
-            const status = tab.getAttribute('data-status');
-                const pageSize = 1;
+        const status = tab.getAttribute('data-status');
 
-            orderCards.forEach(card => {
-                if (status === 'all' || card.getAttribute('data-status') === status) {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
-                }
-                 window.location.href = `/Order/ViewOrderList?page=1&status=${status}&pageSize=${pageSize}`;
-            });
+        orderCards.forEach(card => {
+            if (status === 'all' || card.getAttribute('data-status') === status) {
+                card.style.display = 'block';
+            } else {
+                card.style.display = 'none';
+            }
         });
+
+        window.location.href = `/Order/ViewOrderList?page=1&status=${status}&pageSize=1`;
     });
+});
 
     document.querySelector('.search-bar').addEventListener('input', function () {
         const searchTerm = this.value.toLowerCase();
