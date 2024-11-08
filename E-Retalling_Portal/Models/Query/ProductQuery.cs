@@ -123,8 +123,11 @@ namespace E_Retalling_Portal.Models.Query
                     
                     if (product.isVariation)
                     {
-                        List<ProductItem>? items = context.ProductItems.GetAllProductItem().ToList();
-                        if (!items.IsNullOrEmpty()) { stockProduct += items.Count; }
+                        List<ProductItem> pi = context.ProductItems.GetProductItem(product.id).ToList();
+                        foreach (ProductItem piItem in pi)
+                        {
+                            stockProduct += piItem.quantity;
+                        }
                     } else
                     {
                         stockProduct += product.quantity;
@@ -149,7 +152,7 @@ namespace E_Retalling_Portal.Models.Query
                         {
                             if (product.id == item.productId)
                             {
-                                salesProduct++;
+                                salesProduct += item.quantity;
                             }
                         }
                     }
@@ -174,5 +177,32 @@ namespace E_Retalling_Portal.Models.Query
 
             }
         }
+        public static List<Product> GetAllSalesProduct(this DbSet<Product> dbProduct, List<Product> products)
+        {
+            using (var context = new Context())
+            {
+                List<Product>saleProduct = new List<Product>();
+                List<OrderItem> orderItems = context.OrderItems.GetAllOrderItemHasSales().ToList();
+                if (!orderItems.IsNullOrEmpty())
+                {
+                    foreach (var product in products)
+                    {
+                        foreach (var item in orderItems)
+                        {
+                            if (product.id == item.productId)
+                            {
+                                if (!saleProduct.Contains(context.Products.GetProductById(item.productId).FirstOrDefault()))
+                                {
+                                    saleProduct.Add(context.Products.GetProductById(item.productId).FirstOrDefault());
+                                }
+                                
+                            }
+                        }
+                    }
+                }
+                return saleProduct;
+            }
+        }
+
     }
 }
