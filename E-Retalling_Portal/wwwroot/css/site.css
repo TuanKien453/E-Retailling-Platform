@@ -385,9 +385,10 @@ body {
 .discount-value {
     position: absolute;
     top: 10px;
-    right: 10px;
-    background-color: rgba(255, 0, 0, 0.8); /* Semi-transparent red background */
+    right: 8px;
+    background-color: #ff5e00;
     color: white;
+    padding: 2px 6px;
     font-size: 14px;
     border-radius: 5px;
     font-weight: bold;

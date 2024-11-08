@@ -9,6 +9,7 @@ using System.Transactions;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using System.Drawing.Printing;
 using X.PagedList.Extensions;
+using Microsoft.IdentityModel.Tokens;
 
 namespace E_Retalling_Portal.Controllers.SellerShopManager
 {
@@ -30,7 +31,7 @@ namespace E_Retalling_Portal.Controllers.SellerShopManager
                 var orderInfoResponses = new List<OrderInfoResponse>();
                 foreach (var orderItem in orderItemList)
                 {
-                    if (orderItem.externalOrderCode != null)
+                    if (!orderItem.externalOrderCode.IsNullOrEmpty())
                     {
                         var orderInfoResponse = await _ghnService.GetOrderInfoAsync(orderItem.externalOrderCode);
                         orderInfoResponses.Add(orderInfoResponse);
@@ -63,7 +64,7 @@ namespace E_Retalling_Portal.Controllers.SellerShopManager
                 var orderInfoResponses = new List<OrderInfoResponse>();
                 foreach (var orderItem in orderItemList)
                 {
-                    if (orderItem.externalOrderCode != null)
+                    if (!orderItem.externalOrderCode.IsNullOrEmpty())
                     {
                         var orderInfoResponse = await _ghnService.GetOrderInfoAsync(orderItem.externalOrderCode);
                         orderInfoResponses.Add(orderInfoResponse);
