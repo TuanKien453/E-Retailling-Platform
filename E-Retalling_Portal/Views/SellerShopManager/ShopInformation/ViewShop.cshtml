@@ -107,14 +107,14 @@
                                     <div class="input-group input-group-dynamic mb-4 is-filled row">
                                         <div>
                                             <label for="name" class="form-label">Shop Name</label>
-                                            <input class="form-control" id="name" type="text" readonly />
+                                            <input class="form-control" value="@ViewBag.Shop.name" id="name" type="text" readonly />
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="input-group input-group-dynamic is-filled">
                                         <label for="createdAt" class="form-label">Created At</label>
-                                        <input class="form-control" type="text" id="createdAt" readonly>
+                                        <input class="form-control" value="@ViewBag.Shop.createdAt" type="text" id="createdAt" readonly>
                                     </div>
                                 </div>
                             </div>
@@ -122,12 +122,12 @@
                             <div class="mb-4">
                                 <div class="input-group input-group-dynamic is-filled">
                                     <label class="form-label" for="address">Address Detail</label>
-                                    <input class="form-control" type="text" id="address" readonly>
+                                    <input class="form-control" value="@ViewBag.Shop.address" type="text" id="address" readonly>
                                 </div>
                             </div>
                             <div class="input-group mb-4 input-group-static is-filled">
                                 <label for="shopDescription" class="form-label">Shop Description</label>
-                                <textarea class="form-control" rows="4" type="text" id="shopDescription" readonly></textarea>
+                                <textarea class="form-control" rows="4" type="text" id="shopDescription" readonly>@ViewBag.Shop.shopDescription</textarea>
                             </div>
                     </form>
                     <form asp-action="UpdateShop" asp-controller="Shop">
@@ -147,16 +147,4 @@
 @section Scripts {
     <!-- External JavaScript Files -->
     <script src="@Url.Content("~/js/materialkitpro.js")"></script>
-
-    <!-- Page-Specific JavaScript -->
-    <script>
-        const shopData = JSON.parse('@Html.Raw(Json.Serialize(ViewBag.Shop))');
-
-
-        document.getElementById('name').value = shopData.name;
-        document.getElementById('createdAt').value = shopData.createdAt;
-        document.getElementById('shopDescription').value = shopData.shopDescription;
-        document.getElementById('address').value = shopData.address;
-            
-    </script>
 }

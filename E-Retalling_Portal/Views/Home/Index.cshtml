@@ -2,8 +2,7 @@
 
 @{
     ViewData["Title"] = "Home Page";
-    bool hasDiscount = false;
-    bool hasDiscount1 = false;
+    var productDiscounts = ViewBag.productDiscounts as Dictionary<int, ProductDiscount>;
 }
 
 <div class="container mt-4">
@@ -11,12 +10,21 @@
         <h3>You May Like</h3>
         @foreach (var product in ViewBag.recommendedProduct)
         {
+            var discount = productDiscounts != null && productDiscounts.ContainsKey(product.id)
+            ? productDiscounts[product.id]
+            : null;
+            var discountPrice = discount != null ? ((100-discount.discount.value) * product.price / 100)
+            : product.price;
             <div class="col-md-2 col-sm-6">
                 <div class="product-grid">
                     <div class="product-image">
                         <a href="@Url.Action("Index", "ViewProductDetail", new { area = "Home", productId = product.id })" class="image">
+                            @if (discount != null)
+                            {
+                                <div class="discount-value">-@discount.discount.value %</div>
+                            }
                             <img class="img-1" src="~/productImages/@product.coverImage.imageName">
-                            @if (product.images.Count>1)
+                            @if (product.images.Count > 1)
                             {
                                 <img class="img-2" src="~/productImages/@product.images[1].imageName">
                             }
@@ -24,25 +32,54 @@
                         <a href="@Url.Action("Index", "ViewProductDetail", new { area = "Home", productId = product.id })" class="product-view"><i class="fa fa-search"></i></a>
                     </div>
                     <div class="product-content">
+                        @if (ViewBag.recommendProductRatings != null && ViewBag.recommendProductRatings.ContainsKey(product.id))
+                        {
+                            int averageRating = ViewBag.recommendProductRatings[product.id];
+
+                            <!-- Display stars -->
+                            <div class="product-rating">
+                                @for (int i = 1; i <= 5; i++)
+                                {
+                                    if (i <= averageRating)
+                                    {
+                                        <i class="fa fa-star" style="font-size: 12px; color:yellow"></i>  <!-- Filled star -->
+                                    }
+                                    else
+                                    {
+                                        <i class="fa fa-star text-muted" style="font-size: 12px;"></i>  <!-- Empty star -->
+                                    }
+                                }
+                                <span class="ms-1">
+                                    @averageRating
+                                </span> <!-- Display numeric rating -->
+                            </div>
+                        }
+                        else
+                        {
+                            <!-- Display 5 empty stars if no rating -->
+                            <div class="product-rating">
+                                @for (int i = 1; i <= 5; i++)
+                                {
+                                    <i class="fa fa-star text-muted" style="font-size: 12px;"></i>  <!-- Empty star -->
+                                }
+                                <span class="ms-1">
+                                    0
+                                </span> <!-- No ratings yet -->
+                            </div>
+                        }
+
                         <h3 class="title"><a href="@Url.Action("Index", "ViewProductDetail", new { area = "Home", productId = product.id })">@product.name</a></h3>
-                        @foreach (var item in ViewBag.productDiscounts)
+
+                        @if (discount != null)
                         {
-                            if (item.product != null && item.product.id == product.id)
-                            {
-                                <span class="discount-name">@item.discount.name</span>
-                                hasDiscount = true;
-                                var discountedPrice = Math.Round(product.price * (1 - (item.discount.value / 100.0)), 2);
-                                <div class="price-container">
-                                    <div class="price"> @discountedPrice VND </div>
-                                    <div class="price"><s>@product.price VND</s></div>
-                                </div>
-                                break;
-                            }
+                            <span class="discount-name">@discount.discount.name</span>
+                            <div class="price"> @discountPrice.ToString("#,0").Replace(",", ".") VND   <s>@product.price.ToString("#,0").Replace(",", ".") VND</s></div>
                         }
-                        @if (hasDiscount == false)
+                        else
                         {
-                            <div class="price">@product.price VND</div>
+                            <div class="price">@product.price.ToString("#,0").Replace(",", ".") VND</div>
                         }
+
                     </div>
                 </div>
             </div>
@@ -148,46 +185,76 @@
                 <div class="row">
                     @foreach (var product in Model)
                     {
+                        var discount = productDiscounts != null && productDiscounts.ContainsKey(product.id)
+                        ? productDiscounts[product.id]
+                        : null;
+                        var discountPrice = discount != null ? ((100 - discount.discount.value) * product.price / 100)
+                        : product.price;
+
                         <div class="col-md-3 col-sm-6">
                             <div class="product-grid">
                                 <div class="product-image">
                                     <a href="@Url.Action("Index", "ViewProductDetail", new { area = "Home", productId = product.id })" class="image">
+                                        @if(discount != null)
+                                        {
+                                            <div class="discount-value">-@discount.discount.value %</div>
+                                        }
                                         <img class="img-1" src="~/productImages/@product.coverImage.imageName">
-
-                                        @foreach (var image in ViewBag.imageList)
+                                        @if (product.images.Count > 1)
                                         {
-                                            @if (image.productId == product.id && image.productCoveredId == null)
-                                            {
-                                                <img class="img-2" src="~/productImages/@image.imageName">
-                                                break;
-                                            }
+                                            <img class="img-2" src="~/productImages/@product.images[1].imageName">
                                         }
-
-
-
                                     </a>
-                                    <a href="@Url.Action("Index", "ViewProductDetail", new { area = "Home", productId = product.id })" class="product-view"><i class="fa fa-search"></i></a>
                                 </div>
+
                                 <div class="product-content">
-                                    <h3 class="title"><a href="@Url.Action("Index", "ViewProductDetail", new { area = "Home", productId = product.id })">@product.name</a></h3>
-                                    @foreach (var item in ViewBag.productDiscounts)
-                                    {
-                                        if (item.product != null && item.product.id == product.id)
+                                    <div class="product-rating">
+                                        @if (ViewBag.productAverageRatings != null && ViewBag.productAverageRatings.ContainsKey(product.id))
                                         {
-                                            <span class="discount-name">@item.discount.name</span>
-                                            hasDiscount1 = true;
-                                            var discountedPrice = Math.Round(product.price * (1 - (item.discount.value / 100.0)), 2);
-                                            <div class="price-container">
-                                                <div class="price"> @discountedPrice VND</div>
-                                                <div class="price"><s>@product.price VND</s></div>
-                                            </div>
-                                            break;
+                                            int averageRating = ViewBag.productAverageRatings[product.id];
+
+                                            // Display stars
+                                            @for (int i = 1; i <= 5; i++)
+                                            {
+                                                if (i <= averageRating)
+                                                {
+                                                    <i class="fa fa-star" style="font-size: 12px; color:yellow"></i>  <!-- Filled star -->
+                                                }
+                                                else
+                                                {
+                                                    <i class="fa fa-star text-muted" style="font-size: 12px;"></i>  <!-- Empty star -->
+                                                }
+                                            }
+                                            <span class="ms-1">
+                                                @averageRating
+                                            </span> <!-- Display numeric rating -->
                                         }
-                                    }
-                                    @if (hasDiscount1 == false)
+                                        else
+                                        {
+                                            // Display 5 empty stars if no rating
+                                            @for (int i = 1; i <= 5; i++)
+                                            {
+                                                <i class="fa fa-star text-muted" style="font-size: 12px;"></i>  <!-- Empty star -->
+                                            }
+                                            <span class="ms-1">
+                                                0
+                                            </span> <!-- No ratings yet -->
+                                        }
+                                    </div>
+                                    <h3 class="title"><a href="@Url.Action("Index", "ViewProductDetail", new { area = "Home", productId = product.id })">@product.name</a></h3>
+
+
+
+                                    @if (discount != null)
                                     {
-                                        <div class="price">@product.price VND</div>
+                                        <span class="discount-name">@discount.discount.name</span>
+                                        <div class="price"> @discountPrice.ToString("#,0").Replace(",", ".") VND   <s>@product.price.ToString("#,0").Replace(",", ".") VND</s></div>
                                     }
+                                    else
+                                    {
+                                        <div class="price">@product.price.ToString("#,0").Replace(",", ".") VND</div>
+                                    }
+
                                 </div>
                             </div>
                         </div>

@@ -69,9 +69,19 @@ namespace E_Retalling_Portal.Controllers.Home
                         Console.WriteLine(item.price);
                     }
                 }
+                var productDiscountList = context.ProductDiscounts.GetProductDiscount().ToList();
+                var productDiscounts = new Dictionary<int, ProductDiscount>();
+                foreach (var item in productDiscountList)
+                {
+                    if (item.id != null)
+                    {
+                        productDiscounts[item.productId] = item;
+                    }
+                }
+                ViewBag.productDiscountss = productDiscounts;
 
-                var productDiscounts = context.ProductDiscounts.GetProductDiscount().ToList();
-                ViewBag.productDiscounts = productDiscounts; ViewBag.quantityProduct = totalQuantityOfProductItems;
+                ViewBag.productDiscounts = productDiscountList; 
+                ViewBag.quantityProduct = totalQuantityOfProductItems;
                 ViewBag.productPrice = context.Products.GetProductDiscountPrice(product);
                 ViewBag.productImageList = product.images;
                 ViewBag.product = product;
@@ -88,6 +98,7 @@ namespace E_Retalling_Portal.Controllers.Home
                                                         comment = oi.comment,
                                                         rating = oi.rating
                                                     })
+                                                    .OrderByDescending(oi => oi.rating)
                                                     .ToList() as List<FeedbackViewModel>;
                 int pageSize = 5;
                 int pageNumber = (page ?? 1);

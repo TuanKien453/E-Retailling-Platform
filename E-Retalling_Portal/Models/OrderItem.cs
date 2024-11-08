@@ -21,6 +21,8 @@ namespace E_Retalling_Portal.Models
         public int? rating { get; set; }
         [MaxLength(400)]
         public string? comment { get; set; }
+        public string? createAt { get; set; }
+        public string? finishAt { get; set; }
         public Order order { get; set; }
 
         public ProductItem productItem { get; set; }

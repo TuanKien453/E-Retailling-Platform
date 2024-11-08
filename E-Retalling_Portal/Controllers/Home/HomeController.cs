@@ -84,9 +84,23 @@ namespace E_Retalling_Portal.Controllers.Home
                 }
                 var pageNumber = page ?? 1;
                 var pageSize = 24;
+
+
                 List<Product> products = GetProductsIsNotDelete(productList);
+
                 var paginatedProducts = products.ToPagedList(pageNumber, pageSize);
-                var productDiscounts = context.ProductDiscounts.GetProductDiscount().ToList();
+
+                var productDiscountList = context.ProductDiscounts.GetProductDiscount().ToList();
+                var productDiscounts = new Dictionary<int, ProductDiscount>();
+                foreach (var item in productDiscountList)
+                {
+                    if (item.id != null)
+                    {
+                        productDiscounts[item.productId] = item;
+                        Console.WriteLine(item.discount.value);
+                    }
+                }
+
                 ViewBag.productDiscounts = productDiscounts;
                 ViewBag.searchQuery = searchQuery;
                 ViewBag.imageList = imageList;
@@ -96,12 +110,45 @@ namespace E_Retalling_Portal.Controllers.Home
                 ViewBag.currentPage = pageNumber;
                 ViewBag.recommendedProduct = GetRecommendProduct();
                 ViewBag.page = pageNumber;
+                var productAverageRatings = new Dictionary<int, int>();
+                var recommendProductRatings = new Dictionary<int, int>();
+                foreach (var product in paginatedProducts)
+                {
+                    // Get the ratings for the current product
+                    var ratings = context.OrderItems
+                        .Where(oi => oi.productId == product.id && oi.rating.HasValue)
+                        .Select(oi => oi.rating.Value)
+                        .ToList();
+
+                    // Calculate the average rating for the current product, rounding to the nearest integer
+                    int averageRating = ratings.Any() ? (int)Math.Round(ratings.Average()) : 0;
+
+                    // Add the productId and its average rating to the dictionary
+                    productAverageRatings[product.id] = averageRating;
+                }
+                foreach (var recommendProduct in GetRecommendProduct())
+                {
+                    // Get the ratings for the current product
+                    var ratings = context.OrderItems
+                        .Where(oi => oi.productId == recommendProduct.id && oi.rating.HasValue)
+                        .Select(oi => oi.rating.Value)
+                        .ToList();
+
+                    // Calculate the average rating for the current product, rounding to the nearest integer
+                    int recommendaverageRating = ratings.Any() ? (int)Math.Round(ratings.Average()) : 0;
+
+                    // Add the productId and its average rating to the dictionary
+                    recommendProductRatings[recommendProduct.id] = recommendaverageRating;
+                }
+                ViewBag.productAverageRatings = productAverageRatings;
+                ViewBag.recommendProductRatings = recommendProductRatings;
                 return View(paginatedProducts);          
             }
         }
         public IActionResult ViewShop(int id, int? page)
         {
             List<Product> productList;
+            Shop shop;
             using (var context = new Context())
             {
                 productList = context.Products.GetProduct().Where(p=>p.shopId==id).ToList();
@@ -112,13 +159,21 @@ namespace E_Retalling_Portal.Controllers.Home
                         if (product.isVariation == true && product.productItems.Count > 0)
                         {
                             var min = product.productItems.Min(item => item.price);
-
                             product.price = min;
                         }
                     }
                 }
-                var productDiscounts = context.ProductDiscounts.GetProductDiscount().ToList();
+                var productDiscountList = context.ProductDiscounts.GetProductDiscount().ToList();
+                var productDiscounts = new Dictionary<int, ProductDiscount>();
+                foreach (var item in productDiscountList)
+                {
+                    if (item.id != null)
+                    {
+                        productDiscounts[item.productId] = item;
+                    }
+                }
                 ViewBag.productDiscounts = productDiscounts;
+                shop = context.Shops.Include(s=>s.products).Include(s=>s.account).ThenInclude(a=>a.user).FirstOrDefault(s => s.id == id);
             }
             if (productList != null)
             {
@@ -134,9 +189,10 @@ namespace E_Retalling_Portal.Controllers.Home
             }
 
             var pageNumber = page ?? 1;
-            var pageSize = 1;
+            var pageSize = 42;
             List<Product> products = GetProductsIsNotDelete(productList);
             var paginatedProducts = products.ToPagedList(pageNumber, pageSize);
+            ViewBag.shop = shop;
             ViewBag.id = id;
             return View("ViewShop", paginatedProducts);
         }

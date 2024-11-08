@@ -11,6 +11,11 @@ namespace E_Retalling_Portal.Controllers.Filter
 
         public void OnActionExecuted(ActionExecutedContext context)
         {
+
+        }
+
+        public void OnActionExecuting(ActionExecutingContext context)
+        {
             Boolean haveAccess = false;
             var session = context.HttpContext.Session;
             var accId = session.GetInt32(SessionKeys.AccountId.ToString());
@@ -28,13 +33,9 @@ namespace E_Retalling_Portal.Controllers.Filter
 
             if (!haveAccess)
             {
-
                 context.Result = new RedirectToActionResult("NoShop", "CreateShop", null);
+                return;
             }
-        }
-
-        public void OnActionExecuting(ActionExecutingContext context)
-        {
 
             var controller = context.Controller as DiscountManagerController;
             if (controller == null)
@@ -46,7 +47,7 @@ namespace E_Retalling_Portal.Controllers.Filter
             {
                 return;
             }
-            int? accId = context.HttpContext.Session.GetInt32(SessionKeys.AccountId.ToString());
+
             using (var dbContext = new Context())
             {
                 var shop = dbContext.Shops.GetShopbyAccId(accId.Value).FirstOrDefault();
