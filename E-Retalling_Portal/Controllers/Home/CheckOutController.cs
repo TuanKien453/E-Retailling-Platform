@@ -666,7 +666,7 @@ namespace E_Retalling_Portal.Controllers.Home
                     context.SaveChanges();
                 }
                 TempData["successMess"] = "Order Success";
-				RedirectToAction("Index", "Cart");
+				return RedirectToAction("Index", "Cart");
 			}
             return Ok("transaction fail");
         }
