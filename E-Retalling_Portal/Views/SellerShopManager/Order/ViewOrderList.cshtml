@@ -1,4 +1,5 @@
-﻿@{
+﻿@model X.PagedList.IPagedList<E_Retalling_Portal.Models.GHNResponseModel.OrderInfoResponse>
+@{
     ViewData["Title"] = "Order List";
 }
 <link href="~/css/OrderList.css" rel="stylesheet">
@@ -11,7 +12,7 @@
                 <button type="button" stype="background: none;
                                              border: none;
                                              font-size: 30px;
-                                             color: #f44336; 
+                                             color: #f44336;
                                              opacity: 0.8;
                                              cursor: pointer;
                                              transition: opacity 0.3s ease, transform 0.2s ease;" class="close" data-dismiss="modal" aria-label="Close">
@@ -86,7 +87,7 @@
 <div class="container">
     <!-- Tabs -->
     <div class="tabs">
-        <div class="tab active" data-status="all">All</div>
+        <div class="tab" data-status="all">All</div>
         <div class="tab" data-status="ready_to_pick">Ready To Pick</div>
         <div class="tab" data-status="picking">Picking</div>
         <div class="tab" data-status="picked">Picked</div>
@@ -99,7 +100,7 @@
     <div class="order-list">
         @foreach (var item in ViewBag.OrderList)
         {
-            string displayStatus = System.Globalization.CultureInfo.CurrentCulture.TextInfo.ToTitleCase(@item.Status.Replace("_", " "));           
+            string displayStatus = System.Globalization.CultureInfo.CurrentCulture.TextInfo.ToTitleCase(@item.Status.Replace("_", " "));
             var isProductItemNull = item.ProductItemId == null;
             var productImage = isProductItemNull ? item.Product.coverImage.imageName : item.ProductItem.image.imageName;
             var productName = isProductItemNull ? item.Product.name : $"{item.Product.name} - {item.ProductItem.attribute}";
@@ -127,13 +128,13 @@
                                 data-bs-toggle="modal"
                                 data-bs-target="#viewOrderDetail"
                                 data-item='{
-                                "productName": "@productName",
-                                "quantity": "@item.Quantity",
-                                "price": "@item.Price",
-                                "shippingFee": "@item.ShippingFee",
-                                "status": "@item.Status",
-                                "productPrice": "@price"
-                        }'>
+                                    "productName": "@productName",
+                                    "quantity": "@item.Quantity",
+                                    "price": "@item.Price",
+                                    "shippingFee": "@item.ShippingFee",
+                                    "status": "@item.Status",
+                                    "productPrice": "@price"
+                            }'>
                             View Order Detail
                         </button>
                     </div>
@@ -147,15 +148,22 @@
                             Product Price(<span>@item.Quantity items</span>):
                             @if (totalPrice != item.Price)
                             {
-                            <span style="text-decoration: line-through; color: #999;">
-                                <span>@totalPrice VND</span>
-                            </span>
+                                <span style="text-decoration: line-through; color: #999;">
+                                    <span>@totalPrice VND</span>
+                                </span>
                             }
                             <span style="color: #e84118;">@item.Price VND</span>
                         </p>
                         <p>
                             Shipping Fee: @item.ShippingFee VND
                         </p>
+                        <p>
+                            Created At : @item.CreateDate
+                        </p>
+                        @if (item.FinishDate != null)
+                        {
+                            <p>Finish At: @item.FinishDate</p>
+                        }
                         <div class="tab" data-status="@item.Status"><span>Status: @displayStatus</span></div>
                     </div>
                 </div>
@@ -169,6 +177,20 @@
                 </div>
             </div>
         }
+    </div>
+    <div class="pagination-controls">
+        @Html.PagedListPager((IPagedList)ViewBag.OrderList, page =>
+                 Url.Action("ViewOrderList", new { page, status = ViewBag.CurrentStatus, pageSize = ViewBag.PageSize }),
+                 new PagedListRenderOptions
+        {
+            DisplayLinkToFirstPage = PagedListDisplayMode.IfNeeded,
+            DisplayLinkToLastPage = PagedListDisplayMode.IfNeeded,
+            MaximumPageNumbersToDisplay = 10,
+            DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
+            DisplayLinkToNextPage = PagedListDisplayMode.Always
+        }
+                 )
+
     </div>
 </div>
 <div class="modal fade" id="viewOrderDetail" tabindex="-1" aria-labelledby="viewOrderDetailLabel" aria-hidden="true">
@@ -198,33 +220,35 @@
 
 <script>
     const tabs = document.querySelectorAll('.tab');
-    const orderCards = document.querySelectorAll('.order-card');
+const orderCards = document.querySelectorAll('.order-card');
 
-    tabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-            tabs.forEach(t => t.classList.remove('active'));
-            tab.classList.add('active');
+tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+        tabs.forEach(t => t.classList.remove('active')); 
+        tab.classList.add('active'); 
 
-            const status = tab.getAttribute('data-status');
+        const status = tab.getAttribute('data-status');
 
-            orderCards.forEach(card => {
-                if (status === 'all' || card.getAttribute('data-status') === status) {
-                    card.style.display = 'block'; 
-                } else {
-                    card.style.display = 'none'; 
-                }
-            });
+        orderCards.forEach(card => {
+            if (status === 'all' || card.getAttribute('data-status') === status) {
+                card.style.display = 'block';
+            } else {
+                card.style.display = 'none';
+            }
         });
-    });
 
-    document.querySelector('.search-bar').addEventListener('input', function() {
+        window.location.href = `/Order/ViewOrderList?page=1&status=${status}&pageSize=1`;
+    });
+});
+
+    document.querySelector('.search-bar').addEventListener('input', function () {
         const searchTerm = this.value.toLowerCase();
         orderCards.forEach(card => {
             const productName = card.querySelector('.order-details p').textContent.toLowerCase();
             if (productName.includes(searchTerm)) {
-                card.style.display = 'block'; 
+                card.style.display = 'block';
             } else {
-                card.style.display = 'none'; 
+                card.style.display = 'none';
             }
         });
     });
@@ -253,6 +277,6 @@
         modal.find('.modal-body #orderItemId').val(orderItemId); // Set the orderItemId in the hidden input
     });
 
-  
+
 </script>
 

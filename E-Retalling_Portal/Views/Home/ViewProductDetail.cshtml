@@ -449,7 +449,7 @@
             document.getElementById('mainImage').src = defaultImageSrc;
         }
     }
-    function addToCart(productItemId, quantity, action) {
+    function addToCart(productItemId, quantity,action) {
         if (isVariation === true && selectedProductId != null) {
             const xhr = new XMLHttpRequest();
             xhr.open('GET', `/Cart/AddToCart?itemId=${productItemId}&quantity=${quantity}&isProduct=${false}`, true);
@@ -466,9 +466,9 @@
                     setTimeout(() => {
                         popupMessage.style.display = 'none';
                         if (action === 'buyNow') {
-                            window.location.href = '/Cart'; 
+                            window.location.href = '/Cart';
                         } else if (action === 'addToCart') {
-                            location.reload(); 
+                            location.reload();
                         }
                     }, 1500);
                 }
@@ -476,7 +476,7 @@
             xhr.send();
         } else if (isVariation === false && selectedProductId == null) {
             const xhr = new XMLHttpRequest();
-            xhr.open('GET', `/Cart/AddToCart?itemId=${productItemId}&quantity=${quantity}&isProduct=${true}`, true);
+            xhr.open('GET', `/Cart/AddToCart?itemId=${productId}&quantity=${quantity}&isProduct=${true}`, true);
             xhr.onreadystatechange = function () {
                 if (xhr.readyState == 4 && xhr.status == 200) {
                     const popupMessage = document.getElementById('popupMessage');
@@ -489,11 +489,10 @@
 
                     setTimeout(() => {
                         popupMessage.style.display = 'none';
-
                         if (action === 'buyNow') {
-                            window.location.href = '/Cart'; 
+                            window.location.href = '/Cart';
                         } else if (action === 'addToCart') {
-                            location.reload(); 
+                            location.reload();
                         }
                     }, 1500);
                 }
@@ -504,7 +503,7 @@
             errorMessage.style.display = 'block';
             setTimeout(() => {
                 errorMessage.style.display = 'none';
-            }, 1000);
+            }, 3000);
             return;
         }
     }
