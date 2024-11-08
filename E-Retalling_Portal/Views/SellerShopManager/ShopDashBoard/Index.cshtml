@@ -137,7 +137,7 @@
                         <div class="icon icon-yellow">📦</div>
                         <div class="text-container">
                             <div class="count">@ViewBag.TotalProduct</div>
-                            <div class="label">Totat Product</div>
+                            <a href="@Url.Action("ViewProducts","Product") " class="label">Total Products</a>
                         </div>
                     </div>
                 </div>
@@ -147,7 +147,7 @@
                         <div class="icon icon-green">📥</div>
                         <div class="text-container">
                             <div class="count">@ViewBag.StockProduct</div>
-                            <div class="label">Stock Prduct</div>
+                            <a href="@Url.Action("ViewQuantityProduct","ShopDashBoard")" class="label">Stock Products</a>
                         </div>
                     </div>
                 </div>
@@ -157,7 +157,7 @@
                         <div class="icon icon-orange">🛒</div>
                         <div class="text-container">
                             <div class="count">@ViewBag.SaleProducts</div>
-                            <div class="label">Sale Product</div>
+                            <div class="label">Sale Products</div>
                         </div>
                     </div>
                 </div>
@@ -179,7 +179,7 @@
                         <div class="icon icon-yellow">📂</div>
                         <div class="text-container">
                             <div class="count">@ViewBag.Category</div>
-                            <div class="label">Totat Category</div>
+                            <div class="label">Total Categories</div>
                         </div>
                     </div>
                 </div>
@@ -189,7 +189,7 @@
                         <div class="icon icon-green">📈</div>
                         <div class="text-container">
                             <div class="count">@ViewBag.Order</div>
-                            <div class="label">Total Order</div>
+                            <a href="@Url.Action("TotalOrder","ShopDashBoard")" class="label">Total Number Orders</a>
                         </div>
                     </div>
                 </div>
@@ -199,10 +199,20 @@
                         <div class="icon icon-orange">👥</div>
                         <div class="text-container">
                             <div class="count">@ViewBag.Users</div>
-                            <div class="label">Total Customer</div>
+                            <div class="label">Total Customers</div>
                         </div>
                     </div>
                 </div>
+
+                <div class="card">
+                    <div class="card-content">
+                        <div class="icon icon-orange">🛒</div>
+                    <div class="text-container">
+                            <a href="@Url.Action("ViewDetailSaleProduct","ShopDashBoard")" class="label"> Detail Sale Product</a>
+                    </div>
+                    </div>
+                </div>
+
             </div>
 
             <div class="container">
@@ -221,7 +231,7 @@
                     </div>
                     </div>
                     <div class="col-6" style="">
-                        <h3 style ="text-align: center; font-weight: bold; margin: 20px">Total Product in Category</h3>
+                        <h3 style ="text-align: center; font-weight: bold; margin: 20px">Category Overview</h3>
                         <div id="categoryChartContainer" style="width: 70%; margin: auto;">
                             <canvas id="categoryBarChart"></canvas>
                         </div>
@@ -255,23 +265,6 @@
                 <canvas id="salesChart"></canvas>
             </div>
             
-            <div>
-                <table id="myTable" class="display">
-                    <thead>
-                        <tr>
-                            <th>Days</th>
-                            <th>Sale</th>
-                            <th>Transaction Fee</th>
-                            <th>Average Order</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tableBody">
-                        <!-- Rows will be populated by JavaScript -->
-                    </tbody>
-                </table>
-            </div>
-
-             
         </div>
     </div>
 </div>
@@ -279,7 +272,7 @@
 <script>
     let salesChart; // Ensure this is globally scoped
 
-function initChart(labels, sales, others, averages) {
+function initChart(labels, sales) {
     const ctx = document.getElementById('salesChart').getContext('2d');
 
     // Destroy existing chart before creating a new one
@@ -293,32 +286,14 @@ function initChart(labels, sales, others, averages) {
             labels: labels,
             datasets: [
                 {
-                    label: 'Revenue Sales',
+                    label: 'Profit',
                     data: sales,
                     borderColor: 'rgba(75, 192, 192, 1)',
                     backgroundColor: 'rgba(75, 192, 192, 0.2)',
                     borderWidth: 2,
                     fill: true,
                     tension: 0.4
-                },
-                {
-                    label: 'Transaction Fee',
-                    data: others,
-                    borderColor: 'rgba(255, 99, 132, 1)',
-                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                    borderWidth: 2,
-                    fill: true,
-                    tension: 0.4
-                },
-                {
-                    label: 'Revenue Order',
-                    data: averages,
-                    borderColor: 'rgba(54, 162, 235, 1)',
-                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                    borderWidth: 2,
-                    fill: true,
-                    tension: 0.4
-                }
+                }              
             ]
         },
         options: {
@@ -326,7 +301,7 @@ function initChart(labels, sales, others, averages) {
             scales: {
                 y: {
                     beginAtZero: true,
-                    title: { display: true, text: 'Profit (VND)' }
+                    title: { display: true, text: 'Value (VND)' }
                 },
                 x: {
                     title: { display: true, text: 'Days' }
@@ -342,28 +317,11 @@ function initChart(labels, sales, others, averages) {
         fetch(`/ShopDashBoard/LoadChartData?monthName=${monthName}`)
             .then(response => response.json())
             .then(data => {
-                if (data.error) {
-                    console.error('Error:', data.error);
-                    alert(data.error);
-                    return;
-                }
 
-                const { labels, sales, others, averages } = data;
 
-                const tableBody = document.getElementById('tableBody');
-                tableBody.innerHTML = '';
-
-                labels.forEach((label, i) => {
-                    const row = `<tr>
-                            <td>${label}</td>
-                            <td>${sales[i]}</td>
-                            <td>${others[i]}</td>
-                            <td>${averages[i]}</td>
-                        </tr>`;
-                    tableBody.innerHTML += row;
-                });
-
-                initChart(labels, sales, others, averages);
+                const { labels, sales } = data;
+              
+                initChart(labels, sales);
             })
             .catch(error => console.error('Error loading chart data:', error));
     }
@@ -427,25 +385,10 @@ function initChart(labels, sales, others, averages) {
     function updateBarChart() {
         const startDate = document.getElementById('startDate').value;
         const endDate = document.getElementById('endDate').value;
-
-        if (!startDate || !endDate) {
-            alert("Please select both start and end dates.");
-            return;
-        }
-
+        
         fetch(`/ShopDashBoard/LoadProductDataFromDay?startTime=${startDate}&endTime=${endDate}`)
             .then(response => response.json())
             .then(data => {
-                if (!data || !Array.isArray(data.productNames) || !Array.isArray(data.productQuantities)) {
-                    console.error('Invalid data format:', data);
-                    alert('Unexpected data format received. Please try again.');
-                    return;
-                }
-
-                if (data.productNames.length === 0 || data.productQuantities.length === 0) {
-                    alert('No data available for the selected date range.');
-                    return;
-                }
 
                 const shortenedLabels = data.productNames.map(label => {
                     return label.length > 10 ? label.substring(0, 10) + '...' : label;  // Adjust 10 to your desired length
@@ -485,17 +428,11 @@ function initChart(labels, sales, others, averages) {
             })
             .catch(error => {
                 console.error('Error loading product data for the bar chart:', error);
-                alert('Failed to load data. Please try again later.');
             });
 
         fetch('/ShopDashBoard/LoadProductInCate')
             .then(response => response.json())
             .then(data => {
-                if (!data || !Array.isArray(data.category) || !Array.isArray(data.number)) {
-                    console.error('Invalid data format:', data);
-                    alert('Unexpected data format received. Please try again.');
-                    return;
-                }
 
                 const ctxCate = document.getElementById('categoryBarChart').getContext('2d');
 
@@ -560,7 +497,6 @@ function initChart(labels, sales, others, averages) {
             })
             .catch(error => {
                 console.error('Error loading category data for the bar chart:', error);
-                alert('Failed to load category data. Please try again later.');
             });
     }
 

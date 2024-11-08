@@ -1,0 +1,109 @@
+﻿@{
+    ViewData["Title"] = "ViewQuantityProduct";
+    Layout = "~/Views/Shared/ShopManagerSideBarLayout.cshtml";
+}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<div class="content m-4 pb-3">
+    <div class="row p-4">
+        <div class="col-12">
+            <div style="position: absolute; top: 20px; left: 20px;">
+                <a href="javascript:history.back()" class="btn btn-primary" style="text-decoration: none; padding: 8px 12px; font-size: 16px;">
+                    Back
+                </a>
+            </div>
+            <h2 class="text-center">Stock Product Quantities</h2>
+            <div style="width: 100%; margin: auto;">
+                <canvas id="productQuantityChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    function loadProductQuantities() {
+        const maxLabelLength = 10; // Adjust the maximum length as needed
+
+        function shortenLabel(label) {
+            return label.length > maxLabelLength ? label.substring(0, maxLabelLength) + "..." : label;
+        }
+
+        fetch('/ShopDashBoard/LoadProductQuantity')
+            .then(response => response.json())
+            .then(data => {
+
+                // Shorten each label in productName array
+                const shortenedProductNames = data.productName.map(shortenLabel);
+
+                const ctx = document.getElementById('productQuantityChart').getContext('2d');
+
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: shortenedProductNames, // Use shortened product names
+                        datasets: [{
+                            label: 'Quantity',
+                            data: data.productQuantity, // Quantities for each product
+                            backgroundColor: [
+                                'rgba(255, 99, 132, 0.2)',
+                                'rgba(255, 159, 64, 0.2)',
+                                'rgba(255, 205, 86, 0.2)',
+                                'rgba(75, 192, 192, 0.2)',
+                                'rgba(54, 162, 235, 0.2)',
+                                'rgba(153, 102, 255, 0.2)',
+                                'rgba(201, 203, 207, 0.2)'
+                            ],
+                            borderColor: [
+                                'rgb(255, 99, 132)',
+                                'rgb(255, 159, 64)',
+                                'rgb(255, 205, 86)',
+                                'rgb(75, 192, 192)',
+                                'rgb(54, 162, 235)',
+                                'rgb(153, 102, 255)',
+                                'rgb(201, 203, 207)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'Products'
+                                }
+                            },
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Quantity'
+                                }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                position: 'top'
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    title: (tooltipItems) => {
+                                        // Show full product name in tooltip
+                                        const index = tooltipItems[0].dataIndex;
+                                        return data.productName[index];
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            })
+            .catch(error => {
+                console.error('Error loading product quantities:', error);
+            });
+    }
+
+    document.addEventListener('DOMContentLoaded', loadProductQuantities);
+</script>

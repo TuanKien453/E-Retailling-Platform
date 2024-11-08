@@ -152,6 +152,7 @@
     <script>
         const shopData = JSON.parse('@Html.Raw(Json.Serialize(ViewBag.Shop))');
 
+
         document.getElementById('name').value = shopData.name;
         document.getElementById('createdAt').value = shopData.createdAt;
         document.getElementById('shopDescription').value = shopData.shopDescription;

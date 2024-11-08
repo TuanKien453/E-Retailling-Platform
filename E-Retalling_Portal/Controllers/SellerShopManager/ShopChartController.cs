@@ -5,11 +5,14 @@ using E_Retalling_Portal.Models;
 using E_Retalling_Portal.Models.Enums;
 using E_Retalling_Portal.Models.Query;
 using Microsoft.IdentityModel.Tokens;
+using E_Retalling_Portal.Controllers.Filter;
 
 namespace E_Retalling_Portal.Controllers.SellerShopManager
 {
     public class ShopChartController : Controller
     {
+        [TypeFilter(typeof(ShopOwnerRoleFilter))]
+        [TypeFilter(typeof(HaveShopFilter))]
         public IActionResult ViewShopChart()
         {
             var context = new Context();
@@ -59,16 +62,12 @@ namespace E_Retalling_Portal.Controllers.SellerShopManager
                 double[] average = new double[monthsString.Length];
                 double[] other = new double[monthsString.Length];
                 double countSale = 0;
-                double countAverage = 0;
-                double countBreak = 0;
                 double countFee = 0;
 
                 int year = DateTime.ParseExact(yearString.Trim(), "yyyy", null).Year;
                 for (int i = 0; i < monthsString.Length; i++)
                 {
                     countSale = 0;
-                    countAverage = 0;
-                    countBreak = 0;
                     countFee = 0;
                     int day = i + 1;
                     int month = DateTime.ParseExact(monthsString[i].Trim(), "MMMM", null).Month;
@@ -86,25 +85,19 @@ namespace E_Retalling_Portal.Controllers.SellerShopManager
                                 {
                                     double today = item.quantity * item.price;
                                     countFee += today * item.transactionFee / 100;
-                                    countBreak += today * item.transactionFee/100 + (double)item.shippingFee/1000;
-                                    countSale += today;
-                                    
+                                    countSale += today - countFee;
+
                                 }
                             }
 
                         }
-                        countAverage += countSale + countBreak;
                         data[i] = countSale;
-                        other[i] = countFee;
-                        average[i] = countAverage;
                     }
 
                 }
                 var labels = monthsString;
                 var sales = data;
-                var others = other;
-                var averages = average;
-                return Json(new { labels, sales, others, averages });
+                return Json(new { labels, sales});
             }
 
         }

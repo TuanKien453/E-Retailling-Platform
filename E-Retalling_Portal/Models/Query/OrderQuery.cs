@@ -55,7 +55,7 @@ namespace E_Retalling_Portal.Models.Query
                     {
                         foreach (var item in orderItems)
                         {
-                            if (product.id == item.productId)
+                            if (product.id == item.productId && !item.externalOrderCode.IsNullOrEmpty())
                             {
                                 count++;
                             }

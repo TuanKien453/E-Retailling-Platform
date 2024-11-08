@@ -226,7 +226,7 @@
 					<div class="revenue-container">
 						<div class="revenue-details">
 							<div class="revenue-amount">
-								<h5 class="revenue-value">@currentYearRevenue.ToString("C")</h5> 
+								<h5 class="revenue-value">@currentYearRevenue.ToString("C", new System.Globalization.CultureInfo("vi-VN"))</h5>
 								<h6 class="revenue-label">Total Revenue Of All Shops for @currentYear</h6>
 							</div>
 							<div class="revenue-change" style="display:flex; justify-content:end">
@@ -368,7 +368,7 @@
 					labels: labels,
 					datasets: [
 						{
-							label: 'Total Profit ($)',
+							label: 'Total Profit (VND)',
 							data: transactionFees,
 							backgroundColor: 'rgba(255, 99, 132, 0.6)',
 							borderColor: 'rgba(255, 99, 132, 1)',
@@ -388,7 +388,7 @@
 						y: {
 							title: {
 								display: true,
-								text: 'Amount ($)'
+								text: 'Amount (VND)'
 							},
 							beginAtZero: true
 						}
