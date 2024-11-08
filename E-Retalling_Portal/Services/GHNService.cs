@@ -75,6 +75,10 @@ namespace E_Retalling_Portal.Services
         }
         public async Task<OrderInfoResponse> GetOrderInfoAsync(string orderCode)
         {
+            if(orderCode == null)
+            {
+                return null;
+            }
             var requestUrl = "https://dev-online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/detail";
             var requestBody = new { order_code = orderCode};
             var request = _ghnLibrary.CreateRequest(requestUrl, HttpMethod.Post, requestBody);

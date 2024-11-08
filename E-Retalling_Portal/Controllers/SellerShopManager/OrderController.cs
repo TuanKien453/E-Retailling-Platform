@@ -24,14 +24,17 @@ namespace E_Retalling_Portal.Controllers.SellerShopManager
                 int? accountId = (int)HttpContext.Session.GetInt32(SessionKeys.AccountId.ToString());
                 Account account = context.Accounts.GetAccountByAccountId(accountId.Value).FirstOrDefault();
 				var shop = context.Shops.GetShopbyAccId(accountId.Value).FirstOrDefault();
-                var orderItemList = context.OrderItems.GetOrderItemByUserId(shop.id).ToList();
+                var orderItemList = context.OrderItems.GetOrderItemByShopId(shop.id).ToList();
 				var orderInfoResponses = new List<OrderInfoResponse>();
 				foreach (var orderItem in orderItemList)
 				{
 					if (orderItem.externalOrderCode != null)
 					{
 						var orderInfoResponse = await _ghnService.GetOrderInfoAsync(orderItem.externalOrderCode);
-						orderInfoResponses.Add(orderInfoResponse);
+						if (orderInfoResponse != null)
+						{
+							orderInfoResponses.Add(orderInfoResponse);
+						}
 					}
 				}
 				var joinedData = GetDataFromOrsedItemAndOrderInfoResponse(orderItemList, orderInfoResponses);
@@ -57,8 +60,11 @@ namespace E_Retalling_Portal.Controllers.SellerShopManager
 					if (orderItem.externalOrderCode != null)
 					{
 						var orderInfoResponse = await _ghnService.GetOrderInfoAsync(orderItem.externalOrderCode);
-						orderInfoResponses.Add(orderInfoResponse);
-					}
+                        if (orderInfoResponse != null)
+                        {
+                            orderInfoResponses.Add(orderInfoResponse);
+                        }
+                    }
 				}
                 var joinedData = GetDataFromOrsedItemAndOrderInfoResponse(orderItemList, orderInfoResponses);
 				foreach (var item in joinedData)
@@ -66,6 +72,7 @@ namespace E_Retalling_Portal.Controllers.SellerShopManager
                     Console.WriteLine(item.Product.price);
 				}
                 ViewBag.OrderList = joinedData;
+
 				return View("/Views/SellerShopManager/Order/ViewOrderList.cshtml");
 			}
 		}
@@ -96,7 +103,9 @@ namespace E_Retalling_Portal.Controllers.SellerShopManager
 								Product = orderItem.product,
 								ProductItem = orderItem.productItem,
 								ProductItemId = orderItem.productItemId,
-								OrderItem = orderItem
+								OrderItem = orderItem,
+								CreateDate = orderInfo.Data.CreatedDate,
+								FinishDate = orderInfo.Data.FinishDate
                             });
             return joinedData;
         }

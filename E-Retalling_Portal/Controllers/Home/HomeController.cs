@@ -84,9 +84,23 @@ namespace E_Retalling_Portal.Controllers.Home
                 }
                 var pageNumber = page ?? 1;
                 var pageSize = 24;
+
+
                 List<Product> products = GetProductsIsNotDelete(productList);
+
                 var paginatedProducts = products.ToPagedList(pageNumber, pageSize);
-                var productDiscounts = context.ProductDiscounts.GetProductDiscount().ToList();
+
+                var productDiscountList = context.ProductDiscounts.GetProductDiscount().ToList();
+                var productDiscounts = new Dictionary<int, ProductDiscount>();
+                foreach (var item in productDiscountList)
+                {
+                    if (item.id != null)
+                    {
+                        productDiscounts[item.productId] = item;
+                        Console.WriteLine(item.discount.value);
+                    }
+                }
+
                 ViewBag.productDiscounts = productDiscounts;
                 ViewBag.searchQuery = searchQuery;
                 ViewBag.imageList = imageList;
@@ -98,7 +112,6 @@ namespace E_Retalling_Portal.Controllers.Home
                 ViewBag.page = pageNumber;
                 var productAverageRatings = new Dictionary<int, int>();
                 var recommendProductRatings = new Dictionary<int, int>();
-
                 foreach (var product in paginatedProducts)
                 {
                     // Get the ratings for the current product
@@ -146,12 +159,19 @@ namespace E_Retalling_Portal.Controllers.Home
                         if (product.isVariation == true && product.productItems.Count > 0)
                         {
                             var min = product.productItems.Min(item => item.price);
-
                             product.price = min;
                         }
                     }
                 }
-                var productDiscounts = context.ProductDiscounts.GetProductDiscount().ToList();
+                var productDiscountList = context.ProductDiscounts.GetProductDiscount().ToList();
+                var productDiscounts = new Dictionary<int, ProductDiscount>();
+                foreach (var item in productDiscountList)
+                {
+                    if (item.id != null)
+                    {
+                        productDiscounts[item.productId] = item;
+                    }
+                }
                 ViewBag.productDiscounts = productDiscounts;
                 shop = context.Shops.Include(s=>s.products).Include(s=>s.account).ThenInclude(a=>a.user).FirstOrDefault(s => s.id == id);
             }
