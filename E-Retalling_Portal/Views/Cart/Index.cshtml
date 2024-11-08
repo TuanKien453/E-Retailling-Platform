@@ -272,7 +272,7 @@
             }
             @if (TempData["successMess"] != null)
             {
-                <div class="alert alert-success" role="alert" style="color:white;max-width:400px;padding:12px;">
+                <div id="successMessage" class="alert alert-success" role="alert" style="color:white;max-width:400px;padding:12px;">
                     Order success ! View order list for detail
                 </div>
             }
@@ -469,7 +469,12 @@
         });
 
 
-
+        setTimeout(function () {
+            var successMessage = document.getElementById('successMessage');
+            if (successMessage) {
+                successMessage.style.display = 'none';
+            }
+        }, 5000);
     </script>
 
 }
