@@ -2,8 +2,7 @@
 
 @{
     ViewData["Title"] = "Home Page";
-    bool hasDiscount = false;
-    bool hasDiscount1 = false;
+    var productDiscounts = ViewBag.productDiscounts as Dictionary<int, ProductDiscountItemModel>;
 }
 
 <div class="container mt-4">
@@ -11,12 +10,20 @@
         <h3>You May Like</h3>
         @foreach (var product in ViewBag.recommendedProduct)
         {
+            var discount = productDiscounts != null && productDiscounts.ContainsKey(product.id)
+            ? productDiscounts[product.id]
+            : null;
+
             <div class="col-md-2 col-sm-6">
                 <div class="product-grid">
                     <div class="product-image">
                         <a href="@Url.Action("Index", "ViewProductDetail", new { area = "Home", productId = product.id })" class="image">
+                            @if (discount != null && discount.productDiscount != null && discount.isDiscount == "true")
+                            {
+                                <div class="discount-value">-@discount.productDiscount.discount.value %</div>
+                            }
                             <img class="img-1" src="~/productImages/@product.coverImage.imageName">
-                            @if (product.images.Count>1)
+                            @if (product.images.Count > 1)
                             {
                                 <img class="img-2" src="~/productImages/@product.images[1].imageName">
                             }
@@ -24,61 +31,62 @@
                         <a href="@Url.Action("Index", "ViewProductDetail", new { area = "Home", productId = product.id })" class="product-view"><i class="fa fa-search"></i></a>
                     </div>
                     <div class="product-content">
-                         @if (ViewBag.recommendProductRatings != null && ViewBag.recommendProductRatings.ContainsKey(product.id))
-                {
-                    int averageRating = ViewBag.recommendProductRatings[product.id];
+                        @if (ViewBag.recommendProductRatings != null && ViewBag.recommendProductRatings.ContainsKey(product.id))
+                        {
+                            int averageRating = ViewBag.recommendProductRatings[product.id];
 
-                    <!-- Display stars -->
-                    <div class="product-rating">
-                        @for (int i = 1; i <= 5; i++)
-                        {
-                            if (i <= averageRating)
-                            {
-                                <i class="fa fa-star" style="font-size: 12px; color:yellow"></i>  <!-- Filled star -->
-                            }
-                            else
-                            {
-                                <i class="fa fa-star text-muted" style="font-size: 12px;"></i>  <!-- Empty star -->
-                            }
+                            <!-- Display stars -->
+                            <div class="product-rating">
+                                @for (int i = 1; i <= 5; i++)
+                                {
+                                    if (i <= averageRating)
+                                    {
+                                        <i class="fa fa-star" style="font-size: 12px; color:yellow"></i>  <!-- Filled star -->
+                                    }
+                                    else
+                                    {
+                                        <i class="fa fa-star text-muted" style="font-size: 12px;"></i>  <!-- Empty star -->
+                                    }
+                                }
+                                <span class="ms-1">
+                                    @averageRating
+                                </span> <!-- Display numeric rating -->
+                            </div>
                         }
-                        <span class="ms-1">
-                            @averageRating
-                        </span> <!-- Display numeric rating -->
-                    </div>
-                }
-                else
-                {
-                    <!-- Display 5 empty stars if no rating -->
-                    <div class="product-rating">
-                        @for (int i = 1; i <= 5; i++)
+                        else
                         {
-                            <i class="fa fa-star text-muted" style="font-size: 12px;"></i>  <!-- Empty star -->
+                            <!-- Display 5 empty stars if no rating -->
+                            <div class="product-rating">
+                                @for (int i = 1; i <= 5; i++)
+                                {
+                                    <i class="fa fa-star text-muted" style="font-size: 12px;"></i>  <!-- Empty star -->
+                                }
+                                <span class="ms-1">
+                                    0
+                                </span> <!-- No ratings yet -->
+                            </div>
                         }
-                        <span class="ms-1">
-                            0
-                        </span> <!-- No ratings yet -->
-                    </div>
-                }
 
                         <h3 class="title"><a href="@Url.Action("Index", "ViewProductDetail", new { area = "Home", productId = product.id })">@product.name</a></h3>
-                        @foreach (var item in ViewBag.productDiscounts)
+
+                        @if (discount != null && discount.product != null && discount.isDiscount == "true")
                         {
-                            if (item.product != null && item.product.id == product.id)
-                            {
-                                <span class="discount-name">@item.discount.name</span>
-                                hasDiscount = true;
-                                var discountedPrice = Math.Round(product.price * (1 - (item.discount.value / 100.0)), 2);
-                                <div class="price-container">
-                                    <div class="price"> @discountedPrice VND </div>
-                                    <div class="price"><s>@product.price VND</s></div>
-                                </div>
-                                break;
-                            }
+
+                            <span class="discount-name">@discount.productDiscount.discount.name</span>
+                            <div class="price"> @discount.discountedPrice.ToString("#,0").Replace(",", ".") VND   <s>@discount.product.price.ToString("#,0").Replace(",", ".") VND</s></div>
                         }
-                        @if (hasDiscount == false)
+                        else if (discount != null && discount.productItem != null && discount.isDiscount == "true")
                         {
-                            <div class="price">@product.price VND</div>
+
+                            <span class="discount-name">@discount.productDiscount.discount.name</span>
+                            <div class="price"> @discount.discountedPrice.ToString("#,0").Replace(",", ".") VND   <s>@discount.productItem.price.ToString("#,0").Replace(",", ".") VND</s></div>
+
                         }
+                        else
+                        {
+                            <div class="price">@product.price.ToString("#,0").Replace(",", ".") VND</div>
+                        }
+
                     </div>
                 </div>
             </div>
@@ -149,13 +157,17 @@
                             }
 
                         }
-                        <label>Filter by price :</label>
-                        <b id="minPrice">$ @(ViewBag.minPrice ?? 250)</b> - <b id="maxPrice">$ @(ViewBag.maxPrice != null && ViewBag.maxPrice == 1000 ? "1000+" : ViewBag.maxPrice ?? 450)</b>
+                        <label>Filter by price :</label><br />
+                        <b id="minPrice">@((ViewBag.minPrice ?? 2500000).ToString("#,0").Replace(",", ".")) VND</b> -
+                        <b id="maxPrice">@(((ViewBag.maxPrice != null && ViewBag.maxPrice == 10000000) ? "10.000.000VND+" : (ViewBag.maxPrice ?? 4500000).ToString("#,0").Replace(",", "."))) VND</b>
+
                         <input id="ex2" type="text" class="span2" value=""
-                               data-slider-min="2" data-slider-max="1000"
-                               data-slider-step="5" data-slider-value="[@(ViewBag.minPrice ?? 250),@(ViewBag.maxPrice ?? 450)]" />
-                        <input type="hidden" name="minPrice" id="minPriceInput" value="@(ViewBag.minPrice ?? 250)" />
-                        <input type="hidden" name="maxPrice" id="maxPriceInput" value="@(ViewBag.maxPrice ?? 450)" />
+                               data-slider-min="0" data-slider-max="10000000"
+                               data-slider-step="500000"
+                               data-slider-value="[@(ViewBag.minPrice ?? 2500000), @(ViewBag.maxPrice ?? 4500000)]" />
+
+                        <input type="hidden" name="minPrice" id="minPriceInput" value="@(ViewBag.minPrice ?? 2500000)" />
+                        <input type="hidden" name="maxPrice" id="maxPriceInput" value="@(ViewBag.maxPrice ?? 4500000)" />
                         <input type="hidden" name="categoryId" value="@ViewBag.categoryId" />
                         <input type="hidden" name="searchQuery" value="@ViewBag.searchQuery" />
                         <button type="submit" class="btn btn-primary mt-3">Apply Filter</button>
@@ -184,82 +196,83 @@
                 <div class="row">
                     @foreach (var product in Model)
                     {
+                        var discount = productDiscounts != null && productDiscounts.ContainsKey(product.id)
+                        ? productDiscounts[product.id]
+                        : null;
+
+
                         <div class="col-md-3 col-sm-6">
                             <div class="product-grid">
                                 <div class="product-image">
                                     <a href="@Url.Action("Index", "ViewProductDetail", new { area = "Home", productId = product.id })" class="image">
-                                        <img class="img-1" src="~/productImages/@product.coverImage.imageName">
-
-                                        @foreach (var image in ViewBag.imageList)
+                                        @if (discount != null && discount.productDiscount != null && discount.isDiscount == "true")
                                         {
-                                            @if (image.productId == product.id && image.productCoveredId == null)
-                                            {
-                                                <img class="img-2" src="~/productImages/@image.imageName">
-                                                break;
-                                            }
+                                            <div class="discount-value">-@discount.productDiscount.discount.value %</div>
                                         }
-
-
-
+                                        <img class="img-1" src="~/productImages/@product.coverImage.imageName">
+                                        @if (product.images.Count > 1)
+                                        {
+                                            <img class="img-2" src="~/productImages/@product.images[1].imageName">
+                                        }
                                     </a>
-                                    <a href="@Url.Action("Index", "ViewProductDetail", new { area = "Home", productId = product.id })" class="product-view"><i class="fa fa-search"></i></a>
                                 </div>
-                                <div class="product-content">
-                                     <div class="product-rating">
-    @if (ViewBag.productAverageRatings != null && ViewBag.productAverageRatings.ContainsKey(product.id))
-    {
-        int averageRating = ViewBag.productAverageRatings[product.id];
 
-        // Display stars
-        @for (int i = 1; i <= 5; i++)
-        {
-            if (i <= averageRating)
-            {
-                <i class="fa fa-star" style="font-size: 12px; color:yellow"></i>  <!-- Filled star -->
-            }
-            else
-            {
-                <i class="fa fa-star text-muted" style="font-size: 12px;"></i>  <!-- Empty star -->
-            }
-        }
-        <span class="ms-1">
-            @averageRating
-        </span> <!-- Display numeric rating -->
-    }
-    else
-    {
-        // Display 5 empty stars if no rating
-        @for (int i = 1; i <= 5; i++)
-        {
-            <i class="fa fa-star text-muted" style="font-size: 12px;"></i>  <!-- Empty star -->
-        }
-        <span class="ms-1">
-            0
-        </span> <!-- No ratings yet -->
-    }
-</div>
+                                <div class="product-content">
+                                    <div class="product-rating">
+                                        @if (ViewBag.productAverageRatings != null && ViewBag.productAverageRatings.ContainsKey(product.id))
+                                        {
+                                            int averageRating = ViewBag.productAverageRatings[product.id];
+
+                                            // Display stars
+                                            @for (int i = 1; i <= 5; i++)
+                                            {
+                                                if (i <= averageRating)
+                                                {
+                                                    <i class="fa fa-star" style="font-size: 12px; color:yellow"></i>  <!-- Filled star -->
+                                                }
+                                                else
+                                                {
+                                                    <i class="fa fa-star text-muted" style="font-size: 12px;"></i>  <!-- Empty star -->
+                                                }
+                                            }
+                                            <span class="ms-1">
+                                                @averageRating
+                                            </span> <!-- Display numeric rating -->
+                                        }
+                                        else
+                                        {
+                                            // Display 5 empty stars if no rating
+                                            @for (int i = 1; i <= 5; i++)
+                                            {
+                                                <i class="fa fa-star text-muted" style="font-size: 12px;"></i>  <!-- Empty star -->
+                                            }
+                                            <span class="ms-1">
+                                                0
+                                            </span> <!-- No ratings yet -->
+                                        }
+                                    </div>
                                     <h3 class="title"><a href="@Url.Action("Index", "ViewProductDetail", new { area = "Home", productId = product.id })">@product.name</a></h3>
 
 
 
-                                    @foreach (var item in ViewBag.productDiscounts)
+                                    @if (discount != null && discount.product != null && discount.isDiscount == "true")
                                     {
-                                        if (item.product != null && item.product.id == product.id)
-                                        {
-                                            <span class="discount-name">@item.discount.name</span>
-                                            hasDiscount1 = true;
-                                            var discountedPrice = Math.Round(product.price * (1 - (item.discount.value / 100.0)), 2);
-                                            <div class="price-container">
-                                                <div class="price"> @discountedPrice VND</div>
-                                                <div class="price"><s>@product.price VND</s></div>
-                                            </div>
-                                            break;
-                                        }
+
+                                        <span class="discount-name">@discount.productDiscount.discount.name</span>
+                                        <div class="price"> @discount.discountedPrice.ToString("#,0").Replace(",", ".") VND   <s>@discount.product.price.ToString("#,0").Replace(",", ".") VND</s></div>
                                     }
-                                    @if (hasDiscount1 == false)
+                                    else if (discount != null && discount.productItem != null && discount.isDiscount == "true")
                                     {
-                                        <div class="price">@product.price VND</div>
+
+                                        <span class="discount-name">@discount.productDiscount.discount.name</span>
+                                        <div class="price"> @discount.discountedPrice.ToString("#,0").Replace(",", ".") VND   <s>@discount.productItem.price.ToString("#,0").Replace(",", ".") VND</s></div>
+
                                     }
+                                    else
+                                    {
+                                        <div class="price">@product.price.ToString("#,0").Replace(",", ".") VND</div>
+                                    }
+
                                 </div>
                             </div>
                         </div>
@@ -278,36 +291,44 @@
             </div>
         </div>
     </div>
-</section>
-<script>
-    //----------------------------------------------------------------------------------------
+    <script>
+        //----------------------------------------------------------------------------------------
 
 
-    //Filter by price
-    var slider = new Slider('#ex2', {
-        tooltip: 'hide',
-        range: true
-    });
+        //Filter by price
+        var slider = new Slider('#ex2', {
+            tooltip: 'hide',
+            range: true,
+            step: 500000, // Chỉnh khoảng cách giữa các bước là 500.000 VND
+            min: 0, // Giá trị min có thể là 0 hoặc giá trị tối thiểu bạn muốn
+            max: 10000000, // Giá trị max, trong trường hợp này là 10.000.000 VND (có thể thay đổi tùy ý)
+        });
 
-    function updatePriceLabels(value) {
-        document.getElementById('minPrice').textContent = '$ ' + value[0];
-        if (value[1] === 1000) {
-            document.getElementById('maxPrice').textContent = '$ 1000+';
-        } else {
-            document.getElementById('maxPrice').textContent = '$ ' + value[1];
+        function updatePriceLabels(value) {
+            // Định dạng giá trị với dấu phân cách hàng nghìn và thêm VND vào sau
+            var minPriceFormatted = value[0].toLocaleString() + " VND";
+            var maxPriceFormatted = value[1] === 10000000 ? '10.000.000 VND+' : value[1].toLocaleString() + " VND";
+
+            // Cập nhật nhãn giá trị min và max
+            document.getElementById('minPrice').textContent = minPriceFormatted;
+            document.getElementById('maxPrice').textContent = maxPriceFormatted;
+
+            // Cập nhật giá trị input cho min và max price
+            document.getElementById('minPriceInput').value = value[0];
+            document.getElementById('maxPriceInput').value = value[1];
         }
-        document.getElementById('minPriceInput').value = value[0];
-        document.getElementById('maxPriceInput').value = value[1];
-    }
 
+        // Cập nhật nhãn khi người dùng kéo thanh trượt
+        slider.on('slide', function (value) {
+            updatePriceLabels(value);
+        });
 
-    slider.on('slide', function (value) {
-        updatePriceLabels(value);
-    });
+        // Cập nhật nhãn khi giá trị thay đổi hoàn toàn
+        slider.on('change', function (event) {
+            var value = event.newValue;
+            updatePriceLabels(value);
+        });
 
-    slider.on('change', function (event) {
-        var value = event.newValue;
-        updatePriceLabels(value);
-    });
-    //-----------------------------------------------------------------
-</script>
+        //-----------------------------------------------------------------
+    </script>
+</section>

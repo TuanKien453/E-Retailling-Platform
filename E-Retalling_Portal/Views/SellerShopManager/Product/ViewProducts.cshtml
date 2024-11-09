@@ -17,12 +17,13 @@
                 <thead>
                     <tr>
                         <th style="width: 10%;">Cover Image</th>
-                        <th style="width: 25%;">Name</th>
-                        <th style="width: 15%;">Category</th>
+                        <th style="width: 20%;">Name</th>
+                        <th style="width: 10%;">Category</th>
                         <th style="width: 10%;">Weight</th>
                         <th style="width: 10%;">Price</th>
                         <th style="width: 10%;">Quantity</th>
                         <th style="width: 20%;">Action</th>
+                        <th style="width: 10%;">Rating</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -62,6 +63,27 @@
                                 <a href="#" class="text-danger font-weight-bold text-xs" data-bs-toggle="modal" data-bs-target="#deleteModal" onclick="sendDataToModal(@item.id)">
                                     Delete
                                 </a>
+                            </td>
+                            <td>
+                                <div class="product-rating">
+                                    @if (ViewBag.productAverageRatings != null && ViewBag.productAverageRatings.ContainsKey(item.id))
+                                    {
+                                        int averageRating = ViewBag.productAverageRatings[item.id];
+                                        <a href="@Url.Action("Index", "ViewProductDetail", new { productId = item.id }) #reviews-section" class="btn btn-link ms-1 p-0" style="text-decoration: none;">
+                                        <span class="ms-1">
+                                            @averageRating <i class="fa fa-star" style="font-size: 12px; color:yellow"></i>
+                                        </span> <!-- Display numeric rating -->
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <a href="@Url.Action("Index", "ViewProductDetail", new { productId = item.id }) #reviews-section" class="btn btn-link ms-1 p-0" style="text-decoration: none;">
+                                        <span class="ms-1">
+                                            0 <i class="fa fa-star text-muted" style="font-size: 12px;"></i> 
+                                        </span> <!-- No ratings yet -->
+                                        </a>
+                                    }
+                                </div>
                             </td>
                         </tr>
                     }

@@ -162,7 +162,7 @@ namespace E_Retalling_Portal.Controllers.Home
             DateTime currentTime = DateTime.Now;
             string formattedCurrentTime = currentTime.ToString("yyyyMMddHHmmss");
 
-            DateTime endTime = currentTime.AddMinutes(10);
+            DateTime endTime = currentTime.AddMinutes(15);
             string formattedEndTime = endTime.ToString("yyyyMMddHHmmss");
 
 
@@ -370,8 +370,10 @@ namespace E_Retalling_Portal.Controllers.Home
                             externalOrderCode = orderResponse.Data.OrderCode,
                             shippingStatus = "wait to take"
                         };
-                        item.Key.quantity -= item.Value;
+                        
                         context.Add(orderItem);
+                        var uPI = context.ProductItems.FirstOrDefault(pi => pi.id == item.Key.id);
+                        uPI.quantity -= item.Value;
                         context.SaveChanges();
                     }
 
@@ -425,8 +427,10 @@ namespace E_Retalling_Portal.Controllers.Home
                             externalOrderCode = orderResponse.Data.OrderCode,
                             shippingStatus = "wait to take"
                         };
-                        item.Key.quantity -= item.Value;
+                        
                         context.Add(orderItem);
+                        var uP = context.Products.FirstOrDefault(p=>p.id==item.Key.id);
+                        uP.quantity -= item.Value;
                         context.SaveChanges();
                     }
 
@@ -494,8 +498,9 @@ namespace E_Retalling_Portal.Controllers.Home
                             externalOrderCode = orderResponse.Data.OrderCode,
                             shippingStatus = "wait to take"
                         };
-                        item.Key.quantity -= item.Value;
                         context.Add(orderItem);
+                        var uPI = context.ProductItems.FirstOrDefault(pi => pi.id == item.Key.id);
+                        uPI.quantity -= item.Value;
                         context.SaveChanges();
                     }
 
@@ -552,8 +557,9 @@ namespace E_Retalling_Portal.Controllers.Home
                             externalOrderCode = orderResponse.Data.OrderCode,
                             shippingStatus = "wait to take"
                         };
-                        item.Key.quantity -= item.Value;
                         context.Add(orderItem);
+                        var uP = context.Products.FirstOrDefault(p => p.id == item.Key.id);
+                        uP.quantity -= item.Value;
                         context.SaveChanges();
                     }
 
@@ -660,7 +666,7 @@ namespace E_Retalling_Portal.Controllers.Home
                     context.SaveChanges();
                 }
                 TempData["successMess"] = "Order Success";
-				RedirectToAction("Index", "Cart");
+				return RedirectToAction("Index", "Cart");
 			}
             return Ok("transaction fail");
         }

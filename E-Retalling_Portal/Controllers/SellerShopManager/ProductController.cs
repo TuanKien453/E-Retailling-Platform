@@ -62,6 +62,23 @@ namespace E_Retalling_Portal.Controllers.ShopManager
                 var shop = context.Shops.GetShopbyAccId(accId.Value).FirstOrDefault();
                 List<Product> products = context.Products.GetProductsByShop(shop.id).ToList();
                 ViewBag.products = products;
+
+                var productAverageRatings = new Dictionary<int, int>();
+                foreach (var product in products)
+                {
+                    // Get the ratings for the current product
+                    var ratings = context.OrderItems
+                        .Where(oi => oi.productId == product.id && oi.rating.HasValue)
+                        .Select(oi => oi.rating.Value)
+                        .ToList();
+
+                    // Calculate the average rating for the current product, rounding to the nearest integer
+                    int averageRating = ratings.Any() ? (int)Math.Round(ratings.Average()) : 0;
+
+                    // Add the productId and its average rating to the dictionary
+                    productAverageRatings[product.id] = averageRating;
+                }
+                ViewBag.productAverageRatings = productAverageRatings;
             }
 
             return View("/Views/SellerShopManager/product/ViewProducts.cshtml");

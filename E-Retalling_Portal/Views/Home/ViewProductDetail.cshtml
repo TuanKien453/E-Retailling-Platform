@@ -2,7 +2,7 @@
 
 @{
     ViewData["Title"] = "View Product";
-    bool hasDiscount = false;
+    var productDiscounts = ViewBag.productDiscounts as Dictionary<int, ProductDiscountItemModel>;
 }
 
 
@@ -80,12 +80,12 @@
                             {
                                 if (ViewBag.minPrice == ViewBag.maxPrice)
                                 {
-                                    @($"{ViewBag.minPrice}VND")
+                                    @($"{ViewBag.minPrice.ToString("#,0").Replace(",", ".")}VND")
                                 }
                                 else
                                 {
-                                    <span id="newPrice">@($"{ViewBag.minPrice} VND") -</span>
-                                    <span id="oldPrice" style="display: inline;">@($"{ViewBag.maxPrice} VND")</span>
+                                    <span id="newPrice">@($"{ViewBag.minPrice.ToString("#,0").Replace(",", ".")} VND") -</span>
+                                    <span id="oldPrice" style="display: inline;">@($"{ViewBag.maxPrice.ToString("#,0").Replace(",", ".")} VND")</span>
                                     <s><span id="discount" style="display: inline;"></span></s>
                                 }
                             }
@@ -93,9 +93,9 @@
                             {
                                 @if(ViewBag.productPrice != ViewBag.product.price)
                                 {
-                                    @($"{ViewBag.productPrice}VND")     <s>@($"{ViewBag.product.price}VND")</s>
+                                    @($"{ViewBag.productPrice.ToString("#,0").Replace(",", ".")}VND")     <s>@($"{ViewBag.product.price.ToString("#,0").Replace(",", ".")}VND")</s>
                                 }else{
-                                    @($"{ViewBag.product.price}VND")
+                                    @($"{ViewBag.product.price.ToString("#,0").Replace(",", ".")}VND")
                                 }
                             }
 
@@ -110,8 +110,7 @@
                                     onmouseover="updateMainImage('/productImages/@(productItem.image.imageName)')"
                                     onmouseout="resetMainImage('/productImages/@ViewBag.product.coverImage.imageName')">
                                 <img src="~/productImages/@(productItem.image.imageName)" alt="Alternate Text" />
-                                @(ViewBag.discountPrices != null && ViewBag.discountPrices.ContainsKey(productItem.id) ? ViewBag.discountPrices[productItem.id] : 0)
-                                @ViewBag.product.name - @productItem.attribute
+                                @productItem.attribute
                             </button>
 
                         }
@@ -132,15 +131,18 @@
                             Quantity available: <span id="quantityDisplay">@ViewBag.product.quantity</span>
                         </div>
                     </div>
-                    <a href="/Cart" class="btn btn-warning shadow-0"> Buy now </a>
                     <form id="addToCartForm" style="display: none;">
                         <input type="hidden" name="productItemId" id="productItemId" />
                         <input type="hidden" name="quantity" id="quantity" />
                     </form>
 
-                    <button onclick="addToCart(selectedProductId, document.getElementById('quantityInput').value)" class="btn btn-primary shadow-0">
-                        <i class="me-1 fa fa-shopping-basket"></i> Add to cart
+                    <button onclick="addToCart(selectedProductId, document.getElementById('quantityInput').value, 'buyNow')" class="btn btn-warning shadow-0">
+                        <i class="me-1 fa fa-shopping-basket"></i> Buy now
                     </button>
+                    <button onclick="addToCart(selectedProductId, document.getElementById('quantityInput').value, 'addToCart')" class="btn btn-primary shadow-0">
+                        <i class="me-1 fa fa-shopping-basket"></i> Add to Cart
+                    </button>
+
                     <div id="popupMessage" class="popup-message" style="display: none; top:50px; height:40px;">Added to cart successfully!</div>
                     <div id="errorMessage" class="popup-message" style="display: none; background-color:white;color: red; top:50px; height:40px;">Please choose a product!</div>
                     <p>
@@ -167,12 +169,12 @@
                 </div>
             </div>
         </div>
-        <div class="row g-3">
+        <div class="row g-3" id="reviews-section">
 
             @if (Model != null && Model.Any())
             {
-                <h2 class="feedback-title" style="font-size: 25px">Customer Feedback</h2>
-
+                <h2 class="feedback-title" style="font-size: 25px">Customer Feedback (@Model.Count Feedbacks)</h2>
+               
                 foreach (var feedback in Model)
                 {
                     <div class="feedback-item" style="margin: 0">
@@ -204,7 +206,6 @@
                     </div>
                 }
 
-                // Hiển thị điều khiển phân trang
                 @Html.PagedListPager(Model, page => Url.Action("Index", new { productId = ViewBag.product.id, page }),
                          new PagedListRenderOptions
             {
@@ -217,7 +218,7 @@
             }
             else
             {
-                <div class="no-feedback-message" style="text-align: center; margin-top: 20px; font-size: 20px; color: red;">
+                <div class="no-feedback-message" style="text-align: center; margin-top: 20px; font-size: 20px; color: #8936Ec;">
                     <strong>No feedback available.</strong> <br />
                     We would love to hear your thoughts!
                 </div>
@@ -308,33 +309,43 @@
             <h5 class="card-title">Similar</h5>
             @foreach (var product in ViewBag.similarProducts)
             {
+                var discount = productDiscounts != null && productDiscounts.ContainsKey(product.id)
+                ? productDiscounts[product.id]
+                : null;
                 <div class="col-md-2 col-sm-6">
                     <div class="product-grid">
                         <div class="product-image">
                             <a href="@Url.Action("Index", "ViewProductDetail", new { area = "Home", productId = product.id })" class="image">
+                                @if (discount!=null && discount.productDiscount != null && discount.isDiscount == "true")
+                                {
+                                    <div class="discount-value">-@discount.productDiscount.discount.value %</div>
+                                }
                                 <img class="img-1" src="~/productImages/@product.coverImage.imageName">
+                                @if (product.images.Count > 1)
+                                {
+                                    <img class="img-2" src="~/productImages/@product.images[1].imageName">
+                                }
                             </a>
                             <a href="@Url.Action("Index", "ViewProductDetail", new { area = "Home", productId = product.id })" class="product-view"><i class="fa fa-search"></i></a>
                         </div>
                         <div class="product-content">
                             <h3 class="title"><a href="@Url.Action("Index", "ViewProductDetail", new { area = "Home", productId = product.id })">@product.name</a></h3>
-                            @foreach (var item in ViewBag.productDiscounts)
+                            @if (discount != null && discount.product != null && discount.isDiscount == "true")
                             {
-                                if (item.product != null && item.product.id == product.id)
-                                {
-                                    <span class="discount-name">@item.discount.name</span>
-                                    hasDiscount = true;
-                                    var discountedPrice = Math.Round(product.price * (1 - (item.discount.value / 100.0)), 2);
-                                    <div class="price-container">
-                                        <div class="price"> @discountedPrice VND </div>
-                                        <div class="price"><s>@product.price VND</s></div>
-                                    </div>
-                                    break;
-                                }
+
+                                <span class="discount-name">@discount.productDiscount.discount.name</span>
+                                <div class="price"> @discount.discountedPrice.ToString("#,0").Replace(",", ".") VND   <s>@discount.product.price.ToString("#,0").Replace(",", ".") VND</s></div>
                             }
-                            @if (hasDiscount == false)
+                            else if (discount != null && discount.productItem != null && discount.isDiscount == "true")
                             {
-                                <div class="price">@product.price VND</div>
+
+                                <span class="discount-name">@discount.productDiscount.discount.name</span>
+                                <div class="price"> @discount.discountedPrice.ToString("#,0").Replace(",", ".") VND   <s>@discount.productItem.price.ToString("#,0").Replace(",", ".") VND</s></div>
+
+                            }
+                            else
+                            {
+                                <div class="price">@product.price.ToString("#,0").Replace(",", ".") VND</div>
                             }
                         </div>
                     </div>
@@ -354,9 +365,7 @@
     let productId = @ViewBag.product.id;
     var isVariation = @((ViewBag.product.isVariation == true) ? "true" : "false");
     function toggleSelection(button, quantity, imagePath, productId, productPrice, discountPrice) {
-
         if (selectedButton === button) {
-
             button.classList.remove('selected');
             selectedButton = null;
             document.getElementById('quantityInput').value = 1;
@@ -366,20 +375,19 @@
             resetMainImage('/productImages/@ViewBag.product.coverImage.imageName');
 
             if (isVariation === false) {
-                document.getElementById('productPrice').innerText = '@ViewBag.product.price' + 'VND';
+                document.getElementById('productPrice').innerText = parseFloat('@ViewBag.product.price').toLocaleString('vi-VN') + ' VND';
             } else {
-                const minPrice = '@ViewBag.minPrice';
-                const maxPrice = '@ViewBag.maxPrice';
+                const minPrice = parseFloat('@ViewBag.minPrice');
+                const maxPrice = parseFloat('@ViewBag.maxPrice');
 
                 if (minPrice === maxPrice) {
-                    document.getElementById('productPrice').innerText = minPrice + 'VND';
+                    document.getElementById('productPrice').innerText = minPrice.toLocaleString('vi-VN') + ' VND';
                 } else {
-                    document.getElementById('oldPrice').innerText = maxPrice + ' VND';
+                    document.getElementById('oldPrice').innerText = maxPrice.toLocaleString('vi-VN') + ' VND';
                     document.getElementById('oldPrice').style.display = 'inline';
-                    document.getElementById('newPrice').innerText = minPrice + ' VND -';
+                    document.getElementById('newPrice').innerText = minPrice.toLocaleString('vi-VN') + ' VND -';
                 }
             }
-
         } else {
             let allButtons = document.querySelectorAll('.custom-button');
             allButtons.forEach(btn => btn.classList.remove('selected'));
@@ -394,8 +402,8 @@
 
             updateMainImage(imagePath);
 
-            const oldPriceText = productPrice + " VND";
-            const newPriceText = discountPrice > 0 ? discountPrice + " VND " : "0 VND";
+            const oldPriceText = parseFloat(productPrice).toLocaleString('vi-VN') + " VND";
+            const newPriceText = discountPrice > 0 ? parseFloat(discountPrice).toLocaleString('vi-VN') + " VND " : "0 VND";
 
             document.getElementById('discount').innerText = oldPriceText;
             document.getElementById('newPrice').innerText = newPriceText;
@@ -405,9 +413,9 @@
             } else {
                 document.getElementById('discount').style.display = 'none';
             }
-
         }
     }
+
 
 
     function increaseValue() {
@@ -447,7 +455,7 @@
             document.getElementById('mainImage').src = defaultImageSrc;
         }
     }
-    function addToCart(productItemId, quantity) {
+    function addToCart(productItemId, quantity,action) {
         if (isVariation === true && selectedProductId != null) {
             const xhr = new XMLHttpRequest();
             xhr.open('GET', `/Cart/AddToCart?itemId=${productItemId}&quantity=${quantity}&isProduct=${false}`, true);
@@ -459,11 +467,16 @@
 
                     setTimeout(() => {
                         popupMessage.style.opacity = '0';
-                    }, 3000);
+                    }, 1000);
 
                     setTimeout(() => {
                         popupMessage.style.display = 'none';
-                    }, 3500);
+                        if (action === 'buyNow') {
+                            window.location.href = '/Cart';
+                        } else if (action === 'addToCart') {
+                            location.reload();
+                        }
+                    }, 1500);
                 }
             };
             xhr.send();
@@ -478,11 +491,16 @@
 
                     setTimeout(() => {
                         popupMessage.style.opacity = '0';
-                    }, 3000);
+                    }, 1000);
 
                     setTimeout(() => {
                         popupMessage.style.display = 'none';
-                    }, 3500);
+                        if (action === 'buyNow') {
+                            window.location.href = '/Cart';
+                        } else if (action === 'addToCart') {
+                            location.reload();
+                        }
+                    }, 1500);
                 }
             };
             xhr.send();
@@ -495,6 +513,7 @@
             return;
         }
     }
+
 
 
 

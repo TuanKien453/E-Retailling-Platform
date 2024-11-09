@@ -3,25 +3,25 @@
     Layout = "~/Views/Shared/ShopManagerSideBarLayout.cshtml";
 }
 
-<link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.css" />
+<link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css" />
 <div class="content m-4 pb-3">
 
     <div class="row p-4">
-        <div class="col-12">
-            <table id="myTable" class="display">
+        <div class="col-12" style="overflow-x: auto;">
+            <table id="myTable" class="display" style="width: 100%; table-layout: fixed; font-size:12px;">
                 <thead>
                     <tr>
-                        <th style="width: 8%;">OrderCode</th>
-                        <th style="width: 15%;">Name</th>
-                        <th style="width: 15%;">Phone</th>
-                        <th style="width: 20%;">Address</th>
-                        <th style="width: 8%;">TransactionFee</th>
-                        <th style="width: 8%;">ShippingFee</th>
-                        <th style="width: 8%;">Price</th>
-                        <th style="width: 20%;">Content</th>
-                        <th style="width: 8%;">Weight(gram)</th>
-                        <th style="width: 10%;">Required Note</th>
-                        <th style="width: 8%;">Status</th>
+                        <th>Code</th>
+                        <th>Name</th>
+                        <th>Phone</th>
+                        <th>Address</th>
+                        <th>TransactionFee</th>
+                        <th>ShippingFee</th>
+                        <th>Price</th>
+                        <th>Content</th>
+                        <th>Create At</th>
+                        <th>Finish At</th>
+                        <th>Status</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -36,9 +36,16 @@
                             <td>@item.ShippingFee</td>
                             <td>@item.Price</td>
                             <td>@item.Content</td>
-                            <td>@item.Weight</td>
-                            <td>@item.RequiredNote</td>
-                            <td>@item.Status</td>
+                            <td>@item.CreateDate</td>
+                            @if (item.FinishDate != null)
+                            {
+                                <td>@item.FinishDate</td>
+                            }
+                            else
+                            {
+                                <td>Null</td>
+                            }
+                            <td>@item.ShippingStatus</td>
                         </tr>
                     }
                 </tbody>
@@ -48,17 +55,15 @@
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.datatables.net/2.1.8/js/dataTables.js"></script>
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
 <script>
     function sendDataToModal(id) {
         $('#delete-product-id').val(id);
     }
 
     $(document).ready(function () {
-        $(document).ready(function () {
-            $('#myTable').DataTable({
-                lengthMenu: [[5, 10, 15], [5, 10, 15]]
-            });
+        $('#myTable').DataTable({
+            lengthMenu: [[5, 10, 15], [5, 10, 15]]
         });
     });
 </script>
