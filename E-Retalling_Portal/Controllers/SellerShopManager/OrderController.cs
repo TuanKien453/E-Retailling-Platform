@@ -53,7 +53,7 @@ namespace E_Retalling_Portal.Controllers.SellerShopManager
             }
             return View("/Views/SellerShopManager/Order/OrderInfo.cshtml");
         }
-        public async Task<IActionResult> ViewOrderList(int? page, int pageSize = 1, string status = "all")
+        public async Task<IActionResult> ViewOrderList(int? page, int pageSize = 6, string status = "all")
         {
             using (var context = new Context())
             {

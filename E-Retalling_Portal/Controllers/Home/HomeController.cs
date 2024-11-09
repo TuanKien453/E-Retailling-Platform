@@ -146,18 +146,19 @@ namespace E_Retalling_Portal.Controllers.Home
                     Console.WriteLine($"Key: {entry.Key}");
                     Console.WriteLine($"Discounted Price: {entry.Value.isDiscount}");
                     // In các giá trị trong ProductDiscountItemModel
-                    Console.WriteLine($"Discounted Price: {entry.Value.discountedPrice}");
                     if (entry.Value.product != null)
                     {
-                        Console.WriteLine($"Product Price: {entry.Value.product.price}");
+                        Console.WriteLine($"Discounted Price: {entry.Value.discountedPrice}");
+                        Console.WriteLine($"ProductPrice: {entry.Value.product.price}");
                     }
                     if (entry.Value.productItem != null)
                     {
-                        Console.WriteLine($"productItem Price: {entry.Value.productItem.price}");
+                        Console.WriteLine($"Discounted Price: {entry.Value.discountedPrice}");
+                        Console.WriteLine($"productItemPrice: {entry.Value.productItem.price}");
                     }
                     if (entry.Value.productDiscount != null)
                     {
-                        Console.WriteLine($"Product Discount: {entry.Value.productDiscount.discount.value}");
+                        Console.WriteLine($"Product DiscountValue: {entry.Value.productDiscount.discount.value}");
                     }
                     Console.WriteLine("-----------------------------");
                 }
@@ -332,6 +333,7 @@ namespace E_Retalling_Portal.Controllers.Home
         }
         private List<Product> GetProductsByPrice(double? minPrice, double? maxPrice, List<Product> productList, Dictionary<int, ProductDiscountItemModel> productDiscountItem)
         {
+            var context = new Context();
             if (productList == null || !productList.Any())
             {
                 return new List<Product>();
@@ -339,21 +341,24 @@ namespace E_Retalling_Portal.Controllers.Home
 
             var filteredProducts = productList.Where(p => p.deleteAt == null);
 
-            filteredProducts = filteredProducts.Where(p =>
+            return  filteredProducts.Where(p =>
             {
                 double effectivePrice = p.price;
 
-                if (productDiscountItem.ContainsKey(p.id))
+                if (productDiscountItem.ContainsKey(p.id) && productDiscountItem[p.id].isDiscount == "true")
                 {
                     var discount = productDiscountItem[p.id];
-                    effectivePrice -= discount.discountedPrice;  
+                    effectivePrice = discount.discountedPrice;
+                    return ((minPrice == null || effectivePrice >= minPrice) && (maxPrice == null || effectivePrice <= maxPrice))
+                    || ((minPrice == null || effectivePrice >= minPrice) && (maxPrice == null || maxPrice >= 2000000));
                 }
+                return ((minPrice == null || effectivePrice >= minPrice) && (maxPrice == null || effectivePrice <= maxPrice))
+                    || ((minPrice == null || effectivePrice >= minPrice) && (maxPrice == null || maxPrice >= 2000000));
 
-                return (minPrice == null || effectivePrice >= minPrice) && (maxPrice == null || effectivePrice <= maxPrice);
-            });
+            }).ToList();
 
-            return filteredProducts.ToList();
         }
+
 
 
 

@@ -158,16 +158,16 @@
 
                         }
                         <label>Filter by price :</label><br />
-                        <b id="minPrice">@((ViewBag.minPrice ?? 2500000).ToString("#,0").Replace(",", ".")) VND</b> -
-                        <b id="maxPrice">@(((ViewBag.maxPrice != null && ViewBag.maxPrice == 10000000) ? "10.000.000VND+" : (ViewBag.maxPrice ?? 4500000).ToString("#,0").Replace(",", "."))) VND</b>
+                        <b id="minPrice">@((ViewBag.minPrice ?? 250000).ToString("#,0").Replace(",", ".")) VND</b> -
+                        <b id="maxPrice">@(((ViewBag.maxPrice != null && ViewBag.maxPrice == 2000000) ? "2.000.000VND+" : (ViewBag.maxPrice ?? 450000).ToString("#,0").Replace(",", "."))) VND</b>
 
                         <input id="ex2" type="text" class="span2" value=""
-                               data-slider-min="0" data-slider-max="10000000"
-                               data-slider-step="500000"
-                               data-slider-value="[@(ViewBag.minPrice ?? 2500000), @(ViewBag.maxPrice ?? 4500000)]" />
+                               data-slider-min="0" data-slider-max="2000000"
+                               data-slider-step="100000"
+                               data-slider-value="[@(ViewBag.minPrice ?? 250000), @(ViewBag.maxPrice ?? 450000)]" />
 
-                        <input type="hidden" name="minPrice" id="minPriceInput" value="@(ViewBag.minPrice ?? 2500000)" />
-                        <input type="hidden" name="maxPrice" id="maxPriceInput" value="@(ViewBag.maxPrice ?? 4500000)" />
+                        <input type="hidden" name="minPrice" id="minPriceInput" value="@(ViewBag.minPrice ?? 250000)" />
+                        <input type="hidden" name="maxPrice" id="maxPriceInput" value="@(ViewBag.maxPrice ?? 450000)" />
                         <input type="hidden" name="categoryId" value="@ViewBag.categoryId" />
                         <input type="hidden" name="searchQuery" value="@ViewBag.searchQuery" />
                         <button type="submit" class="btn btn-primary mt-3">Apply Filter</button>
@@ -299,15 +299,15 @@
         var slider = new Slider('#ex2', {
             tooltip: 'hide',
             range: true,
-            step: 500000, // Chỉnh khoảng cách giữa các bước là 500.000 VND
+            step: 100000, // Chỉnh khoảng cách giữa các bước là 500.000 VND
             min: 0, // Giá trị min có thể là 0 hoặc giá trị tối thiểu bạn muốn
-            max: 10000000, // Giá trị max, trong trường hợp này là 10.000.000 VND (có thể thay đổi tùy ý)
+            max: 2000000, // Giá trị max, trong trường hợp này là 10.000.000 VND (có thể thay đổi tùy ý)
         });
 
         function updatePriceLabels(value) {
             // Định dạng giá trị với dấu phân cách hàng nghìn và thêm VND vào sau
             var minPriceFormatted = value[0].toLocaleString() + " VND";
-            var maxPriceFormatted = value[1] === 10000000 ? '10.000.000 VND+' : value[1].toLocaleString() + " VND";
+            var maxPriceFormatted = value[1] === 2000000 ? '2.000.000 VND+' : value[1].toLocaleString() + " VND";
 
             // Cập nhật nhãn giá trị min và max
             document.getElementById('minPrice').textContent = minPriceFormatted;
