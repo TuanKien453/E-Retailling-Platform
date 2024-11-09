@@ -47,7 +47,7 @@ namespace E_Retalling_Portal.Models.Query
             int count = 0;
             using (var context = new Context())
             {
-                List<Product> products = context.Products.GetProductsByShop(shopId).ToList();
+                List<Product> products = context.Products.GetProductsByShopNoNull(shopId).ToList();
                 List<OrderItem> orderItems = context.OrderItems.GetAllOrderItem().ToList();
                 if (!orderItems.IsNullOrEmpty())
                 {
@@ -55,7 +55,7 @@ namespace E_Retalling_Portal.Models.Query
                     {
                         foreach (var item in orderItems)
                         {
-                            if (product.id == item.productId && item.shippingStatus == "delivered")
+                            if (product.id == item.productId && !item.externalOrderCode.IsNullOrEmpty())
                             {
                                 count++;
                             }

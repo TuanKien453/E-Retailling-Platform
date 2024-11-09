@@ -33,7 +33,7 @@ namespace E_Retalling_Portal.Models.Query
             int count = 0;
             using (var context = new Context())
             {
-                List<Product> products = context.Products.GetProductsByShop(shopId).ToList();
+                List<Product> products = context.Products.GetProductsByShopNoNull(shopId).ToList();
                 List<OrderItem> orderItems = context.OrderItems.GetAllOrderItem().ToList();
                 List<int> order = new List<int>();
                 List<int> number = new List<int>();

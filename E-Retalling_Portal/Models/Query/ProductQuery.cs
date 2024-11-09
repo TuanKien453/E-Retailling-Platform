@@ -191,9 +191,9 @@ namespace E_Retalling_Portal.Models.Query
                         {
                             if (product.id == item.productId)
                             {
-                                if (!saleProduct.Contains(context.Products.GetProductById(item.productId).FirstOrDefault()))
+                                if (!saleProduct.Contains(context.Products.GetProductByIdNoNull(item.productId).FirstOrDefault()))
                                 {
-                                    saleProduct.Add(context.Products.GetProductById(item.productId).FirstOrDefault());
+                                    saleProduct.Add(context.Products.GetProductByIdNoNull(item.productId).FirstOrDefault());
                                 }
                                 
                             }
@@ -203,6 +203,13 @@ namespace E_Retalling_Portal.Models.Query
                 return saleProduct;
             }
         }
-
+        public static IQueryable<Product> GetProductsByShopNoNull(this DbSet<Product> dbProduct, int shopId)
+        {
+            return dbProduct.Include("coverImage").Include("images").Include("category").Where(p => p.shopId == shopId);
+        }
+        public static IQueryable<Product> GetProductByIdNoNull(this DbSet<Product> dbProduct, int productId)
+        {
+            return dbProduct.Include("coverImage").Include("images").Include("category").Include("shop").Where(p => p.id == productId);
+        }
     }
 }
