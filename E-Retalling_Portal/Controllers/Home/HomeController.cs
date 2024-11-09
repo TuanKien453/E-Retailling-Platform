@@ -3,6 +3,7 @@ using E_Retalling_Portal.Models.Enums;
 using E_Retalling_Portal.Models.Query;
 using E_Retalling_Portal.Util;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Build.Evaluation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Newtonsoft.Json.Linq;
@@ -39,35 +40,6 @@ namespace E_Retalling_Portal.Controllers.Home
                 breadcrumbList = GetBreadcrumListFromCategoryList(categoryList, categoryId, breadcrumbList, context);
 
                 ViewBag.breadcrumbList = breadcrumbList;
-
-                //Get subcategory by categoryId
-                if (categoryId.HasValue)
-                {
-                    ViewBag.isParentCategory = false;
-                    ViewBag.subcategory = context.Categories.GetSubCategoriesByParentCategoryId(categoryId).ToList();
-                }
-                else
-                {
-                    ViewBag.isParentCategory = true;
-                    ViewBag.categoryList = categoryList;
-                }
-
-                if (categoryId.HasValue)
-                {
-                    productList = GetProductsBySubCategories(categoryId, categoryList, productList, context);
-                }
-
-                if (!string.IsNullOrEmpty(searchQuery))
-                {
-                    productList = GetProductsByFilterSearch(productList, searchQuery);
-                }
-
-                if (minPrice.HasValue || maxPrice.HasValue)
-                {
-                    productList = GetProductsByPrice(minPrice, maxPrice, productList);
-                }
-
-
                 var productDiscountItem = new Dictionary<int, ProductDiscountItemModel>();
                 //Get min price of productItems
                 if (productList != null)
@@ -76,7 +48,7 @@ namespace E_Retalling_Portal.Controllers.Home
                     {
                         if (product.isVariation == true && product.productItems.Count > 0)
                         {
-                            foreach(var item in product.productItems)
+                            foreach (var item in product.productItems)
                             {
                                 if (!productDiscountItem.ContainsKey(product.id))
                                 {
@@ -96,7 +68,7 @@ namespace E_Retalling_Portal.Controllers.Home
                                     {
                                         productDiscountItem[product.id].isDiscount = "false";
                                     }
-                                    if(productDiscountItem[product.id].isDiscount == "true")
+                                    if (productDiscountItem[product.id].isDiscount == "true")
                                     {
                                         break;
                                     }
@@ -127,6 +99,47 @@ namespace E_Retalling_Portal.Controllers.Home
                         }
                     }
                 }
+                if (productList != null)
+                {
+                    foreach (var product in productList)
+                    {
+                        if (product.isVariation == true && product.productItems.Count > 0)
+                        {
+                            var min = product.productItems.Min(item => item.price);
+
+                            product.price = min;
+                        }
+                    }
+                }
+                //Get subcategory by categoryId
+                if (categoryId.HasValue)
+                {
+                    ViewBag.isParentCategory = false;
+                    ViewBag.subcategory = context.Categories.GetSubCategoriesByParentCategoryId(categoryId).ToList();
+                }
+                else
+                {
+                    ViewBag.isParentCategory = true;
+                    ViewBag.categoryList = categoryList;
+                }
+
+                if (categoryId.HasValue)
+                {
+                    productList = GetProductsBySubCategories(categoryId, categoryList, productList, context);
+                }
+
+                if (!string.IsNullOrEmpty(searchQuery))
+                {
+                    productList = GetProductsByFilterSearch(productList, searchQuery);
+                }
+
+                if (minPrice.HasValue || maxPrice.HasValue)
+                {
+                    productList = GetProductsByPrice(minPrice, maxPrice, productList, productDiscountItem);
+                }
+
+
+
                 foreach (var entry in productDiscountItem)
                 {
                     // In key
@@ -148,18 +161,7 @@ namespace E_Retalling_Portal.Controllers.Home
                     }
                     Console.WriteLine("-----------------------------");
                 }
-                if (productList != null)
-                {
-                    foreach (var product in productList)
-                    {
-                        if (product.isVariation == true && product.productItems.Count > 0)
-                        {
-                            var min = product.productItems.Min(item => item.price);
-
-                            product.price = min;
-                        }
-                    }
-                }
+                
                 var pageNumber = page ?? 1;
                 var pageSize = 24;
 
@@ -168,7 +170,7 @@ namespace E_Retalling_Portal.Controllers.Home
 
                 var paginatedProducts = products.ToPagedList(pageNumber, pageSize);
 
-                
+
                 ViewBag.productDiscounts = productDiscountItem;
                 ViewBag.searchQuery = searchQuery;
                 ViewBag.imageList = imageList;
@@ -210,7 +212,7 @@ namespace E_Retalling_Portal.Controllers.Home
                 }
                 ViewBag.productAverageRatings = productAverageRatings;
                 ViewBag.recommendProductRatings = recommendProductRatings;
-                return View(paginatedProducts);          
+                return View(paginatedProducts);
             }
         }
         public IActionResult ViewShop(int id, int? page)
@@ -219,7 +221,7 @@ namespace E_Retalling_Portal.Controllers.Home
             Shop shop;
             using (var context = new Context())
             {
-                productList = context.Products.GetProduct().Where(p=>p.shopId==id).ToList();
+                productList = context.Products.GetProduct().Where(p => p.shopId == id).ToList();
 
                 var productDiscountItem = new Dictionary<int, ProductDiscountItemModel>();
                 if (productList != null)
@@ -281,7 +283,7 @@ namespace E_Retalling_Portal.Controllers.Home
                     }
                 }
                 ViewBag.productDiscounts = productDiscountItem;
-                shop = context.Shops.Include(s=>s.products).Include(s=>s.account).ThenInclude(a=>a.user).FirstOrDefault(s => s.id == id);
+                shop = context.Shops.Include(s => s.products).Include(s => s.account).ThenInclude(a => a.user).FirstOrDefault(s => s.id == id);
             }
             if (productList != null)
             {
@@ -328,25 +330,32 @@ namespace E_Retalling_Portal.Controllers.Home
             }
             return products;
         }
-        private List<Product> GetProductsByPrice(double? minPrice, double? maxPrice, List<Product> productList)
+        private List<Product> GetProductsByPrice(double? minPrice, double? maxPrice, List<Product> productList, Dictionary<int, ProductDiscountItemModel> productDiscountItem)
         {
             if (productList == null || !productList.Any())
             {
-                return new List<Product>(); 
+                return new List<Product>();
             }
 
             var filteredProducts = productList.Where(p => p.deleteAt == null);
 
-            if (minPrice >= 2 && maxPrice < 1000)
-            {                return filteredProducts.Where(p => p.price >= minPrice.Value && p.price < maxPrice.Value).ToList();
-            }
-            else if (minPrice >= 2 && maxPrice >= 1000)
+            filteredProducts = filteredProducts.Where(p =>
             {
-                return filteredProducts.Where(p => p.price >= minPrice.Value).ToList();
-            }
+                double effectivePrice = p.price;
+
+                if (productDiscountItem.ContainsKey(p.id))
+                {
+                    var discount = productDiscountItem[p.id];
+                    effectivePrice -= discount.discountedPrice;  
+                }
+
+                return (minPrice == null || effectivePrice >= minPrice) && (maxPrice == null || effectivePrice <= maxPrice);
+            });
 
             return filteredProducts.ToList();
         }
+
+
 
         private List<BreadcrumbItem> GetBreadcrumListFromCategoryList(List<Category> categoryList, int? categoryId, List<BreadcrumbItem> breadcrumbList, Context context)
         {
@@ -422,10 +431,11 @@ namespace E_Retalling_Portal.Controllers.Home
                         point += CompareSemantics(product.id, recentProd.id);
                     }
                     //reduce point if already saw
-                    if(recentProductIds.Contains(product.id)){
+                    if (recentProductIds.Contains(product.id))
+                    {
                         point -= 0.5;
                     }
-                    recommendedProducts[product]=point;
+                    recommendedProducts[product] = point;
                 }
             }
             foreach (var product in recommendedProducts.Keys)

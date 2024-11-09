@@ -186,12 +186,12 @@ namespace E_Retalling_Portal.Models
         private static void SeedingProductItem(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<ProductItem>().HasData(
-                new ProductItem { id = 1, productId = 1, quantity = 5, price = 15, imageId = 1, attribute = "L" },
-                new ProductItem { id = 2, productId = 1, quantity = 7, price = 13, imageId = 3, attribute = "S" },
-                new ProductItem { id = 3, productId = 3, quantity = 10, price = 26, imageId = 8, attribute = "X" },
-                new ProductItem { id = 4, productId = 3, quantity = 10, price = 15, imageId = 9, attribute = "X" },
-                new ProductItem { id = 5, productId = 3, quantity = 10, price = 20, imageId = 8, attribute = "M" },
-                new ProductItem { id = 6, productId = 3, quantity = 13, price = 14, imageId = 9, attribute = "L" }
+                new ProductItem { id = 1, productId = 1, quantity = 5, price = 1500000, imageId = 1, attribute = "L" },
+                new ProductItem { id = 2, productId = 1, quantity = 7, price = 1003000, imageId = 3, attribute = "S" },
+                new ProductItem { id = 3, productId = 3, quantity = 10, price = 2006, imageId = 8, attribute = "X" },
+                new ProductItem { id = 4, productId = 3, quantity = 10, price = 10005, imageId = 9, attribute = "X" },
+                new ProductItem { id = 5, productId = 3, quantity = 10, price = 20000, imageId = 8, attribute = "M" },
+                new ProductItem { id = 6, productId = 3, quantity = 13, price = 1004, imageId = 9, attribute = "L" }
             );
         }
         private static void SeedingImage(ModelBuilder modelBuilder)
@@ -213,10 +213,10 @@ namespace E_Retalling_Portal.Models
         private static void SeedingProduct(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Product>().HasData(
-                new Product { id = 1, categoryId = 3, name = "Sport Shoe", shopId = 1, desc = "<p>this is a good product<p/>", price = 11, quantity = 10, isVariation = true, status = 1, weight = 1000 },
-                new Product { id = 2, categoryId = 4, name = "T-shirt", shopId = 1, desc = "<p>this is a good product<p/>", price = 12, quantity = 5, isVariation = false, status = 1, weight = 1000 },
-                new Product { id = 3, categoryId = 4, name = "Jacket", shopId = 1, desc = "<p>this is a good product<p/>", price = 13, quantity = 6, isVariation = true, status = 1, weight = 1000 },
-                 new Product { id = 4, categoryId = 6, name = "Jacketooo", shopId = 1, desc = "<p>this is a good product<p/>", price = 14, quantity = 6, isVariation = false, status = 1, weight = 1000 }
+                new Product { id = 1, categoryId = 3, name = "Sport Shoe", shopId = 1, desc = "<p>this is a good product<p/>", isVariation = true, status = 1, weight = 1000 },
+                new Product { id = 2, categoryId = 4, name = "T-shirt", shopId = 1, desc = "<p>this is a good product<p/>", price = 6000000, quantity = 5, isVariation = false, status = 1, weight = 1000 },
+                new Product { id = 3, categoryId = 4, name = "Jacket", shopId = 1, desc = "<p>this is a good product<p/>", isVariation = true, status = 1, weight = 1000 },
+                 new Product { id = 4, categoryId = 6, name = "Jacketooo", shopId = 1, desc = "<p>this is a good product<p/>", price = 14000000, quantity = 6, isVariation = false, status = 1, weight = 1000 }
 );
         }
         private static void SeedingCategory(ModelBuilder modelBuilder)

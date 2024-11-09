@@ -45,7 +45,7 @@
             <div class="product-grid">
                 <div class="product-image">
                     <a href="@Url.Action("Index", "ViewProductDetail", new { area = "Home", productId = product.id })" class="image">
-                        @if (discount.productDiscount != null && discount.isDiscount == "true")
+                        @if (discount != null && discount.productDiscount != null && discount.isDiscount == "true")
                         {
                             <div class="discount-value">-@discount.productDiscount.discount.value %</div>
                         }
