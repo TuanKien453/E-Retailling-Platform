@@ -5,48 +5,55 @@
 <link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.css" />
 <div class="content m-4 pb-3">
 
-    <div class="row p-4">
-        <div class="col-12">
-            <table id="myTable" class="display">
-                <thead>
-                    <tr>
-                        <th>id</th>
-                        <th>email</th>
-                        <th>phoneNumber</th>
-                        <th>displayName</th>
-                        <th>birthday</th>
-                        <th>gender</th>
-                        <th>address</th>
-                        <th>firstName</th>
-                        <th>lastName</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in ViewBag.Users)
-                    {
-                        <tr>
-                            <td>@item.id</td>
-                            <td>@item.email</td>
-                            <td>@item.phoneNumber</td>
-                            <td>@item.displayName</td>
-                            <td>@item.birthday</td>
-                            <td>@item.gender</td>
-                            <td>@item.address</td>
-                            <td>@item.firstName</td>
-                            <td>@item.lastName</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-    </div>
+	<div class="row p-4">
+		<div class="col-12">
+			<table id="myTable" class="display">
+				<thead>
+					<tr>
+						<th>id</th>
+						<th>email</th>
+						<th>phoneNumber</th>
+						<th>displayName</th>
+						<th>birthday</th>
+						<th>gender</th>
+						<th>address</th>
+						<th>firstName</th>
+						<th>lastName</th>
+					</tr>
+				</thead>
+				<tbody>
+					@foreach (var item in ViewBag.Users)
+					{
+							<tr>
+								<td>@item.id</td>
+								<td>@item.email</td>
+								<td>@item.phoneNumber</td>
+								<td>@item.displayName</td>
+								<td>@item.birthday</td>
+								<td>@item.gender</td>
+								<td>@item.address</td>
+								<td>@item.firstName</td>
+								<td>@item.lastName</td>
+							</tr>
+					}
+				</tbody>
+			</table>
+		</div>
+	</div>
 </div>
 <link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.css" />
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.datatables.net/2.1.8/js/dataTables.js"></script>
 <script>
-    $(document).ready(function () {
-        $('#myTable').DataTable();
-    });
+	$(document).ready(function () {
+		$('#myTable').DataTable({
+	"paging": true,
+	"searching": true,
+	"info": true
+});
+});
+
+
 </script>
+

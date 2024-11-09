@@ -1,0 +1,101 @@
+﻿
+@{
+    Layout = "~/Views/Shared/ManagerSideBarLayout.cshtml";
+}
+
+<style>
+    /* Card styling */
+    .card {
+        width: 100%;
+        max-width: 380px;
+        border: none;
+        height: auto;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+        background-color: #fff;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+    /* Ratings styling */
+    .ratings {
+        display: flex;
+        align-items: center;
+        margin-right: 10px;
+    }
+
+        .ratings i {
+            color: #cecece;
+            font-size: 28px;
+            margin-right: 2px;
+        }
+
+    .rating-color {
+        color: #fbc634 !important;
+    }
+
+    /* Review count styling */
+    .review-count {
+        font-weight: 500;
+        font-size: 20px;
+        color: #333;
+    }
+
+    /* Additional styling for smaller text and icons */
+    .small-ratings i {
+        color: #cecece;
+        font-size: 18px;
+    }
+
+    /* Review statistic styling */
+    .review-stat {
+        font-weight: 300;
+        font-size: 16px;
+        color: #555;
+        margin-top: 5px;
+    }
+
+    /* Title styling */
+    h5 {
+        font-size: 20px;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 10px;
+    }
+</style>
+@foreach (var vote in ViewBag.ProductVotes)
+{
+    <div class="card p-3">
+        <h5>@vote.ProductName</h5>
+        <div class="d-flex justify-content-between align-items-center">
+            <div class="ratings">
+                @{
+                    int fullStars = (int)vote.AverageRating; // Số sao đầy đủ
+                    int halfStar = vote.AverageRating - fullStars >= 0.5 ? 1 : 0; // Nếu trung bình là 0.5 hoặc hơn, thêm nửa sao
+                    int emptyStars = 5 - fullStars - halfStar; // Số sao rỗng còn lại
+
+                    for (int i = 0; i < fullStars; i++)
+                    {
+                        <i class="fa fa-star rating-color"></i>
+                    }
+                    if (halfStar == 1)
+                    {
+                        <i class="fa fa-star-half rating-color"></i>
+                    }
+                    for (int i = 0; i < emptyStars; i++)
+                    {
+                        <i class="fa fa-star"></i>
+                    }
+                }
+            </div>
+            <h5 class="review-count">@vote.VoteCount Reviews</h5>
+        </div>
+    </div>
+}
+

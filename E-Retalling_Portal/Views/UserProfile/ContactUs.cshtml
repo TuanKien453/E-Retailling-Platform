@@ -1,0 +1,26 @@
+﻿@{
+    Layout = "_Layout";
+}
+
+<h2>Contact Us</h2>
+
+<form asp-action="SendContactEmail" method="post">
+    <div>
+        <label for="name">Name</label>
+        <input type="text" id="name" name="Name" required />
+    </div>
+    <div>
+        <label for="email">Email</label>
+        <input type="email" id="email" name="Email" required />
+    </div>
+    <div>
+        <label for="message">Message</label>
+        <textarea id="message" name="Message" required></textarea>
+    </div>
+    <button type="submit">Send</button>
+</form>
+
+@if (ViewBag.MessageSent != null)
+{
+    <p>@ViewBag.MessageSent</p>
+}
