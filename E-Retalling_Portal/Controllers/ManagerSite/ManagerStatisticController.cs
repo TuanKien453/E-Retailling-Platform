@@ -47,5 +47,29 @@ namespace E_Retalling_Portal.Controllers.ManagerSite
             var Top10SellingProduct = ManagerStatisticQuery.GetTop10BestSellingProductsByShopId(shopId);
             return View("/Views/ManagerSite/ManagerStatistic/Top10SellingProduct.cshtml", Top10SellingProduct);
         }
+
+        public IActionResult ProductRateStatistic()
+        {
+            Context context = new Context();
+
+            var productVotes = context.OrderItems
+                .Where(oi => oi.rating != null)
+                .GroupBy(oi => oi.productId)
+                .Select(g => new
+                {
+                    ProductId = g.Key,
+                    ProductName = context.Products
+                        .Where(p => p.id == g.Key)
+                        .Select(p => p.name)
+                        .FirstOrDefault(),
+                    VoteCount = g.Count(),
+                    AverageRating = g.Average(oi => oi.rating)
+                })
+                .ToList();
+
+            ViewBag.ProductVotes = productVotes;
+
+            return View("/Views/ManagerSite/ManagerStatistic/ProductRateStatistic.cshtml");
+        }
     }
 }

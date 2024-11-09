@@ -242,7 +242,57 @@ namespace E_Retalling_Portal.Controllers.UserProfile
 
 			return View("OTPReceive");
 		}
+        [HttpGet]
+        public IActionResult ContactUs()
+        {
+            return View();
+        }
 
-	}
+        [HttpPost]
+        public IActionResult SendContactEmail(string Name, string Email, string Message)
+        {
+            try
+            {
+                // Tạo email mới
+                var email = new MimeMessage();
+                email.From.Add(new MailboxAddress("E-Retailing-Portal", Email));
+                email.To.Add(new MailboxAddress("", "quya1k48@gmail.com"));
+
+                email.Subject = "New Contact Us Message";
+                email.Body = new TextPart(MimeKit.Text.TextFormat.Html)
+                {
+                    Text = $@"
+<html>
+<body>
+    <p>You have received a new message from the contact form on your website.</p>
+    <p><strong>Name:</strong> {Name}</p>
+    <p><strong>Email:</strong> {Email}</p>
+    <p><strong>Message:</strong></p>
+    <p>{Message}</p>
+    <p>Best regards,<br>E-Retailing-Portal</p>
+</body>
+</html>"
+                };
+
+                // Gửi email qua SMTP
+                using (var smtp = new SmtpClient())
+                {
+                    smtp.Connect("smtp.gmail.com", 587, false);
+                    smtp.Authenticate("quya1k48@gmail.com", "dwuueitkzbynxhhk");
+                    smtp.Send(email);
+                    smtp.Disconnect(true);
+                }
+
+                ViewBag.MessageSent = "Thank you for contacting us! Your message has been sent.";
+            }
+            catch (Exception ex)
+            {
+                ViewBag.MessageSent = "There was an error sending your message. Please try again later.";
+            }
+
+            return View("ContactUs");
+        }
+
+    }
 }
 

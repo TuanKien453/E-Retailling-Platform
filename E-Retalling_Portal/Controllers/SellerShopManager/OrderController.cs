@@ -100,5 +100,31 @@ namespace E_Retalling_Portal.Controllers.SellerShopManager
                             });
             return joinedData;
         }
+        public IActionResult OrderRate()
+        {
+            Context context = new Context();
+            int? accountId = (int)HttpContext.Session.GetInt32(SessionKeys.AccountId.ToString());
+            var shop = context.Shops.GetShopbyAccId(accountId.Value).FirstOrDefault();
+
+            var productVotes = context.OrderItems
+                .Where(oi => oi.rating != null && context.Products
+                    .Any(p => p.id == oi.productId && p.shopId == shop.id))
+                .GroupBy(oi => oi.productId)
+                .Select(g => new
+                {
+                    ProductId = g.Key,
+                    ProductName = context.Products
+                        .Where(p => p.id == g.Key)
+                        .Select(p => p.name)
+                        .FirstOrDefault(),
+                    VoteCount = g.Count(),
+                    AverageRating = g.Average(oi => oi.rating)
+                })
+                .ToList();
+
+            ViewBag.ProductVotes = productVotes;
+
+            return View("/Views/ManagerSite/ManagerStatistic/ProductRateStatistic.cshtml");
+        }
     }
 }
