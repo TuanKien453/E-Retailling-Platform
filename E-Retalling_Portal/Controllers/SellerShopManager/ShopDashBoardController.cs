@@ -66,7 +66,7 @@ namespace E_Retalling_Portal.Controllers.ShopManager
             using (var context = new Context())
             {
                 var shop = context.Shops.GetShopbyAccId(accId.Value).FirstOrDefault();
-                List<Product> products = context.Products.GetProductsByShop(shop.id).ToList();
+                List<Product> products = context.Products.GetProductsByShopNoNull(shop.id).ToList();
                 List<Product> saleProducts = context.Products.GetAllSalesProduct(products);
                 ViewBag.products = saleProducts;
             }
@@ -83,7 +83,7 @@ namespace E_Retalling_Portal.Controllers.ShopManager
         {
             using (var context = new Context())
             {
-                Product product = context.Products.GetProductById(productId).FirstOrDefault();
+                Product product = context.Products.GetProductByIdNoNull(productId).FirstOrDefault();
                 if (product == null)
                 {
                     return View("Views/Shared/ErrorPage/Error500.cshtml");
@@ -109,7 +109,7 @@ namespace E_Retalling_Portal.Controllers.ShopManager
                 if (product.isVariation)
                 {
 
-                    List<ProductItem> productItems = context.ProductItems.GetProductItem(productId).ToList();
+                    List<ProductItem> productItems = context.ProductItems.GetProductItemNoNull(productId).ToList();
                     foreach (var order in ordersFromDate)
                     {
                         List<OrderItem> orderItems = context.OrderItems.GetOrderItemByOrderId(order.id).ToList();
@@ -120,7 +120,7 @@ namespace E_Retalling_Portal.Controllers.ShopManager
                             {
                                 break;
                             }
-                            var productItem = context.ProductItems.GetProductItemByProductItemId(productItemId).FirstOrDefault();
+                            var productItem = context.ProductItems.GetProductItemByProductItemIdNoNull(productItemId).FirstOrDefault();
 
                             if (productItem != null && productItems.Contains(productItem))
                             {
@@ -139,7 +139,7 @@ namespace E_Retalling_Portal.Controllers.ShopManager
                     }
                     var productData = productFromDay.Select(item => new
                     {
-                        ProductName = context.ProductItems.GetProductItemByProductItemId(item.Key).FirstOrDefault()?.attribute,
+                        ProductName = context.ProductItems.GetProductItemByProductItemIdNoNull(item.Key).FirstOrDefault()?.attribute,
                         Quantity = item.Value
                     }).ToList();
 
@@ -154,7 +154,7 @@ namespace E_Retalling_Portal.Controllers.ShopManager
                     int count = 0;
                     foreach (var order in ordersFromDate)
                     {
-                        List<OrderItem> orderItems = context.OrderItems.GetOrderItemByOrderId(order.id).ToList();
+                        List<OrderItem> orderItems = context.OrderItems.GetOrderItemByOrderItemId(order.id).ToList();
                         foreach (var item in orderItems)
                         {
                             if (item.shippingStatus.ToString().Equals("delivered", StringComparison.OrdinalIgnoreCase))
@@ -185,7 +185,7 @@ namespace E_Retalling_Portal.Controllers.ShopManager
             {
                 int? accId = HttpContext.Session.GetInt32(SessionKeys.AccountId.ToString());
                 var shop = context.Shops.GetShopbyAccId(accId.Value).FirstOrDefault();
-                List<Product> products = context.Products.GetProductsByShop(shop.id).ToList();
+                List<Product> products = context.Products.GetProductsByShopNoNull(shop.id).ToList();
                 int month;
                 try
                 {
@@ -215,9 +215,10 @@ namespace E_Retalling_Portal.Controllers.ShopManager
                         List<OrderItem> orderItems = context.OrderItems.GetOrderItemByOrderId(order.id).ToList();
                         foreach (var item in orderItems)
                         {
+                            countFee = 0;
                             if (item.shippingStatus.ToString().Equals("delivered", StringComparison.OrdinalIgnoreCase))
                             {
-                                if (products.Contains(context.Products.GetProductById(item.productId).FirstOrDefault()))
+                                if (products.Contains(context.Products.GetProductByIdNoNull(item.productId).FirstOrDefault()))
                                 {
                                     double today = item.quantity * item.price;
                                     countFee += today * item.transactionFee / 100;
@@ -253,7 +254,7 @@ namespace E_Retalling_Portal.Controllers.ShopManager
                 int? accId = HttpContext.Session.GetInt32(SessionKeys.AccountId.ToString());
                 var shop = context.Shops.GetShopbyAccId(accId.Value).FirstOrDefault();
 
-                List<Product> products = context.Products.GetProductsByShop(shop.id).ToList();
+                List<Product> products = context.Products.GetProductsByShopNoNull(shop.id).ToList();
 
                 // Fetch orders without date filtering
                 List<Order> allOrders = context.Orders.ToList();
@@ -283,7 +284,7 @@ namespace E_Retalling_Portal.Controllers.ShopManager
                     {
                         if (item.shippingStatus.ToString().Equals("delivered", StringComparison.OrdinalIgnoreCase))
                         {
-                            var product = context.Products.GetProductById(item.productId).FirstOrDefault();
+                            var product = context.Products.GetProductByIdNoNull(item.productId).FirstOrDefault();
                             if (product != null && products.Contains(product))
                             {
                                 if (productFromDay.ContainsKey(item.productId))
@@ -301,7 +302,7 @@ namespace E_Retalling_Portal.Controllers.ShopManager
 
                 var productData = productFromDay.Select(item => new
                 {
-                    ProductName = context.Products.GetProductById(item.Key).FirstOrDefault()?.name,
+                    ProductName = context.Products.GetProductByIdNoNull(item.Key).FirstOrDefault()?.name,
                     Quantity = item.Value
                 }).ToList();
 
@@ -372,6 +373,7 @@ namespace E_Retalling_Portal.Controllers.ShopManager
         {
             return View("/Views/SellerShopManager/ShopDashBoard/TotalOrder.cshtml");
         }
+
         public IActionResult TotalOrderDataFromDay(DateTime startTime, DateTime endTime)
         {
             using (var context = new Context())
@@ -379,12 +381,9 @@ namespace E_Retalling_Portal.Controllers.ShopManager
                 int? accId = HttpContext.Session.GetInt32(SessionKeys.AccountId.ToString());
                 var shop = context.Shops.GetShopbyAccId(accId.Value).FirstOrDefault();
 
-                List<Product> products = context.Products.GetProductsByShop(shop.id).ToList();
-
-                // Fetch orders without date filtering
+                List<Product> products = context.Products.GetProductsByShopNoNull(shop.id).ToList();
                 List<Order> allOrders = context.Orders.ToList();
 
-                // Filter orders in memory based on parsed `createTime`
                 List<Order> ordersFromDate = allOrders
                     .Where(order =>
                     {
@@ -399,31 +398,46 @@ namespace E_Retalling_Portal.Controllers.ShopManager
                         return isParsed && orderDate >= startTime && orderDate <= endTime;
                     })
                     .ToList();
-                Dictionary<string, int> totalOrder = new Dictionary<string, int>();
+
+                var orderData = new Dictionary<string, Dictionary<string, int>>
+                {
+                    // This dictionary will have usernames as keys,
+                    // with each username containing both delivered and undelivered counts.
+                };
+
                 foreach (var order in ordersFromDate)
                 {
                     List<OrderItem> orderItems = context.OrderItems.GetOrderItemByOrderId(order.id).ToList();
+
                     foreach (var item in orderItems)
                     {
-                        if (item.shippingStatus.ToString().Equals("delivered", StringComparison.OrdinalIgnoreCase) )
+                        var product = context.Products.GetProductByIdNoNull(item.productId).FirstOrDefault();
+                        if (product == null || !products.Contains(product)) continue;
+
+                        User user = context.Users.GetUserById(order.userId).FirstOrDefault();
+                        if (user == null) continue;
+
+                        if (!orderData.ContainsKey(user.displayName))
                         {
-                            var product = context.Products.GetProductById(item.productId).FirstOrDefault();
-                            if (product != null && products.Contains(product))
-                            {
-                                User user = context.Users.GetUserById(order.userId).FirstOrDefault();
-                                if (totalOrder.ContainsKey(user.displayName))
-                                {
-                                    totalOrder[user.displayName]++;
-                                }
-                                else
-                                {
-                                    totalOrder[user.displayName] = 1;
-                                }
-                            }
+                            orderData[user.displayName] = new Dictionary<string, int>
+                    {
+                        { "DeliveredOrders", 0 },
+                        { "NotDeliveredOrders", 0 }
+                    };
+                        }
+
+                        if (item.shippingStatus.Equals("delivered", StringComparison.OrdinalIgnoreCase))
+                        {
+                            orderData[user.displayName]["DeliveredOrders"]++;
+                        }
+                        else if (!string.IsNullOrEmpty(item.externalOrderCode))
+                        {
+                            orderData[user.displayName]["NotDeliveredOrders"]++;
                         }
                     }
                 }
-                return Json(totalOrder);
+
+                return Json(orderData);
             }
         }
     }

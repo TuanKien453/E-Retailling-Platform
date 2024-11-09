@@ -56,7 +56,7 @@ namespace E_Retalling_Portal.Controllers.SellerShopManager
             {
                 int? accId = HttpContext.Session.GetInt32(SessionKeys.AccountId.ToString());
                 var shop = context.Shops.GetShopbyAccId(accId.Value).FirstOrDefault();
-                List<Product> products = context.Products.GetProductsByShop(shop.id).ToList();
+                List<Product> products = context.Products.GetProductsByShopNoNull(shop.id).ToList();
                
                 double[] data = new double[monthsString.Length];
                 double[] average = new double[monthsString.Length];
@@ -75,18 +75,18 @@ namespace E_Retalling_Portal.Controllers.SellerShopManager
 
                     foreach (var order in orderInMonth)
                     {
-
                         List<OrderItem> orderItems = context.OrderItems.GetOrderItemByOrderId(order.id).ToList();
                         foreach (var item in orderItems)
                         {
+                            countFee = 0;
                             if (item.shippingStatus.ToString().Equals("delivered", StringComparison.OrdinalIgnoreCase))
                             {
-                                if (products.Contains(context.Products.GetProductById(item.productId).FirstOrDefault()))
+                                if (products.Contains(context.Products.GetProductByIdNoNull(item.productId).FirstOrDefault()))
                                 {
                                     double today = item.quantity * item.price;
                                     countFee += today * item.transactionFee / 100;
                                     countSale += today - countFee;
-
+                                    Console.WriteLine($"don = {today}, fee = {countFee}, sale = {countSale}");
                                 }
                             }
 

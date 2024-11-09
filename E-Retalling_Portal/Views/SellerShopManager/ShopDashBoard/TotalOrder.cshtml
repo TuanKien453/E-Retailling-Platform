@@ -4,6 +4,7 @@
 }
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 <div class="content m-4 pb-3" id="ShopDashBoard">
     <div class="row p-4">
         <div class="col-12">
@@ -26,6 +27,7 @@
         </div>
     </div>
 </div>
+
 <script>
     let orderChart;
 
@@ -36,30 +38,37 @@
         fetch(`/ShopDashBoard/TotalOrderDataFromDay?startTime=${startDate}&endTime=${endDate}`)
             .then(response => response.json())
             .then(data => {
+                const labels = Object.keys(data); // Usernames
+                const deliveredData = labels.map(user => data[user].DeliveredOrders); // Delivered order counts
+                const notDeliveredData = labels.map(user => data[user].NotDeliveredOrders); // Undelivered order counts
 
                 const ctx = document.getElementById('orderChart').getContext('2d');
 
-                // Destroy existing chart instance if it exists
                 if (orderChart instanceof Chart) {
                     orderChart.destroy();
                 }
 
-                // Prepare data for chart
-                const labels = Object.keys(data); // Usernames
-                const values = Object.values(data); // Order counts
-
-                // Create a new bar chart
+                // Create a new bar chart with two datasets
                 orderChart = new Chart(ctx, {
                     type: 'bar',
                     data: {
                         labels: labels,
-                        datasets: [{
-                            label: 'Total Orders',
-                            data: values,
-                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                            borderColor: 'rgba(75, 192, 192, 1)',
-                            borderWidth: 1
-                        }]
+                        datasets: [
+                            {
+                                label: 'Delivered Orders',
+                                data: deliveredData,
+                                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                                borderColor: 'rgba(75, 192, 192, 1)',
+                                borderWidth: 1
+                            },
+                            {
+                                label: 'Not Delivered Orders',
+                                data: notDeliveredData,
+                                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                                borderColor: 'rgba(255, 99, 132, 1)',
+                                borderWidth: 1
+                            }
+                        ]
                     },
                     options: {
                         responsive: true,

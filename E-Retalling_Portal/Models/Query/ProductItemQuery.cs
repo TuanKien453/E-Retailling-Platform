@@ -70,5 +70,23 @@ namespace E_Retalling_Portal.Models.Query
 
             }
         }
+        public static IQueryable<ProductItem> GetProductItemNoNull(this DbSet<ProductItem> dbProductItem, int productId)
+        {
+            return dbProductItem.Include("image").Where(pi => pi.productId == productId);
+        }
+
+        public static IQueryable<ProductItem> GetProductItemByProductItemIdNoNull(this DbSet<ProductItem> dbProductItem, int productItemId)
+        {
+            return dbProductItem
+                .Include(pi => pi.image)
+                .Include(pi => pi.product)
+                    .ThenInclude(p => p.shop)
+                .Where(pi => pi.id == productItemId);
+        }
+
+        public static IQueryable<ProductItem> GetAllProductItemNoNull(this DbSet<ProductItem> dbProductItem)
+        {
+            return dbProductItem.Include(p => p.image).Include(p => p.product).Include(p => p.product.shop);
+        }
     }
 }
