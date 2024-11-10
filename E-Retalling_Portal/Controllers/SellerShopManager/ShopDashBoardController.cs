@@ -121,7 +121,6 @@ namespace E_Retalling_Portal.Controllers.ShopManager
                                 break;
                             }
                             var productItem = context.ProductItems.GetProductItemByProductItemIdNoNull(productItemId).FirstOrDefault();
-
                             if (productItem != null && productItems.Contains(productItem))
                             {
                                 if (productFromDay.ContainsKey(productItemId))
@@ -154,14 +153,14 @@ namespace E_Retalling_Portal.Controllers.ShopManager
                     int count = 0;
                     foreach (var order in ordersFromDate)
                     {
-                        List<OrderItem> orderItems = context.OrderItems.GetOrderItemByOrderItemId(order.id).ToList();
+                        List<OrderItem> orderItems = context.OrderItems.GetOrderItemByOrderId(order.id).ToList();
                         foreach (var item in orderItems)
                         {
                             if (item.shippingStatus.ToString().Equals("delivered", StringComparison.OrdinalIgnoreCase))
                             {
                                 if (product.id == item.productId)
                                 {
-                                    count++;
+                                    count += item.quantity;
                                 }
                             }
                         }
