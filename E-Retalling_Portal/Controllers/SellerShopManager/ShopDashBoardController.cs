@@ -219,7 +219,7 @@ namespace E_Retalling_Portal.Controllers.ShopManager
                             {
                                 if (products.Contains(context.Products.GetProductByIdNoNull(item.productId).FirstOrDefault()))
                                 {
-                                    double today = item.quantity * item.price;
+                                    double today = item.price;
                                     countFee += today * item.transactionFee / 100;
                                     countSale += today - countFee;
 

@@ -76,7 +76,7 @@ builder.Services.AddScoped<GHNService, GHNService>();
 builder.Services.AddHostedService<TransactionCleanupService>();
 
 var app = builder.Build();
-
+app.Environment.ApplicationName = "app";
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
